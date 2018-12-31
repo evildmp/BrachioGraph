@@ -288,7 +288,7 @@ class PantoGraph:
 
 class Pen:
 
-    def __init__(self, pin=18, pw_up=1900, pw_down=1150, transition_time=0.25):
+    def __init__(self, pin=18, pw_up=1250, pw_down=2100, transition_time=0.25):
 
         self.pin = pin
         self.pw_up = pw_up
