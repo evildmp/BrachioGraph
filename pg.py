@@ -24,12 +24,12 @@ class PantoGraph:
 
         box_bounds=(0, 0, 13, 6),
 
-        angle_multiplier=1,
+        angle_multiplier=1, # set to -1 if necessary to reverse directions
         correction_1=0,
         correction_2=0,
 
-        centre_1=1350, multiplier_1=425/45,
-        centre_2=1315, multiplier_2=415/45
+        centre_2=1350, multiplier_1=425/45,
+        centre_1=1315, multiplier_2=415/45
     ):
 
         # instantiate this Raspberry Pi as a pigpio.pi() instance
@@ -61,7 +61,11 @@ class PantoGraph:
 
         self.current_x, self.current_y = self.box_bounds[2]/2, self.box_bounds[3]/2
 
-        self.xy(self.current_x, self.current_y)
+        angle_1, angle_2 = self.xy_to_angles(self.current_x, self.current_y)
+
+        self.command_servo_angles(angle_1, angle_2)
+
+        # self.xy(self.current_x, self.current_y)
 
 
     def xy_to_angles(self, x=0, y=0):
@@ -80,8 +84,8 @@ class PantoGraph:
         inner_angle_2 = acos((d2/self.L)/2)
 
         # calculate the angle between the d1 edge and the vertical
-        outer_angle_1 = - atan(x_relative_to_motor_1/(self.HEIGHT-y))
-        outer_angle_2 = - atan(x_relative_to_motor_2/(self.HEIGHT-y))
+        outer_angle_1 = - atan(x_relative_to_motor_1/(self.HEIGHT - y))
+        outer_angle_2 = - atan(x_relative_to_motor_2/(self.HEIGHT - y))
 
         # calculate the sum of the angles in degrees
         angle1 = degrees(outer_angle_1 - inner_angle_1)
@@ -168,12 +172,15 @@ class PantoGraph:
         return actual_pulse_width_1, actual_pulse_width_1
 
 
-    def draw(self, x=0, y=0, wait=.1, interpolate=1):
-        self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
+    def draw(self, x=0, y=0, wait=.5, interpolate=1, rotate=False):
+        self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True, rotate=rotate)
 
 
-    def xy(self, x=0, y=0, wait=1, interpolate=10, draw=False):
+    def xy(self, x=0, y=0, wait=.5, interpolate=10, draw=False, rotate=False):
         # Moves the pen to the xy position; optionally draws
+
+        if rotate:
+            (x, y) = (y,x)
 
         if draw:
             self.pen.down()
@@ -232,7 +239,7 @@ class PantoGraph:
 
 
 
-    def test_pattern(self, bounds=None, wait=1, interpolate=0, repeat=1):
+    def test_pattern(self, bounds=None, wait=1, interpolate=0, rotate=False, repeat=1):
 
         bounds = bounds or self.box_bounds
 
@@ -243,52 +250,55 @@ class PantoGraph:
             for y in range(bounds[1], bounds[3] + 1):
 
                 if y % 2 == 0:
-                    self.draw(bounds[2], bounds[1] + y, wait, interpolate)
-                    self.xy(bounds[2], bounds[1] + y + 1, wait, interpolate)
+                    self.draw(bounds[2], bounds[1] + y, wait, interpolate, rotate=rotate)
+                    self.xy(bounds[2], bounds[1] + y + 1, wait, interpolate, rotate=rotate)
                 else:
-                    self.draw(bounds[0], bounds[1] + y, wait, interpolate)
-                    self.xy(bounds[0], bounds[1] + y + 1, wait, interpolate)
+                    self.draw(bounds[0], bounds[1] + y, wait, interpolate, rotate=rotate)
+                    self.xy(bounds[0], bounds[1] + y + 1, wait, interpolate, rotate=rotate)
 
         self.pen.up()
 
 
-    def box(self, bounds=None, wait=1, interpolate=0, repeat=1):
+    def box(self, bounds=None, wait=1, interpolate=0, rotate=False, repeat=1):
 
         bounds = bounds or self.box_bounds
 
         self.xy(bounds[0], bounds[1], wait, interpolate)
 
         for r in range(repeat):
-            self.draw(bounds[2], bounds[1], wait, interpolate)
-            self.draw(bounds[2], bounds[3], wait, interpolate)
-            self.draw(bounds[0], bounds[3], wait, interpolate)
-            self.draw(bounds[0], bounds[1], wait, interpolate)
+            self.draw(bounds[2], bounds[1], wait, interpolate, rotate=rotate)
+            self.draw(bounds[2], bounds[3], wait, interpolate, rotate=rotate)
+            self.draw(bounds[0], bounds[3], wait, interpolate, rotate=rotate)
+            self.draw(bounds[0], bounds[1], wait, interpolate, rotate=rotate)
 
-    def plot_lines(self, lines=[], wait=1, interpolate=1):
-        divider = 102.4
+    def plot_lines(self, lines=[], wait=1, interpolate=1, rotate=False, divider=102.4):
+
         for line in tqdm(lines):
             x, y = line[0]
-            self.xy(x/divider, y/divider)
+            self.xy(x/divider, y/divider, rotate=rotate)
             for segment in tqdm(line[1:]):
                 x, y = segment
-                self.draw(x/divider, y/divider, wait=wait, interpolate=interpolate)
+                self.draw(x/divider, y/divider, wait=wait, interpolate=interpolate, rotate=rotate)
 
         self.pen.up()
 
 
-    def plot_file(self, filename="", wait=1, interpolate=1):
+    def plot_file(self, filename="", wait=1, interpolate=1, rotate=False, divider=102.4):
 
         with open(filename, "r") as line_file:
             lines = json.load(line_file)
 
-        self.plot_lines(lines, wait=wait, interpolate=interpolate)
+        for line in lines:
+
+
+        self.plot_lines(lines, wait=wait, interpolate=interpolate, rotate=rotate, divider=divider)
 
         self.pen.up()
 
 
 class Pen:
 
-    def __init__(self, pin=18, pw_up=1250, pw_down=2100, transition_time=0.25):
+    def __init__(self, pin=18, pw_up=2100, pw_down=1250, transition_time=0.25):
 
         self.pin = pin
         self.pw_up = pw_up
