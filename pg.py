@@ -288,9 +288,6 @@ class PantoGraph:
         with open(filename, "r") as line_file:
             lines = json.load(line_file)
 
-        for line in lines:
-
-
         self.plot_lines(lines, wait=wait, interpolate=interpolate, rotate=rotate, divider=divider)
 
         self.pen.up()
