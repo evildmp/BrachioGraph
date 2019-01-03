@@ -28,8 +28,8 @@ class PantoGraph:
         correction_1=0,
         correction_2=0,
 
-        centre_2=1350, multiplier_1=425/45,
-        centre_1=1315, multiplier_2=415/45
+        centre_1=1350, multiplier_1=425/45,
+        centre_2=1350, multiplier_2=415/45
     ):
 
         # instantiate this Raspberry Pi as a pigpio.pi() instance
@@ -291,6 +291,12 @@ class PantoGraph:
         self.plot_lines(lines, wait=wait, interpolate=interpolate, rotate=rotate, divider=divider)
 
         self.pen.up()
+
+
+    def set_pw(self, pin, pw):
+        self.rpi.set_servo_pulsewidth(pin, pw)
+
+
 
 
 class Pen:

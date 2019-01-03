@@ -130,6 +130,78 @@ Use `my fork of the linedraw application <https://github.com/evildmp/linedraw>`_
 Note that linedraw defaults to a maximum image dimension of 1024; the ``PantoGraph.plot_lines()``
 method assumes this and divides dimensions by 102.4 to fit a 10cm box.
 
+
+Calibrate the PantoGraph more accurately
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+First of all, bear in mind that you're doing this with hobby servos, not precision devices, not to
+mention a mechanism made of card and ballpoint pens. There is enough slack and play in this system
+to swamp any delicate adjustments you make completely.
+
+Still - we should do the best we can. So:
+
+Remove the arms from the servos. Start up a PantoGraph::
+
+    from pg import *
+    pg = PantoGraph()
+
+Start with motor 1.
+
+Assuming it's on pin 14, run::
+
+    pg.set_pw(pin=14, pw=1350)
+
+1350 µS is the nominal pulse width corresponding to the nominal central or neutral position of
+most servo motors.
+
+Now attach attach a long horn to the servo, so that you can more easily judge its angles. If 0
+degrees is straight ahead, pointing out over the paper, attach the horn at whatever seems closest
+to -30 degrees, i.e. pointing outwards. (We want it pointing outwards in the centre of its range of
+movement, as most of the time in practice the arm will need to point outwards.q)
+
+Now, change the pulse width, until the horn points straight ahead at 0 degrees. This is your
+*centre value*; make a note of it.
+
+Do the same for -90 degrees (straight out).
+
+Now you know what value corresponds to 0 degrees for that arm, what value corresponds to 90
+degrees, and if you divide the difference between them by 90 you'll know what change in pulse width
+corresponds to a 1 degree change:
+
+    (*centre value* - *straight out value*) / 90
+
+This is the *multiplier* value for that arm.
+
+Now repeat the process for the second arm.
+
+It helps a lot to judge the angles if you actually attach an arm to the horn, once you're confident
+that you're not going to be making them smash into each other.
+
+Suppose your values were as follows:
+
+* Servo 1 0 degrees: 1060
+* Servo 1 -90 degrees: 2020
+* Servo 2 0 degrees: 1775
+* Servo 1 90 degrees: 860
+
+Then you would instantiate your PantoGraph obect thus::
+
+    pg=PantoGraph(
+        centre_1=1060,
+        multiplier_1=(2020-1060)/90,
+        centre_2=1775,
+        multiplier_2=(1775-860)/90
+    )
+
+And now you'll find that when you issue a command such as::
+
+    pg.command_servo_angles(-45, 45)
+
+both arms will point out at a perfect 45 degrees.
+
+What? They don't?! Welcome to the world of hobby servos...
+pg.
+
 Reference
 ---------
 
