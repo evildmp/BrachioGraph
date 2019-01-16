@@ -44,9 +44,9 @@ class PantoGraph:
         self.pen.up()
 
         # set the pantograph geometry
-        self.DRIVER = DRIVER
-        self.FOLLOWER = FOLLOWER
-        self.MOTOR_1_POS, self.MOTOR_2_POS = MOTOR_1_POS, MOTOR_2_POS
+        self.DRIVER = driver
+        self.FOLLOWER = follower
+        self.MOTOR_1_POS, self.MOTOR_2_POS = motor_1_pos, motor_2_pos
 
         # the box bounds describe a rectangle that we can safely draw in
         self.box_bounds = box_bounds
