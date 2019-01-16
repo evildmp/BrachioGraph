@@ -14,20 +14,54 @@ Get started
 Build the plotter
 ~~~~~~~~~~~~~~~~~
 
-Make sure the length between the holes in each of the four arms is identical. The easiest way to
-do this is to drill them all at once, and insert the ballpoint pen tube through the first set of
-holes in all the arms, before drilling the second set, again all at once.
+Cut rectangular sections out of your mounting box to fit your servos. The servos should be as close
+together as possible for the best results, but not so close that they foul each other.
 
-It's recommended to make the length between holes no more than 10cm, unless you have more powerful
-servos at your disposal.
+The box should be as low as possible - just high enough to hold the servos. The higher they are,
+the harder it will be to make the pen tip accurately track the movement of the pantograph.
 
-Double arms to hold the pen will help keep it straight.
+You need two pairs of arms:
+
+* two driver arms, attached to the servos
+* two follower arms, attached to the pen
+
+The driver arms should be about half the length of the other two. This gives the servos more mechanical
+advantage, and makes the plotter more accurate.
+
+The easiest way to make the lengths of pair of arms identical is to insert the ballpoint pen tube through the first set
+of holes in both the arms, before making the second set.
+
+It's recommended to make the length between holes no more than 5cm (drivers) and 10cm (followers), unless you have more
+powerful servos at your disposal.
+
+Double or even triple arms to hold the pen will help keep it straight - but be warned that each arm
+you add also adds friction, and at a certain point the added friction will outweigh the benefits of
+your extra arms.
 
 Cut sections of tube to use as hinges.
 
 Fasten the arms **loosely** to the servos - don't tighten them yet.
 
 Make sure your pantograph moves freely.
+
+
+Basic geometry
+~~~~~~~~~~~~~~
+
+Imagine a straight line through the centre of the spindles of the two motors. This is your pantographs's X-axis. The
+point in the middle between the two spindles is 0. The left-hand motor position is the distance from 0 (a negative
+number) and the right-hand motor position is the distance in the other direction - for example, -2.5 and 2.5.
+
+These are your values for ``MOTOR_1_POS`` and ``MOTOR_2_POS`` respectively.
+
+This line also represents 0 on the Y-axis.
+
+We need two more values:
+
+* ``DRIVER``, the length between the holes in the driver arms
+* ``FOLLOWER``, the length between the holes in the follower arms
+
+We'll use these values shortly.
 
 
 Wire up up the servos
@@ -62,33 +96,33 @@ Test it
 
 Launch a Python 3 shell from the ``PantoGraph`` directory.
 
-Create a ``PantoGraph`` instance::
+Create a ``PantoGraph`` instance, using the values you noted earlier::
 
     from pg import *
-    pg = PantoGraph()
+    pg = PantoGraph(driver, follower, motor_1_pos, motor_2_pos)
 
 The servos and arms will move immediately (this is why it's important to have fastened the arms
 loosely). Now issue a command::
 
-    pg.command_servo_angles(0, 0)
+    pg.set_angles(0, 0)
 
 This sets both arms to 0 degrees, i.e. straight ahead out over the paper. Adjust the arms and
 tighten them. Continue, each time checking that the behaviour of the machine seems correct::
 
-    pg.command_servo_angles(-15, 0)  # set arm 1 to -15 degrees, arm 2 to 0 degrees
-    pg.command_servo_angles(0, 0)
-    pg.command_servo_angles(0, 15)   # set arm 1 to 0 degrees, arm 2 to 15 degrees
-    pg.command_servo_angles(-15, 15)
+    pg.set_angles(-15, 0)  # set arm 1 to -15 degrees, arm 2 to 0 degrees
+    pg.set_angles(0, 0)
+    pg.set_angles(0, 15)   # set arm 1 to 0 degrees, arm 2 to 15 degrees
+    pg.set_angles(-15, 15)
 
 As you gain confidence, try larger angles::
 
-    pg.command_servo_angles(-30, 30)
-    pg.command_servo_angles(-45, -45)
-    pg.command_servo_angles(-60, -30)
-    pg.command_servo_angles(-60, 15)
-    pg.command_servo_angles(-60, 0)
-    pg.command_servo_angles(-60, -15)
-    pg.command_servo_angles(-60, -30)
+    pg.set_angles(-30, 30)
+    pg.set_angles(-45, -45)
+    pg.set_angles(-60, -30)
+    pg.set_angles(-60, 15)
+    pg.set_angles(-60, 0)
+    pg.set_angles(-60, -15)
+    pg.set_angles(-60, -30)
 
 ... and so on.
 
@@ -149,7 +183,7 @@ Start with motor 1.
 
 Assuming it's on pin 14, run::
 
-    pg.set_pw(pin=14, pw=1350)
+    pg.set_pulse_widths(pin=14, pw=1350)
 
 1350 µS is the nominal pulse width corresponding to the nominal central or neutral position of
 most servo motors.
@@ -157,7 +191,7 @@ most servo motors.
 Now attach attach a long horn to the servo, so that you can more easily judge its angles. If 0
 degrees is straight ahead, pointing out over the paper, attach the horn at whatever seems closest
 to -30 degrees, i.e. pointing outwards. (We want it pointing outwards in the centre of its range of
-movement, as most of the time in practice the arm will need to point outwards.q)
+movement, as most of the time in practice the arm will need to point outwards.)
 
 Now, change the pulse width, until the horn points straight ahead at 0 degrees. This is your
 *centre value*; make a note of it.
@@ -195,7 +229,7 @@ Then you would instantiate your PantoGraph obect thus::
 
 And now you'll find that when you issue a command such as::
 
-    pg.command_servo_angles(-45, 45)
+    pg.set_angles(-45, 45)
 
 both arms will point out at a perfect 45 degrees.
 
