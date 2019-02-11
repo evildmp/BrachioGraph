@@ -82,10 +82,11 @@ Install requirements
 Raspberry Pi version
 ^^^^^^^^^^^^^^^^^^^^
 
-Use pip to install:
+Use pip3 to install:
 
 * ``pigpio``
 * ``tqdm``
+* ``readchar``
 
 Download the PantoGraph application, for example with ``git@github.com:evildmp/PantoGraph.git`` or
 ``https://github.com/evildmp/PantoGraph.git``.

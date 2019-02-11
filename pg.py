@@ -3,7 +3,8 @@ from math import *
 import sys
 import pigpio
 import json
-from tqdm import tqdm
+from tqdm import tqdm, trange
+import readchar
 
 
 def hypotenuse(side1, side2):
@@ -15,7 +16,7 @@ class PantoGraph:
     def __init__(
         self,
 
-        driver=4,            # the lengths of the arms
+        driver=4,                  # the lengths of the arms
         follower=10.15,            # the lengths of the arms
 
         # The angles are relative to each motor, so we need to know where each motor actually is.
@@ -61,11 +62,119 @@ class PantoGraph:
 
 
         # the arm cannot work well close to the motors
-        self.adder = self.DRIVER * 1.3
+        # self.adder = (self.DRIVER + self.FOLLOWER) / 2
 
         # Initialise the pantograph with the motors straight ahead
         self.set_angles(0, 0)
         self.current_x, self.current_y = self.angles_to_xy(0, 0)
+
+
+    def set_up(self):
+
+        # self.status()
+
+        self.motors = (
+            {
+                "motor": 1,
+                "pin": 14,
+                "calibrations": (
+                    {"angle": 0, "description": "straight ahead"},
+                    {"angle": -90, "description": "straight out to the left"},
+                )
+            },
+            {
+                "motor": 2,
+                "pin": 15,
+                "calibrations": (
+                    {"angle": 0, "description": "straight ahead"},
+                    {"angle": 90, "description": "straight out to the right"},
+                )
+            }
+        )
+
+        print("Important! Before doing anything else, loosen the servo screws, so there won't be any accidents with the arms. \n")
+
+        input("Press Return when you are ready to start calibrating. \n")
+
+        print("""---------------------------------------------------------
+Controls:
+
+    < and >: decrease/increase pulse width by 100µS.
+    { and }: decrease/increase pulse width by  10µS.
+    [ and ]: decrease/increase pulse width by   1µS.
+    0      : confirm that the arm is at the correct angle
+--------------------------------------------------------- \n""")
+
+        for motor in self.motors:
+
+            pin = motor["pin"]
+
+            pw = 1350
+            self.rpi.set_servo_pulsewidth(pin, pw)
+
+            print("Adjusting servo on pin {}\n".format(pin))
+
+            print("    Pulse width: 1350µS (more or less in the centre of its travel).\n")
+
+            print("    Attach the driver arm so that it points outward at between 30˚ and 45˚.\n")
+
+            # first, find the pulse width for an angle of zero
+            angle = motor["calibrations"][0]["angle"]
+            description = motor["calibrations"][0]["description"]
+
+            # interactively discover the pulse width
+            motor["zero"] = self.calibrate(pin, angle, description)
+
+            # next, find the pulse width for an angle of ninety degrees left or right
+            angle = motor["calibrations"][1]["angle"]
+            description = motor["calibrations"][1]["description"]
+
+            # interactively discover the pulse width
+            motor["ninety"] = self.calibrate(pin, angle, description)
+
+
+            # the multiplier is the difference in pulse width required for 1˚ of motion
+            motor["multiplier"] = (motor["ninety"] - motor["zero"]) / angle
+
+        self.centre_1 = self.motors[0]["zero"]
+        self.multiplier_1 = self.motors[0]["multiplier"]
+        self.centre_2 = self.motors[1]["zero"]
+        self.multiplier_2 = self.motors[1]["multiplier"]
+
+        print("Pulse widths\n")
+        print("Motor     0˚ ±90˚ ∆/degree")
+        for motor in self.motors:
+
+            print("  {}    {:4} {:4}  {:.4f}".format(
+                motor["motor"],
+                motor["zero"],
+                motor["ninety"],
+                motor["multiplier"]
+            ))
+
+
+    def calibrate(self, pin, angle, description):
+
+        adjustments = {"<": -100, ">": +100, "{": -10, "}": +10, "[": -1, "]": +1, "0": "done"}
+
+        pw = 1350
+        self.rpi.set_servo_pulsewidth(pin, pw)
+
+        print("        Now use the controls to move the arm to {}˚ (i.e. {}).\n".format(angle, description))
+
+        while True:
+            key = readchar.readchar()
+
+            adjustment = adjustments.get(key, None)
+
+            if adjustment:
+                if adjustment=="done":
+                    print("\n")
+                    return pw
+                else:
+                    pw = pw + adjustment
+                    print("        pulse width: {} ".format(pw), end="\r")
+                    self.rpi.set_servo_pulsewidth(pin, pw)
 
 
     # ----------------- reporting methods -----------------
@@ -75,9 +184,10 @@ class PantoGraph:
         x, y = self.current_x, self.current_y
 
         print("Driver/follower arm length: {:03.1f}".format(self.DRIVER, self.FOLLOWER))
-        print("Furthest reach: {:03.1f}".format(self.furthest_reach()))
+        print("Furthest reach: {:03.1f}".format(self.furthest_reach))
         print("Motor 1 & 2 positions:        {:03.1f}, {:03.1f}".format(self.MOTOR_1_POS, self.MOTOR_2_POS))
         print("Motor angle corrections:      {:03.1f}, {:03.1f}".format(self.correction_1, self.correction_2))
+        print("0˚ pulse widths:              {:03}, {:03}".format(self.centre_1, self.centre_2))
         print("Pulse-width angle multipliers {:03.1f}, {:03.1f}".format(self.multiplier_1, self.multiplier_2))
         print()
         print("Pen x/y:      {: 3.1f}, {: 3.1f}".format(x, y))
@@ -87,33 +197,15 @@ class PantoGraph:
 
     def drawing_area(self):
 
+        # This is an experimental method in progress. It's intended to help find the largest usable drawing
+        # areas, by sweeping the motors through a wide range.
+
         motor_distance = self.MOTOR_2_POS - self.MOTOR_1_POS
 
-        for angle_1 in range(0, -90, -10):
+        for angle_1 in range(0, -107, -10):
             for angle_2 in range(0, angle_1 -10, -10):
 
-                a1 = radians(angle_1)
-                a2 = radians(angle_2)
-
-                elbow_1_x = sin(a1) * self.L                            # s=o/h, s*h=o
-                elbow_1_y = sqrt((self.L ** 2) - (elbow_1_x ** 2))      # h2=l2+x2, l=sqrt h2-x2
-
-                elbow_2_x = sin(a2) * self.L
-                elbow_2_y = sqrt((self.L ** 2) - (elbow_2_x ** 2))
-
-                elbow_dx = motor_distance + elbow_2_x - elbow_1_x
-                elbow_dy = elbow_2_y - elbow_1_y
-
-                base_of_top_triangle = hypotenuse(elbow_dx, elbow_dy)
-
-                angle_of_base_of_top_triangle = asin((elbow_dy) / base_of_top_triangle)
-
-                corner_of_top_triangle = acos((base_of_top_triangle / 2) / self.L) #c=a/h,
-
-                x_to_elbow = cos(corner_of_top_triangle + angle_of_base_of_top_triangle) * self.L #  c=a/h, c*h=a
-                y_to_elbow = sin(corner_of_top_triangle + angle_of_base_of_top_triangle) * self.L # s=o/h, o=s*h
-                x = elbow_1_x + x_to_elbow + self.MOTOR_1_POS
-                y = elbow_1_y + y_to_elbow -self.L
+                x, y = self.angles_to_xy(angle_1, angle_2)
 
                 # x = round(x, 1)
                 # y = round(y, 1)
@@ -121,12 +213,12 @@ class PantoGraph:
 
                 print(
                     "angles: {:3.0f}, {:3.0f};".format(angle_1, angle_2),
-                    "elbow1: {:4.1f}, {:4.1f};".format(elbow_1_x, elbow_1_y),
-                    "elbow2: {:4.1f}, {:4.1f};".format(elbow_2_x, elbow_2_y),
-                    "base length: {:3.0f};".format(base_of_top_triangle),
-                    "base/corner: {:3.0f}, {:3.0f};".format(degrees(angle_of_base_of_top_triangle), degrees(base_of_top_triangle)),
-                    "elbow dx/dy: {:4.1f}, {:4.1f};".format(elbow_dx, elbow_dy),
-                    "elbow to x/y: {:4.1f}, {:4.1f};".format(x_to_elbow, y_to_elbow),
+                    # "elbow1: {:4.1f}, {:4.1f};".format(elbow_1_x, elbow_1_y),
+                    # "elbow2: {:4.1f}, {:4.1f};".format(elbow_2_x, elbow_2_y),
+                    # "base length: {:3.0f};".format(base_of_top_triangle),
+                    # "base/corner: {:3.0f}, {:3.0f};".format(degrees(angle_of_base_of_top_triangle), degrees(base_of_top_triangle)),
+                    # "elbow dx/dy: {:4.1f}, {:4.1f};".format(elbow_dx, elbow_dy),
+                    # "elbow to x/y: {:4.1f}, {:4.1f};".format(x_to_elbow, y_to_elbow),
                     "x/y: {:4.1f}, {:4.1f}".format(x, y)
                 )
             print()
@@ -134,73 +226,170 @@ class PantoGraph:
 
     # ----------------- drawing methods -----------------
 
-    def plot_file(self, filename="", wait=1, interpolate=1, rotate=False, divider=102.4):
+
+    def plot_file(self, filename="", wait=.1, interpolate=10, rotate=False, bounds=None):
+
+        bounds = bounds or self.box_bounds
 
         with open(filename, "r") as line_file:
             lines = json.load(line_file)
 
-        self.plot_lines(lines, wait=wait, interpolate=interpolate, rotate=rotate, divider=divider)
+        # lines is a tuple itself containing a number of tuples, each of which contains a number of 2-tuples
+        #
+        # [                                                                                     # |
+        #     [                                                                                 # |
+        #         [3, 4],                               # |                                     # |
+        #         [2, 4],                               # |                                     # |
+        #         [1, 5],  #  a single point in a line  # |  a list of points defining a line   # |
+        #         [3, 5],                               # |                                     # |
+        #         [3, 7],                               # |                                     # |
+        #     ],                                                                                # |
+        #     [                                                                                 # |  all the lines
+        #         [...],                                                                        # |
+        #         [...],                                                                        # |
+        #     ],                                                                                # |
+        #     [                                                                                 # |
+        #         [...],                                                                        # |
+        #         [...],                                                                        # |
+        #     ],                                                                                # |
+        # ]                                                                                     # |
+
+        # First, we create a pair of empty sets for all the x and y values in all of the lines of the plot data.
+
+        x_values_in_lines = set()
+        y_values_in_lines = set()
+
+        # Loop over each line and all the points in each line, to get sets of all the x and y values:
+
+        for line in lines:
+
+            x_values_in_line, y_values_in_line = zip(*line)
+
+            x_values_in_lines.update(x_values_in_line)
+            y_values_in_lines.update(y_values_in_line)
+
+        # Identify the minimum and maximum values.
+
+        min_x, max_x = min(x_values_in_lines), max(x_values_in_lines)
+        min_y, max_y = min(y_values_in_lines), max(y_values_in_lines)
+
+        # Identify the range they span.
+
+        x_range = max_x - min_x
+        y_range = max_y - min_y
+
+        x_mid_point = (max_x + min_x) / 2
+        y_mid_point = (max_y + min_y) / 2
+
+        box_x_range = bounds[2] - bounds[0]
+        box_y_range = bounds[3] - bounds[1]
+
+        box_x_mid_point = (bounds[0] + bounds[2]) / 2
+        box_y_mid_point = (bounds[1] + bounds[3]) / 2
+
+
+        # Get a 'divider' value for each range - the value by which we must divide all x and y so that they will
+        # fit safely inside the drawing range of the plotter.
+
+        #
+        # If both image and box are in portrait orientation, or both in landscape, we don't need to rotate the plot.
+
+        if (x_range >= y_range and box_x_range >= box_y_range) or (x_range <= y_range and box_x_range <= box_y_range):
+
+            divider = max((x_range / box_x_range), (y_range / box_y_range))
+            rotate = False
+
+        else:
+
+            divider = max((x_range / box_y_range), (y_range / box_x_range))
+            rotate = True
+            x_mid_point, y_mid_point = y_mid_point, x_mid_point
+
+        # Now, divide each value, and take into account the offset from zero of each range
+
+        for line in lines:
+
+            for point in line:
+                if rotate:
+                    point[0], point[1] = point[1], point[0]
+
+                x = point[0]
+                x = x - x_mid_point         # shift x values so that they have zero as their mid-point
+                x = x / divider             # scale x values to fit in our box width
+                x = x + box_x_mid_point     # shift x values so that they have the box x midpoint as their endpoint
+                point[0] = x
+
+                y = point[1]
+                y = y - y_mid_point
+                if rotate:
+                    y = -y
+                y = y / divider
+                y = y + box_y_mid_point
+
+                point[1] = y
+
+        self.plot_lines(lines, wait=wait, interpolate=interpolate)
 
         self.pen.up()
 
 
-    def plot_lines(self, lines=[], wait=1, interpolate=1, rotate=False, divider=102.4):
+    def plot_lines(self, lines=[], wait=1, interpolate=10):
 
-        for line in tqdm(lines):
+        for line in tqdm(lines, desc="Lines", leave=False):
             x, y = line[0]
-            self.xy(x/divider, y/divider, rotate=rotate)
-            for segment in tqdm(line[1:]):
-                x, y = segment
-                self.draw(x/divider, y/divider, wait=wait, interpolate=interpolate, rotate=rotate)
+            self.xy(x, y)
+            for point in tqdm(line[1:], desc="Segments", leave=False):
+                x, y = point
+                self.draw(x, y, wait=wait, interpolate=interpolate)
 
         self.pen.up()
 
 
-    def draw(self, x=0, y=0, wait=.5, interpolate=1, rotate=False):
-        self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True, rotate=rotate)
+    def draw(self, x=0, y=0, wait=.5, interpolate=10):
+        self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
 
 
-    def test_pattern(self, bounds=None, wait=1, interpolate=0, rotate=False, repeat=1):
+    def test_pattern(self, bounds=None, wait=1, interpolate=10, repeat=1):
 
         bounds = bounds or self.box_bounds
 
-        for r in range(repeat):
+        for r in tqdm(trange(repeat, desc='Iteration'), leave=False):
 
             self.xy(bounds[0], bounds[1], wait, interpolate)
 
             for y in range(bounds[1], bounds[3] + 1):
 
                 if y % 2 == 0:
-                    self.draw(bounds[2], bounds[1] + y, wait, interpolate, rotate=rotate)
-                    self.xy(bounds[2], bounds[1] + y + 1, wait, interpolate, rotate=rotate)
+                    self.draw(bounds[2], bounds[1] + y, wait, interpolate)
+                    self.xy(bounds[2], bounds[1] + y + 1, wait, interpolate)
                 else:
-                    self.draw(bounds[0], bounds[1] + y, wait, interpolate, rotate=rotate)
-                    self.xy(bounds[0], bounds[1] + y + 1, wait, interpolate, rotate=rotate)
+                    self.draw(bounds[0], bounds[1] + y, wait, interpolate)
+                    self.xy(bounds[0], bounds[1] + y + 1, wait, interpolate)
 
         self.pen.up()
 
 
-    def box(self, bounds=None, wait=1, interpolate=0, rotate=False, repeat=1, reverse=False):
+    def box(self, bounds=None, wait=.15, interpolate=10, repeat=1, reverse=False):
 
         bounds = bounds or self.box_bounds
 
         self.xy(bounds[0], bounds[1], wait, interpolate)
 
-        for r in range(repeat):
+        for r in tqdm(trange(repeat), desc='Iteration', leave=False):
 
             if not reverse:
 
-                self.draw(bounds[2], bounds[1], wait, interpolate, rotate=rotate)
-                self.draw(bounds[2], bounds[3], wait, interpolate, rotate=rotate)
-                self.draw(bounds[0], bounds[3], wait, interpolate, rotate=rotate)
-                self.draw(bounds[0], bounds[1], wait, interpolate, rotate=rotate)
+                self.draw(bounds[2], bounds[1], wait, interpolate)
+                self.draw(bounds[2], bounds[3], wait, interpolate)
+                self.draw(bounds[0], bounds[3], wait, interpolate)
+                self.draw(bounds[0], bounds[1], wait, interpolate)
 
             else:
 
-                self.draw(bounds[0], bounds[3], wait, interpolate, rotate=rotate)
-                self.draw(bounds[2], bounds[3], wait, interpolate, rotate=rotate)
-                self.draw(bounds[2], bounds[1], wait, interpolate, rotate=rotate)
-                self.draw(bounds[0], bounds[1], wait, interpolate, rotate=rotate)
+                self.draw(bounds[0], bounds[3], wait, interpolate)
+                self.draw(bounds[2], bounds[3], wait, interpolate)
+                self.draw(bounds[2], bounds[1], wait, interpolate)
+                self.draw(bounds[0], bounds[1], wait, interpolate)
 
 
     # ----------------- pen-moving methods -----------------
@@ -212,11 +401,8 @@ class PantoGraph:
         self.xy(self.box_bounds[2]/2, self.box_bounds[3]/2)
 
 
-    def xy(self, x=0, y=0, wait=.5, interpolate=10, draw=False, rotate=False):
+    def xy(self, x=0, y=0, wait=.1, interpolate=10, draw=False):
         # Moves the pen to the xy position; optionally draws
-
-        if rotate:
-            (x, y) = (y,x)
 
         if draw:
             self.pen.down()
@@ -245,9 +431,15 @@ class PantoGraph:
 
         no_of_steps = int(length * interpolate) or 1
 
+        if no_of_steps < 10:
+            disable_tqdm = True
+        else:
+            disable_tqdm = False
+
+
         (length_of_step_x, length_of_step_y) = (x_length/no_of_steps, y_length/no_of_steps)
 
-        for step in tqdm(range(no_of_steps)):
+        for step in tqdm(range(no_of_steps), desc='Interpolation', leave=False, disable=disable_tqdm):
 
             self.current_x = self.current_x + length_of_step_x
             self.current_y = self.current_y + length_of_step_y
@@ -312,16 +504,21 @@ class PantoGraph:
 
     # ----------------- trigonometric methods -----------------
 
+    @property
     def furthest_reach(self):
-        return self.L + sqrt(self.L ** 2 - (self.MOTOR_2_POS-self.MOTOR_1_POS)/2)
+        return self.DRIVER + sqrt(self.FOLLOWER ** 2 - (self.MOTOR_2_POS-self.MOTOR_1_POS)/2)
 
 
-    def xy_to_angles(self, x=0, y=0):
+    def xy_to_angles(self, x=0, y=None):
+
+        if y is None:
+            y = self.furthest_reach
+
         # Given a pair of x/y co-ordinates, returns the angle required of each arm.
 
         # we add L to y, so that y=0 is a safe distance from the motors
 
-        y = y + self.adder
+        # y = y + self.adder
 
         # calculate the x value relative to each motor
         x_relative_to_motor_1 = self.MOTOR_1_POS - x
@@ -389,8 +586,9 @@ class PantoGraph:
         x = elbow_1_x + x_to_elbow + self.MOTOR_1_POS
         y = elbow_1_y + y_to_elbow
 
-        return x, y - self.adder
+        # return x, y - self.adder
 
+        return x, y
 
 
 class Pen:
@@ -428,4 +626,15 @@ class Pen:
 
 # pg = PantoGraph(MOTOR_1_POS=-2.5, MOTOR_2_POS=2.5, L=9.8, centre_1 = 1620, multiplier_1 = 9.556, centre_2= 1090, multiplier_2 = 9.111, box_bounds=(-4, 0, 4, 5))
 
-pg = PantoGraph(driver=4, follower=9.8, motor_1_pos=-2.5, motor_2_pos=2.5, centre_1 = 1850, multiplier_1 = 9.556, centre_2= 950, multiplier_2 = 9.111, box_bounds=(-4, 0, 4, 5))
+# # large servos and box
+#
+# pg = PantoGraph(driver=4, follower=9.8, motor_1_pos=-1.7, motor_2_pos=1.7, centre_1 = 1864, multiplier_1 = 9.2779, centre_2= 964, multiplier_2 = 9.4222, box_bounds=(-4, 0, 4, 5))
+
+pg = PantoGraph(driver=6.8, follower=10.7, motor_1_pos=-1.7, motor_2_pos=1.7, centre_1 = 1639, multiplier_1 = 9.211, centre_2= 1060, multiplier_2 = 9.4444, box_bounds=(-6, 7, 6, 15.5))
+
+
+# # small servos and box
+#
+# pg = PantoGraph(driver=4, follower=9.8, motor_1_pos=-1.5, motor_2_pos=1.5, centre_1 = 2040, multiplier_1 = 10.6222, centre_2= 950, multiplier_2 = 10.2778, box_bounds=(-4, 0, 4, 5))
+
+# pg = PantoGraph(driver=4.65, follower=9.8, motor_1_pos=-1.5, motor_2_pos=1.5, centre_1 = 2225, multiplier_1 = 9.5, centre_2=900, multiplier_2 = 10.2221, box_bounds=(-4.5, 7, 4.5, 13))
