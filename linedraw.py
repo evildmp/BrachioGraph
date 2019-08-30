@@ -50,6 +50,32 @@ def image_to_json(
     lines_to_file(lines, filename)
 
 
+def draw(lines):
+    from tkinter import Tk, LEFT
+    from turtle import Canvas, RawTurtle, TurtleScreen
+
+    # set up the environment
+    root = Tk()
+    canvas = Canvas(root, width=800, height=800)
+    canvas.pack()
+
+    s = TurtleScreen(canvas)
+
+    t = RawTurtle(canvas)
+    t.speed(0)
+    t.width(1)
+
+    for line in lines:
+        x, y = line[0]
+        t.up()
+        t.goto(x*800/1024-400,-(y*800/1024-400))
+        for point in line:
+            t.down()
+            t.goto(point[0]*800/1024-400,-(point[1]*800/1024-400))
+
+    s.mainloop()
+
+
 def vectorise(
     image_filename,
     resolution=1024,
@@ -101,32 +127,6 @@ def vectorise(
     print(len(lines), "strokes.")
     print("done.")
     return lines
-
-
-def draw(lines):
-    from tkinter import Tk, LEFT
-    from turtle import Canvas, RawTurtle, TurtleScreen
-
-    # set up the environment
-    root = Tk()
-    canvas = Canvas(root, width=800, height=800)
-    canvas.pack()
-
-    s = TurtleScreen(canvas)
-
-    t = RawTurtle(canvas)
-    t.speed(0)
-    t.width(1)
-
-    for line in lines:
-        x, y = line[0]
-        t.up()
-        t.goto(x*800/1024-400,-(y*800/1024-400))
-        for point in line:
-            t.down()
-            t.goto(point[0]*800/1024-400,-(point[1]*800/1024-400))
-
-    s.mainloop()
 
 
 def find_edges(image):
