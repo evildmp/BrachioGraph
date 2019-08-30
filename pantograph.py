@@ -1,3 +1,4 @@
+from collections import namedtuple
 from time import sleep
 from math import *
 import sys
@@ -37,11 +38,11 @@ class PantoGraph:
         self.rpi = pigpio.pi()
 
         # the pulse frequency should be 100Hz - higher values could damage the servos
-        self.rpi.set_PWM_frequency(14, 100)
-        self.rpi.set_PWM_frequency(15, 100)
+        self.rpi.set_PWM_frequency(14, 50)
+        self.rpi.set_PWM_frequency(15, 50)
 
         # create the pen object, and make sure the pen is up
-        self.pen = Pen()
+        self.pen = Pen(pg=self)
         self.pen.up()
 
         # set the pantograph geometry
@@ -60,18 +61,17 @@ class PantoGraph:
         self.centre_1, self.centre_2 = centre_1, centre_2
         self.multiplier_1, self.multiplier_2 = multiplier_1, multiplier_2
 
-
-        # the arm cannot work well close to the motors
-        # self.adder = (self.DRIVER + self.FOLLOWER) / 2
-
         # Initialise the pantograph with the motors straight ahead
+        self.rpi.set_servo_pulsewidth(14, 1350)
+        self.rpi.set_servo_pulsewidth(15, 1350)
+
         self.set_angles(0, 0)
         self.current_x, self.current_y = self.angles_to_xy(0, 0)
 
+        self.quiet()
+
 
     def set_up(self):
-
-        # self.status()
 
         self.motors = (
             {
@@ -183,7 +183,7 @@ Controls:
 
         x, y = self.current_x, self.current_y
 
-        print("Driver/follower arm length: {:03.1f}".format(self.DRIVER, self.FOLLOWER))
+        print("Driver/follower arm length: {:03.1f}/{:03.1f}".format(self.DRIVER, self.FOLLOWER))
         print("Furthest reach: {:03.1f}".format(self.furthest_reach))
         print("Motor 1 & 2 positions:        {:03.1f}, {:03.1f}".format(self.MOTOR_1_POS, self.MOTOR_2_POS))
         print("Motor angle corrections:      {:03.1f}, {:03.1f}".format(self.correction_1, self.correction_2))
@@ -223,6 +223,10 @@ Controls:
                 )
             print()
 
+    def sweep(self):
+        pass
+
+
 
     # ----------------- drawing methods -----------------
 
@@ -233,6 +237,11 @@ Controls:
 
         with open(filename, "r") as line_file:
             lines = json.load(line_file)
+
+        self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, rotate=rotate, bounds=bounds)
+
+
+    def plot_lines(self, lines=[], wait=.1, interpolate=10, rotate=False, bounds=None):
 
         # lines is a tuple itself containing a number of tuples, each of which contains a number of 2-tuples
         #
@@ -321,19 +330,12 @@ Controls:
 
                 y = point[1]
                 y = y - y_mid_point
-                if rotate:
-                    y = -y
+                # if rotate:
+                #     y = -y
                 y = y / divider
                 y = y + box_y_mid_point
 
                 point[1] = y
-
-        self.plot_lines(lines, wait=wait, interpolate=interpolate)
-
-        self.pen.up()
-
-
-    def plot_lines(self, lines=[], wait=1, interpolate=10):
 
         for line in tqdm(lines, desc="Lines", leave=False):
             x, y = line[0]
@@ -343,6 +345,9 @@ Controls:
                 self.draw(x, y, wait=wait, interpolate=interpolate)
 
         self.pen.up()
+
+        self.quiet()
+
 
 
     def draw(self, x=0, y=0, wait=.5, interpolate=10):
@@ -368,6 +373,8 @@ Controls:
 
         self.pen.up()
 
+        self.quiet()
+
 
     def box(self, bounds=None, wait=.15, interpolate=10, repeat=1, reverse=False):
 
@@ -391,6 +398,9 @@ Controls:
                 self.draw(bounds[2], bounds[1], wait, interpolate)
                 self.draw(bounds[0], bounds[1], wait, interpolate)
 
+        self.pen.up()
+
+        self.quiet()
 
     # ----------------- pen-moving methods -----------------
 
@@ -399,6 +409,8 @@ Controls:
 
         self.pen.up()
         self.xy(self.box_bounds[2]/2, self.box_bounds[3]/2)
+
+        self.quiet()
 
 
     def xy(self, x=0, y=0, wait=.1, interpolate=10, draw=False):
@@ -431,7 +443,7 @@ Controls:
 
         no_of_steps = int(length * interpolate) or 1
 
-        if no_of_steps < 10:
+        if no_of_steps < 100:
             disable_tqdm = True
         else:
             disable_tqdm = False
@@ -492,6 +504,8 @@ Controls:
 
         self.rpi.set_servo_pulsewidth(14, pw_1)
         self.rpi.set_servo_pulsewidth(15, pw_2)
+
+        sleep(.01)
 
 
     def get_pulse_widths(self):
@@ -591,17 +605,24 @@ Controls:
         return x, y
 
 
+    def quiet(self, servos=[14, 15, 18]):
+
+        for servo in servos:
+            self.rpi.set_servo_pulsewidth(servo, 0)
+
+
 class Pen:
 
-    def __init__(self, pin=18, pw_up=2100, pw_down=1250, transition_time=0.25):
+    def __init__(self, pg, pin=18, pw_up=1650, pw_down=2100, transition_time=0.25):
 
+        self.pg = pg
         self.pin = pin
         self.pw_up = pw_up
         self.pw_down = pw_down
         self.transition_time = transition_time
 
         self.rpi = pigpio.pi()
-        self.rpi.set_PWM_frequency(self.pin, 100)
+        self.rpi.set_PWM_frequency(self.pin, 50)
 
         self.up()
 
@@ -610,10 +631,10 @@ class Pen:
         self.rpi.set_servo_pulsewidth(self.pin, self.pw_down)
         sleep(self.transition_time)
 
+
     def up(self):
         self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
         sleep(self.transition_time)
-
 
 
 # pg = PantoGraph(correction_1=45, correction_2=-45)
@@ -630,7 +651,7 @@ class Pen:
 #
 # pg = PantoGraph(driver=4, follower=9.8, motor_1_pos=-1.7, motor_2_pos=1.7, centre_1 = 1864, multiplier_1 = 9.2779, centre_2= 964, multiplier_2 = 9.4222, box_bounds=(-4, 0, 4, 5))
 
-pg = PantoGraph(driver=6.8, follower=10.7, motor_1_pos=-1.7, motor_2_pos=1.7, centre_1 = 1639, multiplier_1 = 9.211, centre_2= 1060, multiplier_2 = 9.4444, box_bounds=(-6, 7, 6, 15.5))
+# pg = PantoGraph(driver=6.8, follower=10.7, motor_1_pos=-1.7, motor_2_pos=1.7, centre_1 = 1639, multiplier_1 = 9.211, centre_2= 1060, multiplier_2 = 9.4444, box_bounds=(-6, 7, 6, 15.5))
 
 
 # # small servos and box
@@ -638,3 +659,21 @@ pg = PantoGraph(driver=6.8, follower=10.7, motor_1_pos=-1.7, motor_2_pos=1.7, ce
 # pg = PantoGraph(driver=4, follower=9.8, motor_1_pos=-1.5, motor_2_pos=1.5, centre_1 = 2040, multiplier_1 = 10.6222, centre_2= 950, multiplier_2 = 10.2778, box_bounds=(-4, 0, 4, 5))
 
 # pg = PantoGraph(driver=4.65, follower=9.8, motor_1_pos=-1.5, motor_2_pos=1.5, centre_1 = 2225, multiplier_1 = 9.5, centre_2=900, multiplier_2 = 10.2221, box_bounds=(-4.5, 7, 4.5, 13))
+
+# set 1
+# pg = PantoGraph(driver=6.8, follower=10.7, motor_1_pos=-1.5, motor_2_pos=1.5, centre_1 = 1730, multiplier_1 = 9.5556, centre_2= 1110, multiplier_2 = 10, box_bounds=(-5, 8, 5, 15))
+
+# set 2
+# pg = PantoGraph(driver=6.85, follower=11.85, motor_1_pos=-1.5, motor_2_pos=1.5, centre_1 = 1670, multiplier_1 = 9.6667, centre_2= 1100, multiplier_2 = 9.6667, box_bounds=(-7, 8, 7, 18))
+
+# set 3
+# pg = PantoGraph(driver=8.5, follower=12.65, motor_1_pos=-1.5, motor_2_pos=1.5, centre_1 = 1760, multiplier_1 = 9.6667, centre_2= 922, multiplier_2 = 9.6667, box_bounds=(-7, 8, 7, 18))
+
+# set 4
+# pg = PantoGraph(driver=6.9, follower=10.7, motor_1_pos=-1.5, motor_2_pos=1.5, centre_1 = 2042, multiplier_1 = 10.2667, centre_2= 813, multiplier_2 = 9.4556, box_bounds=(-6.5, 7, 6.5, 15))
+
+# set 4
+# pg = PantoGraph(driver=6.85, follower=10.7, motor_1_pos=-1.55, motor_2_pos=1.55, centre_1 = 1721, multiplier_1 = 9.6778, centre_2= 850, multiplier_2 = 9.8889, box_bounds=(-6.5, 7, 6.5, 15))
+
+# set 5
+pg = PantoGraph(driver=6.85, follower=10.7, motor_1_pos=-1.55, motor_2_pos=1.55, centre_1 = 1721, multiplier_1 = 9.6778, centre_2= 983, multiplier_2 = 9.8889, box_bounds=(-6, 8, 6, 15.5))
