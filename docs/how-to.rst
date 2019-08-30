@@ -27,14 +27,14 @@ Launch a Python shell, and import ``linedraw`` so you have the functions at your
 Convert an image to lines using ``vectorise()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the ``images`` directory, you'll find an image named ``daniele.jpg``. To vectorise it, run::
+In the ``images`` directory, you'll find an image named ``africa-solid.jpg``. To vectorise it, run::
 
-    >>> lines = vectorise("me.jpg")
+    >>> lines = vectorise("africa-solid.jpg")
 
 This will generate two things:
 
 * a list of ``lines``, each of which is a list of points
-* an SVG file at ``images/daniele.jpg.svg``, which will give you an idea of the vectorised representation
+* an SVG file at ``images/africa-solid.jpg.svg``, which will give you an idea of the vectorised representation
 
 See :ref:`vectorise` for more details.
 
