@@ -197,6 +197,21 @@ Visualise the relationship between pulse-widths and angles
    :alt: 'Pulse-widths to angles'
    :class: 'main-visual'
 
+First,
+
+::
+
+    pip install jupyterlab
+
+Then::
+
+    jupyter lab pulse_widths.ipynb
+
+This will open a notebook with an example set of values. It includes a plot, showing the relationship
+between pulse-widths and servo angles for a particular servo.
+
+The **dots** show the *actual* values. The **curve** shows a function of best-fit.
+
 
 .. _visualise-area:
 
