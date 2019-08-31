@@ -122,4 +122,3 @@ This visibly helps reduce distortion when the machine is drawing.
 
 It's tempting to try to find optimum mathematical solutions to improve the precision and accuracy of the plotter, but
 in practice the imprecision of the motors themselves and the play in the mechanical system make this rather futile.
-
