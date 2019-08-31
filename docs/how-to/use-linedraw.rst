@@ -18,22 +18,27 @@ Using key functions
 
 Launch a Python shell, and import ``linedraw`` so you have the functions at your disposal::
 
-    >>> from linedraw import *
+    from linedraw import *
 
 
 Convert an image to lines using ``vectorise()``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the ``images`` directory, you'll find an image named ``daniele.jpg``. To vectorise it, run::
+In the ``images`` directory, you'll find an image named ``africa.jpg``. To vectorise it, run::
 
-    >>> lines = vectorise("me.jpg")
+    lines = vectorise("africa.jpg")
 
 This will generate two things:
 
 * a list of ``lines``, each of which is a list of points
-* an SVG file at ``images/daniele.jpg.svg``, which will give you an idea of the vectorised representation
+* an SVG file at ``images/africa.jpg.svg``, which will give you an idea of the vectorised representation
 
-See :ref:`vectorise` for more details.
+You can supply various parameters to ``vectorise()`` to control how it processes the image. For example, a faster
+result can be obtained by not hatching the image::
+
+    lines = vectorise("africa.jpg", draw_hatch=False )
+
+See :ref:`vectorise` for more details of the parameters it takes.
 
 ``vectorise()`` is useful when you are experimenting with vectorisation values to determine the best parameters
 for processing a particular image.
@@ -49,7 +54,7 @@ The output file will be saved in ``images`` with a ``.json`` extension.
 
 To plot the file with the plotter (having :ref:`previously set up a plotter instance <get_started>`)::
 
-    >>> bg.plot_file("<file_name>")
+    bg.plot_file("<file_name>")
 
 
 Visualise how the plotter will draw the lines using ``draw()``
