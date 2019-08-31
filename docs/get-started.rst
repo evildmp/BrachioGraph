@@ -46,6 +46,7 @@ If you haven't already done so, clone the ``BrachioGraph`` repository::
 
     git clone git@github.com:evildmp/BrachioGraph.git
 
+.. _connect-servos:
 
 Wire up the the three servos to the Raspberry Pi
 ------------------------------------------------
