@@ -1,0 +1,6 @@
+pigpio
+tqdm
+readchar
+numpy
+tqdm
+readchar
