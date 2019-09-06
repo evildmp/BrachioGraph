@@ -46,9 +46,7 @@ class BrachioGraph:
             )
 
         else:
-
-            def angles_to_pw_1(angle):
-                return (angle + 90) * 10 + servo_1_zero
+            self.angles_to_pw_1 = self.naive_angles_to_pulse_widths_1
 
         if servo_2_angle_pws:
             servo_2_array = numpy.array(servo_2_angle_pws)
@@ -61,9 +59,7 @@ class BrachioGraph:
             )
 
         else:
-
-            def angles_to_pw_2(angle):
-                 return (angle - 90) * 10 + servo_2_zero
+            self.angles_to_pw_2 = self.naive_angles_to_pulse_widths_2
 
         # instantiate this Raspberry Pi as a pigpio.pi() instance
         self.rpi = pigpio.pi()
@@ -354,6 +350,13 @@ class BrachioGraph:
 
 
     #  ----------------- hardware-related methods -----------------
+
+    def naive_angles_to_pulse_widths_1(angle):
+        return (angle + 90) * 10 + self.servo_1_zero
+
+    def naive_angles_to_pulse_widths_2(angle):
+        return (angle + 90) * 10 + self.servo_2_zero
+
 
     def angles_to_pulse_widths(self, angle_1, angle_2):
         # Given a pair of angles, returns the appropriate pulse widths.
