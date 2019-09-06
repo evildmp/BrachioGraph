@@ -47,6 +47,7 @@ class BrachioGraph:
 
         else:
             self.angles_to_pw_1 = self.naive_angles_to_pulse_widths_1
+            self.servo_1_zero = servo_1_zero
 
         if servo_2_angle_pws:
             servo_2_array = numpy.array(servo_2_angle_pws)
@@ -60,6 +61,7 @@ class BrachioGraph:
 
         else:
             self.angles_to_pw_2 = self.naive_angles_to_pulse_widths_2
+            self.servo_2_zero = servo_2_zero
 
         # instantiate this Raspberry Pi as a pigpio.pi() instance
         self.rpi = pigpio.pi()
