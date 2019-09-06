@@ -351,10 +351,10 @@ class BrachioGraph:
 
     #  ----------------- hardware-related methods -----------------
 
-    def naive_angles_to_pulse_widths_1(angle):
+    def naive_angles_to_pulse_widths_1(self, angle):
         return (angle + 90) * 10 + self.servo_1_zero
 
-    def naive_angles_to_pulse_widths_2(angle):
+    def naive_angles_to_pulse_widths_2(self, angle):
         return (angle + 90) * 10 + self.servo_2_zero
 
 
