@@ -8,3 +8,4 @@ How-to guides
     Improve the calibration of the ploter and its servos <improve-calibration>
     Visualise the behaviour of the plotter and its components <visualise-behaviour>
     Build the PantoGraph, an alternative plotter design <pantograph>
+    Prepare a Raspberry Pi Zero for use with the plotter <prepare-pi>

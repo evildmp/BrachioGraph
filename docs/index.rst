@@ -27,7 +27,7 @@
 
 
 BrachioGraph - the cheapest, simplest possible pen-plotter
-=========================================================
+==========================================================
 
 BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a library of simple Python applications.
 
@@ -81,7 +81,7 @@ Build the machine, install the software, make basic tests
 .. rst-class:: column column2
 
 :doc:`How-to guides <how-to/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Improve the calibration, process images, visualise plotter behaviour, alternative designs
 
@@ -90,7 +90,7 @@ Improve the calibration, process images, visualise plotter behaviour, alternativ
 .. rst-class:: column column2
 
 :doc:`Explanation <explanation/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Understanding the mathematics, choosing hardware.
 
