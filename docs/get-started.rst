@@ -29,7 +29,9 @@ on the upper arm (``inner_arm``), and the distance between the axis of the servo
 Install the required software on the Raspberry Pi
 -------------------------------------------------
 
-``brachiograph.py`` requires a few other components.
+:ref:`prepare-pi` gives step-by-step directions specifically for using a Pi Zero as the plotter engine.
+
+``brachiograph.py`` requires a few additional components:
 
 Use ``apt`` to install:
 
@@ -41,10 +43,16 @@ Use pip to install Python 3 versions of:
 * ``tqdm``
 * ``readchar``
 * ``numpy``
+* ``tqdm``
+* ``readchar``
 
 If you haven't already done so, clone the ``BrachioGraph`` repository::
 
     git clone git@github.com:evildmp/BrachioGraph.git
+
+or, if you need to use HTTPS instead::
+
+    git clone https://github.com/evildmp/BrachioGraph.git
 
 .. _connect-servos:
 
