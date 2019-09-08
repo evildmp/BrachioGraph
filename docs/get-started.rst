@@ -169,3 +169,9 @@ and a test pattern::
 If the lines are reasonably straight and the box is reasonably square, try plotting a file::
 
     bg.plot_file("test_file.json")
+
+
+Save your BrachioGraph definition
+---------------------------------
+
+The file ``bg.py`` is a good place to save your defined `BrachioGraphs` for future use. It already contains examples for units built in the development process.

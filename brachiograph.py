@@ -89,7 +89,7 @@ class BrachioGraph:
     # ----------------- drawing methods -----------------
 
 
-    def plot_file(self, filename="", wait=.1, interpolate=10, rotate=False, flip=False, bounds=None):
+    def plot_file(self, filename="", wait=.1, interpolate=10, bounds=None):
 
         bounds = bounds or self.bounds
 
@@ -99,7 +99,7 @@ class BrachioGraph:
         with open(filename, "r") as line_file:
             lines = json.load(line_file)
 
-        self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, rotate=rotate, flip=flip, bounds=bounds)
+        self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, bounds=bounds, flip=True)
 
 
     def plot_lines(self, lines=[], wait=.1, interpolate=10, rotate=False, flip=False, bounds=None):
@@ -211,8 +211,7 @@ class BrachioGraph:
                 x, y = point
                 self.draw(x, y, wait=wait, interpolate=interpolate)
 
-        self.pen.up()
-
+        self.park()
         self.quiet()
 
 
@@ -357,7 +356,7 @@ class BrachioGraph:
         return (angle + 90) * 10 + self.servo_1_zero
 
     def naive_angles_to_pulse_widths_2(self, angle):
-        return (angle + 90) * 10 + self.servo_2_zero
+        return (angle - 90) * 10 + self.servo_2_zero
 
 
     def angles_to_pulse_widths(self, angle_1, angle_2):
@@ -385,25 +384,12 @@ class BrachioGraph:
         return (actual_pulse_width_1, actual_pulse_width_2)
 
 
-    def zero(self):
+    def park(self):
 
-        # puts the plotter into a safe, known, state
+        # parks the plotter
 
         self.pen.up()
-
-        # Initialise the pantograph with the motors in the centre of their travel. We do this one by one,
-        # rather than both at the same time, to minimise stress.
-
-        self.rpi.set_servo_pulsewidth(14, self.angles_to_pw_1(-90))
-        sleep(0.3)
-        self.rpi.set_servo_pulsewidth(15, self.angles_to_pw_2(90))
-        sleep(0.3)
-
-        # Now the plotter is in a safe physical state.
-
-        # Set the x and y position state, so it knows its current x/y position.
-        self.current_x = -self.INNER_ARM
-        self.current_y = self.OUTER_ARM
+        self.xy(-self.INNER_ARM, self.OUTER_ARM)
 
 
     def quiet(self, servos=[14, 15, 18]):
@@ -563,44 +549,3 @@ class Pen:
         self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
 
         sleep(self.transition_time)
-
-
-# this is an example BrachioGraph definition
-
-# angles in degrees and corresponding pulse-widths for the two arm servos
-servo_1_angle_pws = [
-    [-162, 2490],
-    [-144, 2270],
-    [-126, 2070],
-    [-108, 1880],
-    [ -90, 1680],
-    [ -72, 1540],
-    [ -54, 1360],
-    [ -36, 1190],
-    [ -18, 1020],
-    [   0,  830],
-    [  18,  610],
-]
-
-servo_2_angle_pws = [
-    [  0,  610],
-    [ 18,  810],
-    [ 36,  970],
-    [ 54, 1140],
-    [ 72, 1310],
-    [ 90, 1460],
-    [108, 1630],
-    [126, 1790],
-    [144, 1970],
-    [180, 2360],
-]
-
-
-bg = BrachioGraph(
-    inner_arm=9.0,            # the lengths of the arms
-    outer_arm=9.0,            # the lengths of the arms
-    bounds=(-8, 3, 8, 15),
-    # angles in degrees and corresponding pulse-widths for the two arm servos
-    servo_1_angle_pws=servo_1_angle_pws,
-    servo_2_angle_pws=servo_2_angle_pws,
-)
