@@ -102,29 +102,36 @@ def vectorise(
             pass
     w,h = image.size
 
+    # convert the image to greyscale
     image = image.convert("L")
+
+    # maximise contrast
     image=ImageOps.autocontrast(image, 10)
 
     lines = []
 
     if draw_contours:
         lines += sortlines(getcontours(
-            image.resize((int(resolution/contour_simplify),
-            int(resolution/contour_simplify*h/w))),
+            image.resize((int(resolution/contour_simplify), int(resolution/contour_simplify*h/w))),
             contour_simplify,
         ))
 
     if draw_hatch:
-        lines += sortlines(hatch(
-            image.resize((int(resolution/hatch_size),
-            int(resolution/hatch_size*h/w))),
-            hatch_size,
-        ))
+        lines += sortlines(
+            hatch(
+                # image,
+                image.resize((int(resolution/hatch_size), int(resolution/hatch_size*h/w))),
+                hatch_size,
+            )
+        )
 
     f = open(svg_folder + image_filename + ".svg",'w')
     f.write(makesvg(lines))
     f.close()
-    print(len(lines), "strokes.")
+    segments = 0
+    for line in lines:
+        segments = segments + len(line)
+    print(len(lines), "strokes,", segments, "points.")
     print("done.")
     return lines
 
@@ -234,24 +241,39 @@ def hatch(IM,sc=16):
     lg1 = []
     lg2 = []
     for x0 in range(w):
+        # print("reading x", x0)
         for y0 in range(h):
-            x = x0*sc
-            y = y0*sc
+            # print("    reading y", x0)
+            x = x0 * sc
+            y = y0 * sc
+
+
+
+            # don't hatch above a certain level of brightness
             if PX[x0,y0] > 144:
                 pass
 
+            # above 64, draw horizontal lines
             elif PX[x0,y0] > 64:
                 lg1.append([(x,y+sc/4),(x+sc,y+sc/4)])
+
+            # above 16, draw diagonal lines
             elif PX[x0,y0] > 16:
                 lg1.append([(x,y+sc/4),(x+sc,y+sc/4)])
                 lg2.append([(x+sc,y),(x,y+sc)])
 
+            # below 16, draw diagonal lines
             else:
-                lg1.append([(x,y+sc/4),(x+sc,y+sc/4)])
-                lg1.append([(x,y+sc/2+sc/4),(x+sc,y+sc/2+sc/4)])
-                lg2.append([(x+sc,y),(x,y+sc)])
+                lg1.append([(x,y+sc/4),(x+sc,y+sc/4)])            # horizontal lines
+                lg1.append([(x,y+sc/2+sc/4),(x+sc,y+sc/2+sc/4)])  # horizontal lines with additional offset
+                lg2.append([(x+sc,y),(x,y+sc)])                   # diagonal lines, left
 
+    print("wrangling points...")
     lines = [lg1,lg2]
+
+
+    # The purpose if this is still unclear...
+
     for k in range(0,len(lines)):
         for i in range(0,len(lines[k])):
             for j in range(0,len(lines[k])):
@@ -263,6 +285,48 @@ def hatch(IM,sc=16):
     lines = lines[0]+lines[1]
 
     return lines
+
+    # The next section is an experimental routine to simplify and discard
+    # lines, to make the hatching more efficient and less dense. It's disabled, because
+    # it doesn't discard lines evenly.
+
+    print("simplifying and discarding lines...")
+    new_lines = []
+
+    for line in lines[::2]: # increase the step value to discard hatch lines
+
+        # a line is a list of (x, y) co-ordinates, e.g.:
+
+        # [[0, 1], [2, 1], [3, 1], [3, 2], [3, 4], [4, 4]]
+
+        # this could be simplified to:
+
+        # [[0, 1],         [3, 1],         [3, 4], [4, 4]]
+
+        # first we will check all the points to see which ones have x-values that need to be saved
+
+        saved_points = []
+        length = len(line)
+
+        for index in range(length):
+            # only test points that have neighbours
+            if index > 0 and index < length -1:
+
+                # if this point's x/y-values are not half-way between its neighbours, keep it
+                x_point_is_disposable = (line[index-1][0] + line[index+1][0]) / 2 == line[index][0]
+                y_point_is_disposable = (line[index-1][1] + line[index+1][1]) / 2 == line[index][1]
+
+                if not x_point_is_disposable and not y_point_is_disposable:
+
+                    saved_points.append(line[index])
+
+            # this point must be the first or last in the list, so keep it
+            else:
+                saved_points.append(line[index])
+
+        new_lines.append(saved_points)
+
+    return new_lines
 
 
 
@@ -278,7 +342,7 @@ def makesvg(lines):
 
 def lines_to_file(lines, filename):
     with open(filename, "w") as file_to_save:
-        json.dump(lines, file_to_save)
+        json.dump(lines, file_to_save, indent=4)
 
 
 
