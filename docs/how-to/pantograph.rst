@@ -1,3 +1,5 @@
+.. _how-to-pantograph:
+
 How to build and use the PantoGraph
 ===================================
 

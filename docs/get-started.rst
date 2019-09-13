@@ -112,17 +112,27 @@ And this will correspond to:
 Attach the arms
 ---------------
 
-Attach the arms in the configuration shown, or as close as possible.
+Attach the arms in the configuration shown, or as close as possible. Of course the arms may be a
+few degrees off the perpendicular, but don't worry about that now.
+
 
 .. image:: /images/starting-position.jpg
    :alt: 'Starting position'
    :class: 'main-visual'
 
-Attach the horn to the lifting motor so that it points straight down.
+Attach the horn to the lifting motor.
 
 .. image:: /images/pen-and-lift.jpg
    :alt: 'Pen-lifting mechanism'
    :class: 'main-visual'
+
+You need the pen to be just clear of the paper in the *up* position. The lifting movement can cause
+unwanted movement of the pen, so you need to minimise that. You can experiment with::
+
+    bg.pen.rpi.set_servo_pulsewidth(15, <value>)
+
+to find a good pair of up/down values. Then you can include them in your initialisation of the
+BrachioGraph, by supplying ``pw_up`` and ``pw_down``
 
 Of course your arms may be a few degrees off. Don't worry about that now.
 
@@ -174,4 +184,5 @@ If the lines are reasonably straight and the box is reasonably square, try plott
 Save your BrachioGraph definition
 ---------------------------------
 
-The file ``bg.py`` is a good place to save your defined `BrachioGraphs` for future use. It already contains examples for units built in the development process.
+The file ``bg.py`` is a good place to save your defined ``BrachioGraphs`` for future use. It
+already contains examples for units built in the development process.
