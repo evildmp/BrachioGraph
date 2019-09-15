@@ -2,10 +2,12 @@ from collections import namedtuple
 from time import sleep
 from math import *
 import sys
-import pigpio
+
 import json
 from tqdm import tqdm, trange
 import readchar
+
+import pigpio
 
 
 def hypotenuse(side1, side2):
