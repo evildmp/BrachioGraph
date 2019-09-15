@@ -412,14 +412,14 @@ class BrachioGraph:
 
         # convert x/y co-ordinates into motor angles
 
-        hypotenuse = math.sqrt(x ** 2 + y ** 2)
+        hypotenuse = math.sqrt(x**2+y**2)
         hypotenuse_angle = math.asin(x/hypotenuse)
 
         inner_angle = math.acos(
-            (hypotenuse ** 2 + self.INNER_ARM ** 2 - self.OUTER_ARM ** 2) / (2 * hypotenuse * self.INNER_ARM)
+            (hypotenuse**2+self.INNER_ARM**2-self.OUTER_ARM**2)/(2*hypotenuse*self.INNER_ARM)
         )
         outer_angle = math.acos(
-            (self.INNER_ARM ** 2 + self.OUTER_ARM ** 2 - hypotenuse ** 2) / (2 * self.INNER_ARM * self.OUTER_ARM)
+            (self.INNER_ARM**2+self.OUTER_ARM**2-hypotenuse**2)/(2*self.INNER_ARM*self.OUTER_ARM)
         )
 
         shoulder_motor_angle = hypotenuse_angle - inner_angle
