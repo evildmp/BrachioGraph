@@ -5,6 +5,15 @@ Get started
 
 This section describes building the plotter, and driving it using the ``brachiograph.py`` library.
 
+..  note::
+
+    Please see :ref:`clothes-peg`. This is a variation on the design described below, and is now
+    the recommended way to build the plotter. The differences are very minor and concern only
+    the construction of the arms.
+
+    This page will be updated soon to reflect this.
+
+
 Build the plotter
 -----------------
 
