@@ -52,8 +52,6 @@ Use pip to install Python 3 versions of:
 * ``tqdm``
 * ``readchar``
 * ``numpy``
-* ``tqdm``
-* ``readchar``
 
 If you haven't already done so, clone the ``BrachioGraph`` repository::
 
