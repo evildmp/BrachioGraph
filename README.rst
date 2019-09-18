@@ -6,7 +6,7 @@ BrachioGraph is an ultra-cheap (total cost of materials: €12.50) plotter that 
 
 At its heart is a Raspberry Pi Zero and some relatively simple custom software, driving three servo motors.
 
-The mechanical hardware can be built from nothing but stiff card, a ball-point pen and some glue. The only tools required are a ruler, a sharp knife, a screwdriver and something to make holes in the card.
+The mechanical hardware can be built from nothing but stiff card, a pen or pencil and some glue. The only tools required are a ruler and a sharp knife.
 
 Almost everything required can be found in a desk or kitchen drawer. The entire device can be built with no special skills in about an hour.
 
