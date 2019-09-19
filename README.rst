@@ -11,17 +11,8 @@ The mechanical hardware can be built from nothing but stiff card, a pen or penci
 Almost everything required can be found in a desk or kitchen drawer. The entire device can be built with no special skills in about an hour.
 
 
-.. image:: docs/images/clothespeg.jpg
-    :width: 50%
-    :align: center
-
-.. image:: docs/images/fiat.jpg
-    :width: 50%
-    :align: center
-
-.. image:: docs/images/prague.jpg
-    :width: 50%
-    :align: center
+.. image:: docs/images/readme_combined_image.png
+    :width: 100%
 
 
 Documentation
