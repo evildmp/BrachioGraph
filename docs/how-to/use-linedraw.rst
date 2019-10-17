@@ -8,8 +8,6 @@ Installation
 
 Install:
 
-* ``Pillow``
-* ``numpy``
 * ``opencv-python-headless``
 
 
