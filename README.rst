@@ -2,7 +2,7 @@ BrachioGraph - the cheapest, simplest possible pen-plotter
 ==========================================================
 
 
-BrachioGraph is an ultra-cheap (total cost of materials: €12.50) plotter that can be built with minimal skills.
+BrachioGraph is an ultra-cheap (total cost of materials: ~€14) plotter that can be built with minimal skills.
 
 At its heart is a Raspberry Pi Zero and some relatively simple custom software, driving three servo motors.
 

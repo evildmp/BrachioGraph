@@ -1,6 +1,6 @@
 .. _how-to-pantograph:
 
-How to build and use the PantoGraph
+How to build and use a PantoGraph
 ===================================
 
 The PantoGraph is an earlier version of the plotter that uses a slightly different design. The PantoGraph is more
@@ -169,7 +169,7 @@ Do the same for -90 degrees (straight out).
 
 Now you know what value corresponds to 0 degrees for that arm, what value corresponds to 90
 degrees, and if you divide the difference between them by 90 you'll know what change in pulse width
-corresponds to a 1 degree change:
+corresponds to a 1 degree change::
 
     (*centre value* - *straight out value*) / 90
 
@@ -201,4 +201,3 @@ And now you'll find that when you issue a command such as::
     pg.set_angles(-45, 45)
 
 both arms will - you hope - point out at a perfect 45 degrees.
-**
