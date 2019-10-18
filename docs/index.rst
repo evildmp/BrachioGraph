@@ -60,11 +60,12 @@ Tools required:
 The software
 ------------
 
-* ``brachiograph.py``, to draw images using the servos
-* ``linedraw``, a fork of a library to vectorise bit-map images
-* ``turtle_draw.py``, to help visualise the drawing area of the plotter
-* ``pulse_widths.ipynb``, a Jupyter notebook to help understand the characteristics of a servo motor
-* ``pantograph.py``, to draw images using an alternative plotter design
+* ``brachiograph.py`` to :ref:`draw images using the servos <start-plotting>`
+* ``linedraw.py`` to :ref:`vectorise bit-map images <use-linedraw>`
+* ``turtle_draw.py`` to help :ref:`visualise the drawing area of the plotter <visualise-area>`
+* ``pulse_widths.ipynb``, a Jupyter notebook to :ref:`visualise the relationship between pulse-widths and servo angles
+  <visualise-servo-behaviour>`
+* ``pantograph.py`` to drive an :ref:`alternative plotter design <how-to-pantograph>`
 
 
 .. rst-class:: clearfix row

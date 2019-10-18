@@ -1,6 +1,8 @@
 How to visualise plotter behaviour
 ==================================
 
+.. _visualise-servo-behaviour:
+
 Visualise the relationship between pulse-widths and angles
 ----------------------------------------------------------
 

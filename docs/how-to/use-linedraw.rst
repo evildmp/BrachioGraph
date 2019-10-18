@@ -1,3 +1,5 @@
+.. _use-linedraw:
+
 How to use the ``linedraw.py`` library to vectorise images
 ==========================================================
 
