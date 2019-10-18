@@ -45,7 +45,7 @@ The hardware
 
 * two sticks or pieces of stiff card
 * a pencil or ballpoint pen
-* a clothespin
+* a clothes-peg
 * 3 servo motors
 * a Raspberry Pi, to drive the servos and run the custom code
 
