@@ -20,7 +20,9 @@ class BrachioGraph:
         servo_2_angle_pws=[],
         servo_1_zero=1500,
         servo_2_zero=1500,
-        pw_up=1500,                 # pulse-widths for pen up/down
+        servo_1_degree_ms = 10,    # milliseconds pulse-width per degree
+        servo_2_degree_ms = -10,   # reversed because the elbow servo will be upside-down
+        pw_up=1500,                # pulse-widths for pen up/down
         pw_down=1100,
     ):
 
@@ -48,6 +50,7 @@ class BrachioGraph:
         else:
             self.angles_to_pw_1 = self.naive_angles_to_pulse_widths_1
             self.servo_1_zero = servo_1_zero
+            self.servo_1_degree_ms = servo_1_degree_ms
 
         if servo_2_angle_pws:
             servo_2_array = numpy.array(servo_2_angle_pws)
@@ -62,6 +65,7 @@ class BrachioGraph:
         else:
             self.angles_to_pw_2 = self.naive_angles_to_pulse_widths_2
             self.servo_2_zero = servo_2_zero
+            self.servo_2_degree_ms = servo_2_degree_ms
 
         # instantiate this Raspberry Pi as a pigpio.pi() instance
         self.rpi = pigpio.pi()
@@ -353,10 +357,10 @@ class BrachioGraph:
     #  ----------------- hardware-related methods -----------------
 
     def naive_angles_to_pulse_widths_1(self, angle):
-        return (angle + 90) * 10 + self.servo_1_zero
+        return (angle + 90) * self.servo_1_degree_ms + self.servo_1_zero
 
     def naive_angles_to_pulse_widths_2(self, angle):
-        return (angle - 90) * 10 + self.servo_2_zero
+        return (angle - 90) * self.servo_2_degree_ms + self.servo_2_zero
 
 
     def angles_to_pulse_widths(self, angle_1, angle_2):
