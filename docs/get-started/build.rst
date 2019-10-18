@@ -18,18 +18,45 @@ drawing area, this can be visualised using the :ref:`script provided <visualise-
 Assembly
 -----------------
 
-As illustrated:
+The shoulder motor
+~~~~~~~~~~~~~~~~~~
 
-* glue the servo horns to the inner arm, so that the centres of rotation are about 8cm (or whatever you have selected)
-  apart
-* glue a servo and a clothes-peg to the outer arm, so that a pen in the clothes-peg and the centre of rotation of the
-  arm will also be the appropriate distance apart (or, use an :ref:`alternative arrangement <no-clothes-peg>`)
-* attach the shoulder motor to the base
+Attach a server to the base, either by gluing it or attaching it some other way; two ways are shown below. It needs to
+be raised a little above the level of the base.
+
+.. image:: /images/shoulder-servo-mounting.jpg
+   :alt: 'Options for mounting the shoulder servo'
+
+
+The inner arm
+~~~~~~~~~~~~~
+
+Glue the servo horns to the inner arm, so that the centres of rotation are about 8cm (or whatever you have selected)
+apart.
+
+.. image:: /images/arm.jpg
+   :alt: 'the horns glued to the inner arm'
+
+
+The outer arm, clothes-peg and servos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Glue a servo and a clothes-peg to the outer arm, so that a pen in the clothes-peg and the centre of rotation of the arm
+will also be the appropriate distance apart. Glue the final servo in such a position that its horn can rotate safely,
+and will be able to lift the pen clear of the paper. (See also an :ref:`alternative arrangement <no-clothes-peg>`.)
+
+.. image:: /images/outer-arm.jpg
+   :alt: 'The outer arm, clothes-peg and servos'
+
+
+The assembled BrachioGraph
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: /images/brachiograph-top-view-arms.jpg
    :alt: 'Arms and motors'
    :class: 'main-visual'
 
-The system uses centimetres as its basic unit of length. Measure the distance between the axis of the two servo horns
-on the upper arm (``inner_arm``), and the distance between the axis of the servo motor and the pen on the other
-(``outer_arm``).
+The system uses centimetres as its basic unit of length.
+
+Measure precisely the distance between the axis of the two servo horns on the upper arm (``inner_arm``), and the
+distance between the axis of the servo motor and the pen on the other (``outer_arm``). You'll need these values shortly.
