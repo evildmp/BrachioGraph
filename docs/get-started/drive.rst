@@ -69,7 +69,7 @@ Controls:
 
 * 0: ``exit``
 * a: ``increase x position 1cm``
-* a: ``decrease x position 1cm``
+* s: ``decrease x position 1cm``
 * A: ``increase x position .1cm``
 * S: ``decrease x position .1cm``
 * k: ``increase y position 1cm``
