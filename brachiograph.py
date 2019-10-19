@@ -75,7 +75,7 @@ class BrachioGraph:
         self.rpi.set_PWM_frequency(15, 50)
 
         # create the pen object, and make sure the pen is up
-        self.pen = Pen(ag=self, pw_up=pw_up, pw_down=pw_down)
+        self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down)
 
         # Initialise the pantograph with the motors in the centre of their travel
         self.rpi.set_servo_pulsewidth(14, self.angles_to_pw_1(-90))
@@ -525,9 +525,9 @@ class BrachioGraph:
 
 class Pen:
 
-    def __init__(self, ag, pw_up=1500, pw_down=1100, pin=18, transition_time=0.25):
+    def __init__(self, bg, pw_up=1500, pw_down=1100, pin=18, transition_time=0.25):
 
-        self.ag = ag
+        self.bg = bg
         self.pin = pin
         self.pw_up = pw_up
         self.pw_down = pw_down
@@ -553,3 +553,8 @@ class Pen:
         self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
 
         sleep(self.transition_time)
+
+
+    # for convenience, a quick way to set pen motor pulse-widths
+    def pw(self, pulse_width):
+        self.rpi.set_servo_pulsewidth(self.pin, pulse_width)
