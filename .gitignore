@@ -24,4 +24,4 @@ var/
 # Sphinx documentation
 docs/_build/
 
-images
+/images

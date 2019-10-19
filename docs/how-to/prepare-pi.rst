@@ -39,6 +39,20 @@ Edit ``cmdline.txt``, adding::
 just after ``rootwait``.
 
 
+Set a fixed MAC address
+^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, the Pi will generate a new MAC addresss and appear as a new device to the host each time
+it reboots, which is annoying.
+
+To fix the address, add a file ``/etc/modprobe.d/rndis.conf``. In it, add::
+
+    options g_ether host_addr=ae:ad:f5:9d:9f:ba dev_addr=7a:26:9f:3e:97:6c
+
+See `How can I make a Pi Zero appear as the same RNDIS/Ethernet Gadget device to the host OS each time it restarts?
+<https://raspberrypi.stackexchange.com/a/104749/42583>`_ on StackExchange for more information.
+
+
 Eject the card and put it into the Pi and start it up.
 
 
