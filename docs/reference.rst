@@ -40,6 +40,24 @@ The ``BrachioGraph`` class
   servo horn at a different angle than to change these.
 
 
+The ``Pen`` class
+---------------------------
+
+A ``BrachioGraph`` instance has an instance of a ``Pen`` class, as ``pen``.
+
+::
+
+    class BrachioGraph:
+
+        def __init__(
+            self,
+            bg,                         # the BrachioGraph instance to which the Pen is attached
+            pw_up=1500, pw_down=1100,   # pen up and pen down pulse-widths
+            pin=18,                     # the GPIO pin
+            transition_time=0.25        # how long to wait for up/down movements
+            ):
+
+
 The ``linedraw`` library
 ------------------------
 
