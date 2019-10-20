@@ -219,9 +219,22 @@ class BrachioGraph:
         self.quiet()
 
 
+    def draw_line(self, start=(0, 0), end=(0, 0), wait=.5, interpolate=10):
+        start_x, start_y = start
+        end_x, end_y = end
+
+        self.pen.up()
+        self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
+
+        self.pen.down()
+        self.draw(x=end_x, y=end_y, wait=wait, interpolate=interpolate)
+
+
     def draw(self, x=0, y=0, wait=.5, interpolate=10):
         self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
 
+
+    # ----------------- test pattern methods -----------------
 
     def test_pattern(self, bounds=None, wait=1, interpolate=10, repeat=1):
 
@@ -240,7 +253,25 @@ class BrachioGraph:
                 self.draw(bounds[0], y + 1, wait, interpolate)
 
         self.pen.up()
+        self.quiet()
 
+
+    def vertical_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1):
+
+        bounds = bounds or self.bounds
+
+        if not bounds:
+            return "Plotting a test pattern is only possible when BrachioGraph.bounds is set."
+
+        top_y =    self.bounds[1]
+        bottom_y = self.bounds[3]
+        step = (self.bounds[2] - self.bounds[0]) /  lines
+        x = self.bounds[0]
+        while x <= self.bounds[2]:
+            self.draw_line((x, top_y), (x, bottom_y))
+            x = x + step
+
+        self.pen.up()
         self.quiet()
 
 
