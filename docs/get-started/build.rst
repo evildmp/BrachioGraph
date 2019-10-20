@@ -6,9 +6,16 @@ Build the plotter
 Components and materials
 ------------------------
 
-You'll need: :ref:`a Raspberry Pi <hardware-pi>`, three :ref:`servo motors <hardware-servos>`, two :ref:`arms
-<hardware-arms>` and other small items mentioned below (such as a clothes-peg) depending on exactly how you build the
-machine. You'll also need some strong adhesive.
+You'll need:
+
+* a Raspberry Pi
+* three servo motors
+* two arms
+* other small items mentioned below (such as a clothes-peg) depending on exactly how you build the machine.
+
+You'll also need some strong adhesive.
+
+See :ref:`the hardware section <hardware>` for details on what components and materials to obtain.
 
 If you are using SG90 motors as suggested, arms of about 8cm are suitable for drawing an area approximately 16cm wide
 by 11cm high. This fits well onto a sheet of A5 paper. To help understand the relationship betweem arm geometry and the
