@@ -50,7 +50,7 @@ Attach the horn to the lifting motor.
 You need the pen to be just clear of the paper in the *up* position. The lifting movement can cause
 unwanted movement of the pen, so you need to minimise that. You can experiment with::
 
-    bg.pen.rpi.set_servo_pulsewidth(15, <value>)
+    bg.pen.rpi.set_servo_pulsewidth(18, <value>)
 
 to find a good pair of up/down values. Then you can include them in your initialisation of the
 BrachioGraph, by supplying ``pw_up`` and ``pw_down``
