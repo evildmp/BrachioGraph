@@ -31,6 +31,34 @@ And this will correspond to:
 * the lifting motor in the pen up position, 1700µS pulse width
 
 
+.. _check-movement:
+
+Check the movement
+------------------
+
+We must make sure that the arms move in the direction we expect. Run::
+
+    bg.set_angles(angle_1=-90, angle_2=90)
+
+This shouldn't do anything; the arms should already be at those angles.
+
+Now try changing the values (one at a time) in five-degree increments, e.g.::
+
+    bg.set_angles(angle_1=-95, angle_2=90)  # should move the inner arm 5 degrees anti-clockwise
+
+Increasing the values should move the arms clockwise; decreasing them should move them anti-clockwise. To avoid violent
+movement, don't move them more than five or ten degrees at a time.
+
+The movements may be reversed, because different motors, or the same motor mounted differently, can produce a reversed
+movement for the same input.
+
+In this case you need to incorporate that into your ``BrachioGraph`` definition, by explicitly providing
+``servo_1_degree_ms`` (default: -10) and ``servo_2_degree_ms`` (default: 10) values. For example, if the outer arm's
+movement were reversed, you'd need to initialise the plotter with::
+
+    bg = BrachioGraph(inner_arm=<inner_arm>, outer_arm=<outer_arm>, servo_2_degree_ms=-10)
+
+
 Attach the arms
 ---------------
 
