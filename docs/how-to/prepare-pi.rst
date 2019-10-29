@@ -113,4 +113,4 @@ Start it all up
 
 ::
 
-    sudo pigpiod && source env/bin/activate && cd BachioGraph && python
+    sudo pigpiod && source env/bin/activate && cd BrachioGraph && python
