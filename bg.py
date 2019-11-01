@@ -64,7 +64,7 @@ bg = BrachioGraph(
 #     outer_arm=8,
 #     # the drawing area
 #     bounds=(-6, 4, 6, 12),
-#     # relationship between servo andgles and pulse-widths
+#     # relationship between servo angles and pulse-widths
 #     servo_1_degree_ms=-10,
 #     servo_2_degree_ms=10,
 #     # pulse-widths for pen up/down
