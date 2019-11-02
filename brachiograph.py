@@ -310,7 +310,7 @@ class BrachioGraph:
 
     def centre(self):
 
-        if not bounds:
+        if not self.bounds:
             return "Moving to the centre is only possible when BrachioGraph.bounds is set."
 
 
