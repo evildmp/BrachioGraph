@@ -275,6 +275,25 @@ class BrachioGraph:
         self.quiet()
 
 
+    def horizontal_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1):
+
+        bounds = bounds or self.bounds
+
+        if not bounds:
+            return "Plotting a test pattern is only possible when BrachioGraph.bounds is set."
+
+        min_x = self.bounds[0]
+        max_x = self.bounds[2]
+        step = (self.bounds[3] - self.bounds[1]) /  lines
+        y = self.bounds[1]
+        while y <= self.bounds[3]:
+            self.draw_line((min_x, y), (max_x, y))
+            y = y + step
+
+        self.pen.up()
+        self.quiet()
+
+
     def box(self, bounds=None, wait=.15, interpolate=10, repeat=1, reverse=False):
 
         bounds = bounds or self.bounds
