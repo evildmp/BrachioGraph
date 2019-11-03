@@ -81,7 +81,7 @@ Copy your public key to the Pi so you don't have to log in each time you SSH::
     ssh-copy-id pi@raspberrypi.local
 
 
-Share your Internet conenction to the Pi
+Share your Internet connection to the Pi
 ----------------------------------------
 
 On a Macintosh, this is available via the Sharing Preference Pane.
