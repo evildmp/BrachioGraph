@@ -1,46 +1,15 @@
 from brachiograph import BrachioGraph
 
-# this is an example BrachioGraph definition
+# Uncomment the definition you want to use.
+
+# This is an example BrachioGraph definition. If you build a plotter as
+# described in the "Get started" section of the documentation, this definition
+# is likely to work well. However, you should work out your own servo
+# angle/pulse-width values as described in "Improve the plotter calibration".
+
 
 # angles in degrees and corresponding pulse-widths for the two arm servos
-servo_1_angle_pws = [
-    [-162, 2490],
-    [-144, 2270],
-    [-126, 2070],
-    [-108, 1880],
-    [ -90, 1680],
-    [ -72, 1540],
-    [ -54, 1360],
-    [ -36, 1190],
-    [ -18, 1020],
-    [   0,  830],
-    [  18,  610],
-]
 
-servo_2_angle_pws = [
-    [  0,  610],
-    [ 18,  810],
-    [ 36,  970],
-    [ 54, 1140],
-    [ 72, 1310],
-    [ 90, 1460],
-    [108, 1630],
-    [126, 1790],
-    [144, 1970],
-    [180, 2360],
-]
-
-
-bg = BrachioGraph(
-    inner_arm=9.0,            # the lengths of the arms
-    outer_arm=9.0,            # the lengths of the arms
-    bounds=(-8, 3, 8, 15),
-    # angles in degrees and corresponding pulse-widths for the two arm servos
-    servo_1_angle_pws=servo_1_angle_pws,
-    servo_2_angle_pws=servo_2_angle_pws,
-)
-
-# angles in degrees and corresponding pulse-widths for the two arm servos
 servo_1_angle_pws1 = [
     [-162, 2470],
     [-144, 2250],
@@ -69,15 +38,36 @@ servo_2_angle_pws2 = [
     [180, 2410],
 ]
 
-
-bg2 = BrachioGraph(
-    inner_arm=8,            # the lengths of the arms
-    outer_arm=8,            # the lengths of the arms
+bg = BrachioGraph(
+    # the lengths of the arms
+    inner_arm=8,
+    outer_arm=8,
+    # the drawing area
     bounds=(-8, 3, 8, 14),
     # angles in degrees and corresponding pulse-widths for the two arm servos
     servo_1_angle_pws=servo_1_angle_pws1,
     servo_2_angle_pws=servo_2_angle_pws2,
-    pw_down=1200,                 # pulse-widths for pen up/down
+    # pulse-widths for pen up/down
+    pw_down=1200,
     pw_up=1850,
 )
 
+
+# A "naively" calibrated plotter definition. We assume the default 10ms
+# pulse-width difference = 1 degree of motor movement. If the arms appear to
+# move in the wrong directions, try reversing the value of servo_1_degree_ms
+# and/or servo_2_degree_ms.
+
+# naive_bg = BrachioGraph(
+#     # the lengths of the arms
+#     inner_arm=8,
+#     outer_arm=8,
+#     # the drawing area
+#     bounds=(-6, 4, 6, 12),
+#     # relationship between servo angles and pulse-widths
+#     servo_1_degree_ms=-10,
+#     servo_2_degree_ms=10,
+#     # pulse-widths for pen up/down
+#     pw_down=1200,
+#     pw_up=1850,
+# )

@@ -20,9 +20,9 @@ class BrachioGraph:
         servo_2_angle_pws=[],
         servo_1_zero=1500,
         servo_2_zero=1500,
-        servo_1_degree_ms = 10,    # milliseconds pulse-width per degree
-        servo_2_degree_ms = -10,   # reversed because the elbow servo will be upside-down
-        pw_up=1500,                # pulse-widths for pen up/down
+        servo_1_degree_ms = -10,    # milliseconds pulse-width per degree
+        servo_2_degree_ms = 10,     # reversed because for mpunting of the elbow servo
+        pw_up=1500,                 # pulse-widths for pen up/down
         pw_down=1100,
     ):
 
@@ -329,7 +329,7 @@ class BrachioGraph:
 
     def centre(self):
 
-        if not bounds:
+        if not self.bounds:
             return "Moving to the centre is only possible when BrachioGraph.bounds is set."
 
 

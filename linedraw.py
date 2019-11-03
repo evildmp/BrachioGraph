@@ -332,7 +332,10 @@ def hatch(IM,sc=16):
 
 def makesvg(lines):
     print("generating svg file...")
-    out = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">'
+    width = math.ceil(max([max([p[0]*0.5 for p in l]) for l in lines]))
+    height = math.ceil(max([max([p[1]*0.5 for p in l]) for l in lines]))
+    out = '<svg xmlns="http://www.w3.org/2000/svg" height="%spx" width="%spx" version="1.1">' % (height, width)
+
     for l in lines:
         l = ",".join([str(p[0]*0.5)+","+str(p[1]*0.5) for p in l])
         out += '<polyline points="'+l+'" stroke="black" stroke-width="2" fill="none" />\n'
