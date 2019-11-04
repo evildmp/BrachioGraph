@@ -26,6 +26,11 @@ class BrachioGraph:
         pw_down=1100,
     ):
 
+        self.angles_used_1 = set()
+        self.angles_used_2 = set()
+        self.pulse_widths_used_1 = set()
+        self.pulse_widths_used_2 = set()
+
         # set the pantograph geometry
         self.INNER_ARM = inner_arm
         self.OUTER_ARM = outer_arm
@@ -380,9 +385,13 @@ class BrachioGraph:
 
         self.set_pulse_widths(pw_1, pw_2)
 
-
         # We record the angles, so we that we know where the arms are for future reference.
         self.angle_1, self.angle_2 = angle_1, angle_2
+
+        self.angles_used_1.add(angle_1)
+        self.angles_used_2.add(angle_2)
+        self.pulse_widths_used_1.add(pw_1)
+        self.pulse_widths_used_2.add(pw_2)
 
 
     #  ----------------- hardware-related methods -----------------
@@ -552,6 +561,19 @@ class BrachioGraph:
             print(self.current_x, self.current_y)
 
             self.xy(self.current_x, self.current_y)
+
+
+    # ----------------- reporting methods -----------------
+
+    def report(self):
+        print(self.report_angles())
+        print(self.report_pulse_widths())
+
+    def report_angles(self):
+        return min(self.angles_used_1), max(self.angles_used_1), min(self.angles_used_2), max(self.angles_used_2)
+
+    def report_pulse_widths(self):
+        return min(self.pulse_widths_used_1), max(self.pulse_widths_used_1), min(self.pulse_widths_used_2), max(self.pulse_widths_used_2)
 
 
 class Pen:
