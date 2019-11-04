@@ -107,7 +107,7 @@ Controls:
 
 Use this to discover the bounds of the box the BrachioGraph can draw.
 
-Take a note of the ``bounds`` - the box described by ``[<minimum x>, <minimum y, <maximum x>, <maximum y>]``.
+Take a note of the ``bounds`` - the box described by the integers ``[<minimum x>, <minimum y, <maximum x>, <maximum y>]``.
 
 Reinitialise your plotter with these values::
 
