@@ -9,27 +9,15 @@ See also :ref:`prepare-pi`, which gives step-by-step directions specifically for
 packages; either way, make sure you are in a Python 3 environment.
 
 
-Pip
----
-
-If not already installed::
-
-    sudo apt-get install python3-pip
-
-
-Convenience software (optional but recommended)
+For convenience (optional but recommended)
 -----------------------------------------------
 
-virtualenv
-~~~~~~~~~~
+Virtual environment
+~~~~~~~~~~~~~~~~~~~
 
-Install virtualenv::
+Create and activate a `Python virtual environment <https://docs.python.org/3/library/venv.html>`_ to work in::
 
-    pip3 install virtualenv
-
-... and then create a virtualenv to work in::
-
-    virtualenv env
+    python3 -m venv env
     source env/bin/activate
 
 
@@ -44,6 +32,17 @@ Install with::
     sudo apt-get install tmux
 
 
+Pip
+---
+
+If not already installed, or if you're not using a virtual environment::
+
+    sudo apt-get install python3-pip
+
+This version of pip needs to be invoked with ``pip3``, so if you are not using a Python virtual environment,
+replace ``pip`` with ``pip3`` in the examples below.
+
+
 PIGPIO
 ------
 
@@ -54,7 +53,7 @@ lower-level code.
 ::
 
     sudo apt-get install pigpiod
-    pip3 install pigpio
+    pip install pigpio  # use pip3 if not using a virtual environment
 
 
 Pillow
@@ -67,7 +66,7 @@ Install the required system libraries (listed at https://www.piwheels.org/projec
 Pillow itself::
 
     sudo apt install libwebp6 libtiff5 libjbig0 liblcms2-2 libwebpmux3 libopenjp2-7 libzstd1 libwebpdemux2 libjpeg-dev
-    pip3 install pillow
+    pip install pillow  # use pip3 if not using a virtual environment
 
 
 Numpy
@@ -79,7 +78,7 @@ Install the required system libraries (listed at https://www.piwheels.org/projec
 Numpy itself::
 
     sudo apt install libatlas3-base libgfortran5
-    sudo pip3 install numpy
+    pip install numpy  # use pip3 if not using a virtual environment
 
 
 Git
@@ -97,6 +96,10 @@ Use pip to install Python 3 versions of:
 
 * ``tqdm``      # for the progress indicator while drawing
 * ``readchar``  # to allow the ``BrachioGraph.drive()`` methods to accept user input
+
+::
+
+    pip install tqdm readchar  # use pip3 if not using a virtual environment
 
 
 Clone the BrachioGraph repository
