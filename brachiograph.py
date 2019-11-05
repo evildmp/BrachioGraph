@@ -271,7 +271,7 @@ class BrachioGraph:
             self.draw_line((x, top_y), (x, bottom_y))
             x = x + step
 
-        self.pen.up()
+        self.park()
         self.quiet()
 
 
@@ -290,7 +290,7 @@ class BrachioGraph:
             self.draw_line((min_x, y), (max_x, y))
             y = y + step
 
-        self.pen.up()
+        self.park()
         self.quiet()
 
 
