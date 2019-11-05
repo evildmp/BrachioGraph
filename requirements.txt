@@ -4,3 +4,4 @@ readchar
 numpy
 tqdm
 readchar
+pillow
