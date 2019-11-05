@@ -1,6 +1,5 @@
-pigpio
-tqdm
-readchar
 numpy
-tqdm
+pigpio
+pillow
 readchar
+tqdm

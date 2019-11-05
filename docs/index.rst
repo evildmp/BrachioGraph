@@ -36,37 +36,27 @@ BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a libra
    :class: 'main-visual'
 
 
-.. rst-class:: clearfix row
-
-.. rst-class:: column column2
 
 The hardware
-------------
+-------------
 
-* two sticks or pieces of stiff card
-* a pencil or ballpoint pen
+The plotter is made of:
+
+* two sticks
+* a pen or pencil
 * a clothes-peg
 * 3 servo motors
 * a Raspberry Pi, to drive the servos and run the custom code
-
-Tools required:
-
 * glue
-* a ruler
-* a knife (if you need to cut the card)
 
+Total cost: ~€14
 
-.. rst-class:: column column2
 
 The software
 ------------
 
-* ``brachiograph.py`` to :ref:`draw images using the servos <start-plotting>`
-* ``linedraw.py`` to :ref:`vectorise bit-map images <use-linedraw>`
-* ``turtle_draw.py`` to help :ref:`visualise the drawing area of the plotter <visualise-area>`
-* ``pulse_widths.ipynb``, a Jupyter notebook to :ref:`visualise the relationship between pulse-widths and servo angles
-  <visualise-servo-behaviour>`
-* ``pantograph.py`` to drive an :ref:`alternative plotter design <how-to-pantograph>`
+The software in the `BrachioGraph <https://github.com/evildmp/BrachioGraph>`_ library includes code to :ref:`drive the
+hardware <start-plotting>` and :ref:`vectorise bit-map images <use-linedraw>`.
 
 
 .. rst-class:: clearfix row

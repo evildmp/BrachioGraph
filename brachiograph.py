@@ -5,9 +5,9 @@ import readchar
 import math
 import numpy
 import json
-
 import pigpio
 import tqdm
+
 
 class BrachioGraph:
 
@@ -223,7 +223,6 @@ class BrachioGraph:
                 self.draw(x, y, wait=wait, interpolate=interpolate)
 
         self.park()
-        self.quiet()
 
 
     def draw_line(self, start=(0, 0), end=(0, 0), wait=.5, interpolate=10):
@@ -259,8 +258,7 @@ class BrachioGraph:
                 self.xy(bounds[2],   y + 1, wait, interpolate)
                 self.draw(bounds[0], y + 1, wait, interpolate)
 
-        self.pen.up()
-        self.quiet()
+        self.park()
 
 
     def vertical_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1):
@@ -278,8 +276,25 @@ class BrachioGraph:
             self.draw_line((x, top_y), (x, bottom_y))
             x = x + step
 
-        self.pen.up()
-        self.quiet()
+        self.park()
+
+
+    def horizontal_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1):
+
+        bounds = bounds or self.bounds
+
+        if not bounds:
+            return "Plotting a test pattern is only possible when BrachioGraph.bounds is set."
+
+        min_x = self.bounds[0]
+        max_x = self.bounds[2]
+        step = (self.bounds[3] - self.bounds[1]) /  lines
+        y = self.bounds[1]
+        while y <= self.bounds[3]:
+            self.draw_line((min_x, y), (max_x, y))
+            y = y + step
+
+        self.park()
 
 
     def box(self, bounds=None, wait=.15, interpolate=10, repeat=1, reverse=False):
@@ -307,9 +322,7 @@ class BrachioGraph:
                 self.draw(bounds[2], bounds[1], wait, interpolate)
                 self.draw(bounds[0], bounds[1], wait, interpolate)
 
-        self.pen.up()
-
-        self.quiet()
+        self.park()
 
 
     # ----------------- pen-moving methods -----------------
@@ -319,7 +332,6 @@ class BrachioGraph:
 
         if not self.bounds:
             return "Moving to the centre is only possible when BrachioGraph.bounds is set."
-
 
         self.pen.up()
         self.xy(self.bounds[2]/2, self.bounds[3]/2)
@@ -436,6 +448,8 @@ class BrachioGraph:
 
         self.pen.up()
         self.xy(-self.INNER_ARM, self.OUTER_ARM)
+        sleep(1)
+        self.quiet()
 
 
     def quiet(self, servos=[14, 15, 18]):
