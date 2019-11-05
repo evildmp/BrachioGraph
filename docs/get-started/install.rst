@@ -25,7 +25,7 @@ virtualenv
 
 Install virtualenv::
 
-    pip install virtualenv
+    pip3 install virtualenv
 
 ... and then create a virtualenv to work in::
 
@@ -54,7 +54,7 @@ lower-level code.
 ::
 
     sudo apt-get install pigpiod
-    pip install pigpio
+    pip3 install pigpio
 
 
 Pillow
@@ -66,8 +66,8 @@ to vectors, but it's not required to drive the plotter.
 Install the required system libraries (listed at https://www.piwheels.org/project/Pillow/), followed by
 Pillow itself::
 
-    sudo apt install libwebp6 libtiff5 libjbig0 liblcms2-2 libwebpmux3 libopenjp2-7 libzstd1 libwebpdemux2
-    pip install pillow
+    sudo apt install libwebp6 libtiff5 libjbig0 liblcms2-2 libwebpmux3 libopenjp2-7 libzstd1 libwebpdemux2 libjpeg-dev
+    pip3 install pillow
 
 
 Numpy
