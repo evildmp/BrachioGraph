@@ -26,10 +26,6 @@ class BrachioGraph:
         pw_down=1100,
     ):
 
-        self.angles_used_1 = set()
-        self.angles_used_2 = set()
-        self.pulse_widths_used_1 = set()
-        self.pulse_widths_used_2 = set()
 
         # set the pantograph geometry
         self.INNER_ARM = inner_arm
@@ -93,6 +89,12 @@ class BrachioGraph:
         # Set the x and y position state, so it knows its current x/y position.
         self.current_x = -self.INNER_ARM
         self.current_y = self.OUTER_ARM
+
+        # Create sets for recording movement of the plotter.
+        self.angles_used_1 = set()
+        self.angles_used_2 = set()
+        self.pulse_widths_used_1 = set()
+        self.pulse_widths_used_2 = set()
 
 
     # ----------------- drawing methods -----------------
@@ -275,25 +277,6 @@ class BrachioGraph:
         while x <= self.bounds[2]:
             self.draw_line((x, top_y), (x, bottom_y))
             x = x + step
-
-        self.pen.up()
-        self.quiet()
-
-
-    def horizontal_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1):
-
-        bounds = bounds or self.bounds
-
-        if not bounds:
-            return "Plotting a test pattern is only possible when BrachioGraph.bounds is set."
-
-        min_x = self.bounds[0]
-        max_x = self.bounds[2]
-        step = (self.bounds[3] - self.bounds[1]) /  lines
-        y = self.bounds[1]
-        while y <= self.bounds[3]:
-            self.draw_line((min_x, y), (max_x, y))
-            y = y + step
 
         self.pen.up()
         self.quiet()
@@ -585,14 +568,33 @@ class BrachioGraph:
     # ----------------- reporting methods -----------------
 
     def report(self):
-        print(self.report_angles())
-        print(self.report_pulse_widths())
 
-    def report_angles(self):
-        return min(self.angles_used_1), max(self.angles_used_1), min(self.angles_used_2), max(self.angles_used_2)
+        if self.angles_used_1 and self.angles_used_2 and self.pulse_widths_used_1 and self.pulse_widths_used_2:
 
-    def report_pulse_widths(self):
-        return min(self.pulse_widths_used_1), max(self.pulse_widths_used_1), min(self.pulse_widths_used_2), max(self.pulse_widths_used_2)
+            print(f"                   Servo 1            Servo 2 ")
+            print(f"               min   max   mid    min   max   mid")
+
+            min1 = min(self.angles_used_1)
+            max1 = max(self.angles_used_1)
+            mid1 = (min1 + max1) / 2
+            min2 = min(self.angles_used_2)
+            max2 = max(self.angles_used_2)
+            mid2 = (min2 + max2) / 2
+
+            print(f"      angles  {min1:>4.0f}  {max1:>4.0f}  {mid1:>4.0f}   {min2:>4.0f}  {max2:>4.0f}  {mid2:>4.0f}")
+
+            min1 = min(self.pulse_widths_used_1)
+            max1 = max(self.pulse_widths_used_1)
+            mid1 = (min1 + max1) / 2
+            min2 = min(self.pulse_widths_used_2)
+            max2 = max(self.pulse_widths_used_2)
+            mid2 = (min2 + max2) / 2
+
+            print(f"pulse-widths  {min1:>4.0f}  {max1:>4.0f}  {mid1:>4.0f}   {min2:>4.0f}  {max2:>4.0f}  {mid2:>4.0f}")
+
+        else:
+
+            print("No data recorded yet. Try calling the BrachioGraph.box() method first.")
 
 
 class Pen:
