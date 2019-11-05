@@ -28,7 +28,7 @@ Assembly
 The shoulder motor
 ~~~~~~~~~~~~~~~~~~
 
-Attach a server to the base, either by gluing it or attaching it some other way; two ways are shown below. It needs to
+Attach a servo to the base, either by gluing it or attaching it some other way; two ways are shown below. It needs to
 be raised a little above the level of the base.
 
 .. image:: /images/shoulder-servo-mounting.jpg
