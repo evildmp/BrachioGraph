@@ -59,10 +59,10 @@ Eject the card and put it into the Pi and start it up.
 Connect to the Pi via OTG USB
 -----------------------------
 
-Connect a USB cable to the USB port from your own computer.
+Connect a USB cable to the USB port from your own computer, using the center most usb port on the Raspberry Pi.
 
 After a while, your machine's networking configuration should show the Raspberry Pi. On a Macintosh, it will show up
-as ``RNDIS/Ethernet Gadget``.
+as ``RNDIS/Ethernet Gadget``. On Ubuntu it will show up as an ethernet device named "Wired connection #", and you will need to go into the `IPv4 Settings` configuration tab and set the method to `Shared to other computers`.
 
 You should be able to SSH into it::
 
@@ -85,6 +85,8 @@ Share your Internet connection to the Pi
 ----------------------------------------
 
 On a Macintosh, this is available via the Sharing Preference Pane.
+
+On Ubuntu this was taken care of earlier with the `Shared to other computers` setting.
 
 Check that you can ping an external site from the Pi.
 
