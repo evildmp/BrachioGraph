@@ -59,7 +59,8 @@ Eject the card and put it into the Pi and start it up.
 Connect to the Pi via OTG USB
 -----------------------------
 
-Connect a USB cable to the USB port from your own computer, using the center most usb port on the Raspberry Pi.
+Connect a USB cable to the USB port (marked *USB*, not to be confused with the *PWR* port next to it) from your own
+computer. This will provide power *and* establish an Ethernet connection to the Pi.
 
 After a while, your machine's networking configuration should show the Raspberry Pi.
 
