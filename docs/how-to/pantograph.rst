@@ -6,7 +6,7 @@ How to build and use a PantoGraph
 The PantoGraph is an earlier version of the plotter that uses a slightly different design. The PantoGraph is more
 complex to build, and its geometry imposes some limitations on its range of movement.
 
-It's important to understand that while the BrachipGraph arms can move safely through most of their travel, for the
+It's important to understand that while the BrachioGraph arms can move safely through most of their travel, for the
 PantoGraph there are many more combinations of angles that put them into impossible positions, which makes setting it
 up more challenging.
 
