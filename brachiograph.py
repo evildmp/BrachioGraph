@@ -93,7 +93,7 @@ class BrachioGraph:
     # ----------------- drawing methods -----------------
 
 
-    def plot_file(self, filename="", wait=.1, interpolate=10, bounds=None):
+    def plot_file(self, filename="", wait=.1, interpolate=10, bounds=None, pre_start=False):
 
         bounds = bounds or self.bounds
 
@@ -103,10 +103,10 @@ class BrachioGraph:
         with open(filename, "r") as line_file:
             lines = json.load(line_file)
 
-        self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, bounds=bounds, flip=True)
+        self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, pre_start=pre_start, bounds=bounds, flip=True)
 
 
-    def plot_lines(self, lines=[], wait=.1, interpolate=10, rotate=False, flip=False, bounds=None):
+    def plot_lines(self, lines=[], wait=.1, interpolate=10, pre_start=False, rotate=False, flip=False, bounds=None):
 
         bounds = bounds or self.bounds
 
@@ -209,30 +209,58 @@ class BrachioGraph:
                 point[1] = y
 
         for line in tqdm.tqdm(lines, desc="Lines", leave=False):
+
+            if pre_start:
+                pre_x, pre_y = self.pre_start_position(line[0], line[1])
+                self.xy(x=pre_x, y=pre_y, wait=wait, interpolate=interpolate)
+
             x, y = line[0]
             self.xy(x, y)
             for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
                 x, y = point
-                self.draw(x, y, wait=wait, interpolate=interpolate)
+                self.xy(x, y, wait=wait, interpolate=interpolate, draw=True)
 
         self.park()
         self.quiet()
 
 
-    def draw_line(self, start=(0, 0), end=(0, 0), wait=.5, interpolate=10):
-        start_x, start_y = start
-        end_x, end_y = end
+    def draw_line(self, start=(0, 0), end=(0, 0), wait=.5, interpolate=10, pre_start=False):
+        # draws a straight line between two points
 
-        self.pen.up()
+        if pre_start:
+            pre_x, pre_y = self.pre_start_position(start, end)
+            self.xy(x=pre_x, y=pre_y,     wait=wait, interpolate=interpolate)
+
         self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
-
-        self.pen.down()
-        self.draw(x=end_x, y=end_y, wait=wait, interpolate=interpolate)
+        self.xy(x=end_x, y=end_y,     wait=wait, interpolate=interpolate, draw=True)
 
 
     def draw(self, x=0, y=0, wait=.5, interpolate=10):
         self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
 
+
+    def pre_start_position(self, start=(0, 0), end=(0, 0)):
+        # Returns an x/y position .5cm before the start of the line. Moving the pen from this point before
+        # starting to draw can help eliminate "dead zones" that occur when the mechanism has to change
+        # drawing direction.
+
+        start_x, start_y = start
+        end_x, end_y = end
+
+        diff_x = start_x - end_x
+        diff_y = start_y - end_y
+
+        if diff_x:
+            pre_x = start_x + (diff_x / abs(diff_x) / 2)
+        else:
+            pre_x = start_x
+
+        if diff_y:
+            pre_y = start_y + (diff_y / abs(diff_y) / 2)
+        else:
+            pre_y = start_y
+
+        return (pre_x, pre_y)
 
     # ----------------- test pattern methods -----------------
 
