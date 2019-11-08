@@ -227,9 +227,12 @@ class BrachioGraph:
     def draw_line(self, start=(0, 0), end=(0, 0), wait=.5, interpolate=10, pre_start=False):
         # draws a straight line between two points
 
+        start_x, start_y = start
+        end_x, end_y = end
+
         if pre_start:
             pre_x, pre_y = self.pre_start_position(start, end)
-            self.xy(x=pre_x, y=pre_y,     wait=wait, interpolate=interpolate)
+            self.xy(x=pre_x, y=pre_y, wait=wait, interpolate=interpolate)
 
         self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
         self.xy(x=end_x, y=end_y,     wait=wait, interpolate=interpolate, draw=True)
