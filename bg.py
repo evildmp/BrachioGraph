@@ -43,7 +43,7 @@ bg = BrachioGraph(
     inner_arm=8,
     outer_arm=8,
     # the drawing area
-    bounds=(-8, 3, 8, 14),
+    bounds=(-8, 4, 8, 13),
     # angles in degrees and corresponding pulse-widths for the two arm servos
     servo_1_angle_pws=servo_1_angle_pws1,
     servo_2_angle_pws=servo_2_angle_pws2,
