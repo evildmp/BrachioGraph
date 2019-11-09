@@ -5,9 +5,9 @@ import readchar
 import math
 import numpy
 import json
-
 import pigpio
 import tqdm
+
 
 class BrachioGraph:
 
@@ -25,6 +25,7 @@ class BrachioGraph:
         pw_up=1500,                 # pulse-widths for pen up/down
         pw_down=1100,
     ):
+
 
         # set the pantograph geometry
         self.INNER_ARM = inner_arm
@@ -88,6 +89,12 @@ class BrachioGraph:
         # Set the x and y position state, so it knows its current x/y position.
         self.current_x = -self.INNER_ARM
         self.current_y = self.OUTER_ARM
+
+        # Create sets for recording movement of the plotter.
+        self.angles_used_1 = set()
+        self.angles_used_2 = set()
+        self.pulse_widths_used_1 = set()
+        self.pulse_widths_used_2 = set()
 
 
     # ----------------- drawing methods -----------------
@@ -216,7 +223,6 @@ class BrachioGraph:
                 self.draw(x, y, wait=wait, interpolate=interpolate)
 
         self.park()
-        self.quiet()
 
 
     def draw_line(self, start=(0, 0), end=(0, 0), wait=.5, interpolate=10):
@@ -252,8 +258,7 @@ class BrachioGraph:
                 self.xy(bounds[2],   y + 1, wait, interpolate)
                 self.draw(bounds[0], y + 1, wait, interpolate)
 
-        self.pen.up()
-        self.quiet()
+        self.park()
 
 
     def vertical_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1):
@@ -272,7 +277,6 @@ class BrachioGraph:
             x = x + step
 
         self.park()
-        self.quiet()
 
 
     def horizontal_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1):
@@ -291,7 +295,6 @@ class BrachioGraph:
             y = y + step
 
         self.park()
-        self.quiet()
 
 
     def box(self, bounds=None, wait=.15, interpolate=10, repeat=1, reverse=False):
@@ -319,9 +322,7 @@ class BrachioGraph:
                 self.draw(bounds[2], bounds[1], wait, interpolate)
                 self.draw(bounds[0], bounds[1], wait, interpolate)
 
-        self.pen.up()
-
-        self.quiet()
+        self.park()
 
 
     # ----------------- pen-moving methods -----------------
@@ -331,7 +332,6 @@ class BrachioGraph:
 
         if not self.bounds:
             return "Moving to the centre is only possible when BrachioGraph.bounds is set."
-
 
         self.pen.up()
         self.xy(self.bounds[2]/2, self.bounds[3]/2)
@@ -399,9 +399,13 @@ class BrachioGraph:
 
         self.set_pulse_widths(pw_1, pw_2)
 
-
         # We record the angles, so we that we know where the arms are for future reference.
         self.angle_1, self.angle_2 = angle_1, angle_2
+
+        self.angles_used_1.add(angle_1)
+        self.angles_used_2.add(angle_2)
+        self.pulse_widths_used_1.add(pw_1)
+        self.pulse_widths_used_2.add(pw_2)
 
 
     #  ----------------- hardware-related methods -----------------
@@ -444,6 +448,8 @@ class BrachioGraph:
 
         self.pen.up()
         self.xy(-self.INNER_ARM, self.OUTER_ARM)
+        sleep(1)
+        self.quiet()
 
 
     def quiet(self, servos=[14, 15, 18]):
@@ -571,6 +577,38 @@ class BrachioGraph:
             print(self.current_x, self.current_y)
 
             self.xy(self.current_x, self.current_y)
+
+
+    # ----------------- reporting methods -----------------
+
+    def report(self):
+
+        if self.angles_used_1 and self.angles_used_2 and self.pulse_widths_used_1 and self.pulse_widths_used_2:
+
+            print(f"                   Servo 1            Servo 2 ")
+            print(f"               min   max   mid    min   max   mid")
+
+            min1 = min(self.angles_used_1)
+            max1 = max(self.angles_used_1)
+            mid1 = (min1 + max1) / 2
+            min2 = min(self.angles_used_2)
+            max2 = max(self.angles_used_2)
+            mid2 = (min2 + max2) / 2
+
+            print(f"      angles  {min1:>4.0f}  {max1:>4.0f}  {mid1:>4.0f}   {min2:>4.0f}  {max2:>4.0f}  {mid2:>4.0f}")
+
+            min1 = min(self.pulse_widths_used_1)
+            max1 = max(self.pulse_widths_used_1)
+            mid1 = (min1 + max1) / 2
+            min2 = min(self.pulse_widths_used_2)
+            max2 = max(self.pulse_widths_used_2)
+            mid2 = (min2 + max2) / 2
+
+            print(f"pulse-widths  {min1:>4.0f}  {max1:>4.0f}  {mid1:>4.0f}   {min2:>4.0f}  {max2:>4.0f}  {mid2:>4.0f}")
+
+        else:
+
+            print("No data recorded yet. Try calling the BrachioGraph.box() method first.")
 
 
 class Pen:

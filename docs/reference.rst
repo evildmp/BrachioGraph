@@ -40,6 +40,29 @@ The ``BrachioGraph`` class
   servo horn at a different angle than to change these.
 
 
+Reporting methods
+~~~~~~~~~~~~~~~~~
+
+``report()``
+^^^^^^^^^^^^
+
+The BrachioGraph instance has four attributes, ``angles_used_1``, ``angles_used_2``, ``pulse_widths_used_1``,
+``pulse_widths_used_2``. They are all Python sets. Each time the ``set_angles`` method is called, it records the angle
+and pulse-width recorded for each of the two arm servos.
+
+This creates a running record of all the positions the arms have been in.
+
+After the arm has finished drawing, you can find the minimums, maximums and mid-points::
+
+    >>> bg.report()
+                   min   max   mid    min   max   mid
+          angles  -124     7   -59     43   154    99
+    pulse-widths   771  2048  1410   1047  2063  1555
+
+In this case, it's good to know that the mid-points in the range both servos have covered while plotting all over the
+paper are not too far from 1500ms - which means that their range is reasonably well centred.
+
+
 The ``Pen`` class
 ---------------------------
 
