@@ -12,6 +12,7 @@ The ``BrachioGraph`` class
           self,
           inner_arm,
           outer_arm,
+          virtual_mode=False,
           bounds=None,
           servo_1_zero=1500,
           servo_2_zero=1500,
@@ -26,6 +27,7 @@ The ``BrachioGraph`` class
 * ``inner_arm``, ``outer_arm`` need to be measured from the actual plotter. They don't need to be equal, but some
   combinations are uselessly restrictive. Use the ``turtle_draw.py`` script to :ref:`see how different geometries
   affect the plottable area <visualise-area>`.
+* ``virtual_mode`` allows you to :ref:`run a BrachioGraph without hardware attached <virtual_mode>`
 * ``bounds`` needs to be determined empirically. Or possibly, `computed
   <https://math.stackexchange.com/questions/3293200/how-can-i-calculate-the-area-reachable-by-the-tip-of-an-articulated-
   arm#comment6773872_3293200>`_.

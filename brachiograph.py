@@ -5,7 +5,14 @@ import readchar
 import math
 import numpy
 import json
-import pigpio
+
+try:
+    import pigpio
+    force_virtual_mode = False
+except ModuleNotFoundError:
+    print("pigpio not installed, running in test mode")
+    force_virtual_mode = True
+
 import tqdm
 
 
@@ -15,6 +22,7 @@ class BrachioGraph:
         self,
         inner_arm,                  # the lengths of the arms
         outer_arm,
+        virtual_mode = False,
         bounds=None,                # the maximum rectangular drawing area
         servo_1_angle_pws=[],       # pulse-widths for various angles
         servo_2_angle_pws=[],
@@ -30,6 +38,8 @@ class BrachioGraph:
         # set the pantograph geometry
         self.INNER_ARM = inner_arm
         self.OUTER_ARM = outer_arm
+
+        self.virtual_mode = virtual_mode or force_virtual_mode
 
         # the box bounds describe a rectangle that we can safely draw in
         self.bounds = bounds
@@ -68,21 +78,36 @@ class BrachioGraph:
             self.servo_2_zero = servo_2_zero
             self.servo_2_degree_ms = servo_2_degree_ms
 
-        # instantiate this Raspberry Pi as a pigpio.pi() instance
-        self.rpi = pigpio.pi()
+        if self.virtual_mode:
 
-        # the pulse frequency should be no higher than 100Hz - higher values could (supposedly) damage the servos
-        self.rpi.set_PWM_frequency(14, 50)
-        self.rpi.set_PWM_frequency(15, 50)
+            print("Initialising virtual BrachioGraph")
 
-        # create the pen object, and make sure the pen is up
-        self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down)
+            # create the pen object, and make sure the pen is up
+            self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down)
+            self.virtual_pw_1 = self.angles_to_pw_1(-90)
+            self.virtual_pw_2 = self.angles_to_pw_2(90)
 
-        # Initialise the pantograph with the motors in the centre of their travel
-        self.rpi.set_servo_pulsewidth(14, self.angles_to_pw_1(-90))
-        sleep(0.3)
-        self.rpi.set_servo_pulsewidth(15, self.angles_to_pw_2(90))
-        sleep(0.3)
+            print("    Pen is up")
+            print("    Pulse-width 1", self.virtual_pw_1)
+            print("    Pulse-width 2", self.virtual_pw_2)
+
+        else:
+
+            # instantiate this Raspberry Pi as a pigpio.pi() instance
+            self.rpi = pigpio.pi()
+
+            # the pulse frequency should be no higher than 100Hz - higher values could (supposedly) damage the servos
+            self.rpi.set_PWM_frequency(14, 50)
+            self.rpi.set_PWM_frequency(15, 50)
+
+            # create the pen object, and make sure the pen is up
+            self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down)
+
+            # Initialise the pantograph with the motors in the centre of their travel
+            self.rpi.set_servo_pulsewidth(14, self.angles_to_pw_1(-90))
+            sleep(0.3)
+            self.rpi.set_servo_pulsewidth(15, self.angles_to_pw_2(90))
+            sleep(0.3)
 
         # Now the plotter is in a safe physical state.
 
@@ -471,14 +496,33 @@ class BrachioGraph:
 
     def set_pulse_widths(self, pw_1, pw_2):
 
-        self.rpi.set_servo_pulsewidth(14, pw_1)
-        self.rpi.set_servo_pulsewidth(15, pw_2)
+        if self.virtual_mode:
+
+            if (500 < pw_1 < 2500) and (500 < pw_2 < 2500):
+
+                self.virtual_pw_1 = self.angles_to_pw_1(pw_1)
+                self.virtual_pw_2 = self.angles_to_pw_2(pw_2)
+
+            else:
+               raise ValueError
+
+        else:
+
+            self.rpi.set_servo_pulsewidth(14, pw_1)
+            self.rpi.set_servo_pulsewidth(15, pw_2)
 
 
     def get_pulse_widths(self):
 
-        actual_pulse_width_1 = self.rpi.get_servo_pulsewidth(14)
-        actual_pulse_width_2 = self.rpi.get_servo_pulsewidth(15)
+        if self.virtual_mode:
+
+            actual_pulse_width_1 = self.virtual_pw_1
+            actual_pulse_width_2 = self.virtual_pw_2
+
+        else:
+
+            actual_pulse_width_1 = self.rpi.get_servo_pulsewidth(14)
+            actual_pulse_width_2 = self.rpi.get_servo_pulsewidth(15)
 
         return (actual_pulse_width_1, actual_pulse_width_2)
 
@@ -486,6 +530,9 @@ class BrachioGraph:
     def park(self):
 
         # parks the plotter
+
+        if self.virtual_mode:
+            print("Parking")
 
         self.pen.up()
         self.xy(-self.INNER_ARM, self.OUTER_ARM)
@@ -497,8 +544,13 @@ class BrachioGraph:
 
         # stop sending pulses to the servos
 
-        for servo in servos:
-            self.rpi.set_servo_pulsewidth(servo, 0)
+        if self.virtual_mode:
+            print("Going quiet")
+
+        else:
+
+            for servo in servos:
+                self.rpi.set_servo_pulsewidth(servo, 0)
 
 
     # ----------------- trigonometric methods -----------------
@@ -662,8 +714,15 @@ class Pen:
         self.pw_down = pw_down
         self.transition_time = transition_time
 
-        self.rpi = pigpio.pi()
-        self.rpi.set_PWM_frequency(self.pin, 50)
+        if bg.virtual_mode:
+
+            print("Initialising virtual Pen")
+            self.virtual_mode = True
+
+        else:
+
+            self.rpi = pigpio.pi()
+            self.rpi.set_PWM_frequency(self.pin, 50)
 
         self.up()
         sleep(0.3)
@@ -674,16 +733,37 @@ class Pen:
 
 
     def down(self):
-        self.rpi.set_servo_pulsewidth(self.pin, self.pw_down)
-        sleep(self.transition_time)
+
+        if self.virtual_mode:
+
+            self.virtual_pw = self.pw_down
+
+        else:
+
+            self.rpi.set_servo_pulsewidth(self.pin, self.pw_down)
+            sleep(self.transition_time)
 
 
     def up(self):
-        self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
 
-        sleep(self.transition_time)
+        if self.virtual_mode:
+
+            self.virtual_pw = self.pw_up
+
+        else:
+
+            self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
+            sleep(self.transition_time)
 
 
     # for convenience, a quick way to set pen motor pulse-widths
     def pw(self, pulse_width):
-        self.rpi.set_servo_pulsewidth(self.pin, pulse_width)
+
+        if self.virtual_mode:
+
+            self.virtual_pw = pulse_width
+
+        else:
+
+            self.rpi.set_servo_pulsewidth(self.pin, pulse_width)
+
