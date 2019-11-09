@@ -23,6 +23,7 @@ class BrachioGraph:
         inner_arm,                  # the lengths of the arms
         outer_arm,
         virtual_mode = False,
+        wait=None,
         bounds=None,                # the maximum rectangular drawing area
         servo_1_angle_pws=[],       # pulse-widths for various angles
         servo_2_angle_pws=[],
@@ -87,6 +88,9 @@ class BrachioGraph:
             self.virtual_pw_1 = self.angles_to_pw_1(-90)
             self.virtual_pw_2 = self.angles_to_pw_2(90)
 
+            # by default in virtual mode, we use a wait factor of 0 for speed
+            self.wait = wait or 0
+
             print("    Pen is up")
             print("    Pulse-width 1", self.virtual_pw_1)
             print("    Pulse-width 2", self.virtual_pw_2)
@@ -109,6 +113,10 @@ class BrachioGraph:
             self.rpi.set_servo_pulsewidth(15, self.angles_to_pw_2(90))
             sleep(0.3)
 
+            # by default we use a wait factor of 0.1 for accuracy
+            self.wait = wait or .1
+
+
         # Now the plotter is in a safe physical state.
 
         # Set the x and y position state, so it knows its current x/y position.
@@ -125,8 +133,9 @@ class BrachioGraph:
     # ----------------- drawing methods -----------------
 
 
-    def plot_file(self, filename="", wait=.1, interpolate=10, bounds=None, pre_start=False):
+    def plot_file(self, filename="", wait=0, interpolate=10, bounds=None, pre_start=False):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -138,8 +147,9 @@ class BrachioGraph:
         self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, pre_start=pre_start, bounds=bounds, flip=True)
 
 
-    def plot_lines(self, lines=[], wait=.1, interpolate=10, pre_start=False, rotate=False, flip=False, bounds=None):
+    def plot_lines(self, lines=[], wait=0, interpolate=10, pre_start=False, rotate=False, flip=False, bounds=None):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -255,8 +265,10 @@ class BrachioGraph:
         self.park()
 
 
-    def draw_line(self, start=(0, 0), end=(0, 0), wait=.5, interpolate=10, pre_start=False):
+    def draw_line(self, start=(0, 0), end=(0, 0), wait=0, interpolate=10, pre_start=False):
         # draws a straight line between two points
+
+        wait = wait or self.wait
 
         start_x, start_y = start
         end_x, end_y = end
@@ -269,7 +281,10 @@ class BrachioGraph:
         self.xy(x=end_x, y=end_y,     wait=wait, interpolate=interpolate, draw=True)
 
 
-    def draw(self, x=0, y=0, wait=.5, interpolate=10):
+    def draw(self, x=0, y=0, wait=0, interpolate=10):
+
+        wait = wait or self.wait
+
         self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
 
 
@@ -298,8 +313,9 @@ class BrachioGraph:
 
     # ----------------- test pattern methods -----------------
 
-    def test_pattern(self, bounds=None, wait=1, interpolate=10, repeat=1):
+    def test_pattern(self, bounds=None, wait=0, interpolate=10, repeat=1):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -317,8 +333,9 @@ class BrachioGraph:
         self.park()
 
 
-    def vertical_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1, reverse=False):
+    def vertical_lines(self, bounds=None, lines=25, wait=0, interpolate=10, repeat=1, reverse=False):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -340,8 +357,9 @@ class BrachioGraph:
         self.park()
 
 
-    def horizontal_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1, reverse=False):
+    def horizontal_lines(self, bounds=None, lines=25, wait=0, interpolate=10, repeat=1, reverse=False):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -363,8 +381,9 @@ class BrachioGraph:
         self.park()
 
 
-    def box(self, bounds=None, wait=.15, interpolate=10, repeat=1, reverse=False):
+    def box(self, bounds=None, wait=0, interpolate=10, repeat=1, reverse=False):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -405,8 +424,10 @@ class BrachioGraph:
         self.quiet()
 
 
-    def xy(self, x=0, y=0, wait=.1, interpolate=10, draw=False):
+    def xy(self, x=0, y=0, wait=0, interpolate=10, draw=False):
         # Moves the pen to the xy position; optionally draws
+
+        wait = wait or self.wait
 
         if draw:
             self.pen.down()
