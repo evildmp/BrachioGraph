@@ -94,9 +94,9 @@ The ``linedraw`` library
     def vectorise(
         image_filename,
         resolution=1024,
-        draw_hatch=True,
-        hatch_size = 16,
-        draw_contours=True,
+        draw_hatch=False,
+        hatch_size=16,
+        draw_contours=False,
         contour_simplify=1,
         ):
 
@@ -108,6 +108,8 @@ The ``linedraw`` library
 * ``hatch_size``: smaller is more detailed, and slower
 * ``draw_contours``: find and draw outlines
 * ``contour_simplify``: smaller is more detailed, and slower
+
+At least one of ``draw_hatch`` and ``draw_contours`` must be provided.
 
 It's worth experimenting with these values. Note that ``hatch_size`` and ``contour_simplify`` can be less than 1.
 
