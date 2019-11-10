@@ -94,24 +94,24 @@ The ``linedraw`` library
     def vectorise(
         image_filename,
         resolution=1024,
-        draw_hatch=False,
-        hatch_size=16,
-        draw_contours=False,
-        contour_simplify=1,
+        draw_hatch=False,     # suggested value: 16
+        draw_contours=False,  # suggested value: 2
         ):
 
 * ``image_filename``:  all images are expected to be found in the ``images`` directory
 * ``resolution``: the number of points that will be processed across the largest dimension of the image - larger is
   more detailed, but slower - and you're unlikely to find that the resolution of the plotter itself merits increasing
   this value
-* ``draw_hatch``: should the vectorisation attempt to hatch (shade) the processed image?
-* ``hatch_size``: smaller is more detailed, and slower
-* ``draw_contours``: find and draw outlines
-* ``contour_simplify``: smaller is more detailed, and slower
+* ``draw_hatch``: hatch (shade) the processed image, using the value provided (smaller is more detailed, and slower).
+* ``draw_contours``: find and draw outlines, using the value provided (smaller is more detailed, and slower)
 
 At least one of ``draw_hatch`` and ``draw_contours`` must be provided.
 
-It's worth experimenting with these values. Note that ``hatch_size`` and ``contour_simplify`` can be less than 1.
+It's worth experimenting with these values.
+
+Start with a ``contour_simplify`` of 2, and then values between 0.5 and 4.
+
+Start with a ``hatch_size`` of 16, and then values between 8 and 16.
 
 ``vectorise`` returns a list of ``lines``, each of which is a list of points. It also creates an SVG file at ``images/<image_filename>.svg``, to give you an idea of the vectorised version.
 
@@ -121,4 +121,5 @@ It's worth experimenting with these values. Note that ``hatch_size`` and ``conto
 
 ``image_to_json()`` takes the same parameters, but saves the result as a JSON file.
 
-``image_to_json("africa.jpg")`` will save a file at ``images/africa.jpg.json`` (and also creates an SVG file, at ``images/africa.jpg.svg``).
+``image_to_json("africa.jpg", draw_hatch=16, draw_contours=2)`` will save a file at ``images/africa.jpg.json`` (and
+also creates an SVG file, at ``images/africa.jpg.svg``).

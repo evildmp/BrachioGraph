@@ -26,7 +26,7 @@ Convert an image to lines using ``vectorise()``
 
 In the ``images`` directory, you'll find an image named ``africa.jpg``. To vectorise it, run::
 
-    lines = vectorise("africa.jpg")
+    lines = vectorise("africa.jpg", draw_hatch=16, draw_contours=2)
 
 This will generate two things:
 
@@ -36,7 +36,7 @@ This will generate two things:
 You can supply various parameters to ``vectorise()`` to control how it processes the image. For example, a faster
 result can be obtained by not hatching the image::
 
-    lines = vectorise("africa.jpg", draw_hatch=False )
+    lines = vectorise("africa.jpg", draw_hatch=False, draw_contours=2)
 
 See :ref:`vectorise` for more details of the parameters it takes.
 

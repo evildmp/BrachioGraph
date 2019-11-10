@@ -5,6 +5,7 @@ from random import *
 import math
 import argparse
 import json
+import time
 
 from PIL import Image, ImageDraw, ImageOps
 
@@ -28,14 +29,14 @@ except:
 
 def image_to_json(
     image_filename, resolution=1024,
-    draw_contours=False, contour_simplify=1,
-    draw_hatch=False, hatch_size=16,
+    draw_contours=False,
+    draw_hatch=False,
     ):
 
     lines=vectorise(
         image_filename, resolution,
-        draw_contours, contour_simplify,
-        draw_hatch, hatch_size,
+        draw_contours,
+        draw_hatch
         )
 
     filename = json_folder + image_filename + ".json"
@@ -86,8 +87,8 @@ def draw(lines):
 
 def vectorise(
     image_filename, resolution=1024,
-    draw_contours=False, contour_simplify=1,
-    draw_hatch=False, hatch_size=16,
+    draw_contours=False,
+    draw_hatch=False,
     ):
 
     image = None
@@ -117,16 +118,16 @@ def vectorise(
 
     if draw_contours:
         lines += sortlines(getcontours(
-            image.resize((int(resolution/contour_simplify), int(resolution/contour_simplify*h/w))),
-            contour_simplify,
+            image.resize((int(resolution/draw_contours), int(resolution/draw_contours*h/w))),
+            draw_contours,
         ))
 
     if draw_hatch:
         lines += sortlines(
             hatch(
                 # image,
-                image.resize((int(resolution/hatch_size), int(resolution/hatch_size*h/w))),
-                hatch_size,
+                image.resize((int(resolution/draw_hatch), int(resolution/draw_hatch*h/w))),
+                draw_hatch,
             )
         )
 
@@ -143,11 +144,11 @@ def vectorise(
 
 # -------------- vectorisation options --------------
 
-def getcontours(IM,sc=2):
+def getcontours(image, draw_contours=2):
     print("generating contours...")
-    IM = find_edges(IM)
-    IM1 = IM.copy()
-    IM2 = IM.rotate(-90,expand=True).transpose(Image.FLIP_LEFT_RIGHT)
+    image = find_edges(image)
+    IM1 = image.copy()
+    IM2 = image.rotate(-90,expand=True).transpose(Image.FLIP_LEFT_RIGHT)
     dots1 = getdots(IM1)
     contours1 = connectdots(dots1)
     dots2 = getdots(IM2)
@@ -171,13 +172,13 @@ def getcontours(IM,sc=2):
     contours = [c for c in contours if len(c) > 1]
 
     for i in range(0,len(contours)):
-        contours[i] = [(v[0]*sc,v[1]*sc) for v in contours[i]]
+        contours[i] = [(v[0]*draw_contours,v[1]*draw_contours) for v in contours[i]]
 
     return contours
 
 
 # improved, faster and easier to understand hatching
-def hatch(image, hatch_size=16):
+def hatch(image, draw_hatch=16):
 
     t0 = time.time()
 
@@ -190,8 +191,8 @@ def hatch(image, hatch_size=16):
         # print("reading x", x0)
         for y0 in range(h):
             # print("    reading y", x0)
-            x = x0 * hatch_size
-            y = y0 * hatch_size
+            x = x0 * draw_hatch
+            y = y0 * draw_hatch
 
             # don't hatch above a certain level of brightness
             if pixels[x0, y0] > 144:
@@ -199,18 +200,18 @@ def hatch(image, hatch_size=16):
 
             # above 64, draw horizontal lines
             elif pixels[x0,y0] > 64:
-                lg1.append([(x,y+hatch_size/4),(x+hatch_size,y+hatch_size/4)])
+                lg1.append([(x,y+draw_hatch/4),(x+draw_hatch,y+draw_hatch/4)])
 
             # above 16, draw diagonal lines also
             elif pixels[x0,y0] > 16:
-                lg1.append([(x,y+hatch_size/4),(x+hatch_size,y+hatch_size/4)])
-                lg2.append([(x+hatch_size,y),(x,y+hatch_size)])
+                lg1.append([(x,y+draw_hatch/4),(x+draw_hatch,y+draw_hatch/4)])
+                lg2.append([(x+draw_hatch,y),(x,y+draw_hatch)])
 
             # below 16, draw diagonal lines and a second horizontal line
             else:
-                lg1.append([(x,y+hatch_size/4),(x+hatch_size,y+hatch_size/4)])  # horizontal lines
-                lg1.append([(x,y+hatch_size/2+hatch_size/4),(x+hatch_size,y+hatch_size/2+hatch_size/4)])  # horizontal lines with additional offset
-                lg2.append([(x+hatch_size,y),(x,y+hatch_size)])                 # diagonal lines, left
+                lg1.append([(x,y+draw_hatch/4),(x+draw_hatch,y+draw_hatch/4)])  # horizontal lines
+                lg1.append([(x,y+draw_hatch/2+draw_hatch/4),(x+draw_hatch,y+draw_hatch/2+draw_hatch/4)])  # horizontal lines with additional offset
+                lg2.append([(x+draw_hatch,y),(x,y+draw_hatch)])                 # diagonal lines, left
 
     t1 = time.time()
 
