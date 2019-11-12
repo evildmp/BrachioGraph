@@ -292,15 +292,20 @@ class BrachioGraph:
         self.park()
 
 
-    def vertical_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1):
+    def vertical_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1, reverse=False):
 
         bounds = bounds or self.bounds
 
         if not bounds:
             return "Plotting a test pattern is only possible when BrachioGraph.bounds is set."
 
-        top_y =    self.bounds[1]
-        bottom_y = self.bounds[3]
+        if not reverse:
+            top_y =    self.bounds[1]
+            bottom_y = self.bounds[3]
+        else:
+            bottom_y = self.bounds[1]
+            top_y =    self.bounds[3]
+
         step = (self.bounds[2] - self.bounds[0]) /  lines
         x = self.bounds[0]
         while x <= self.bounds[2]:
@@ -310,15 +315,20 @@ class BrachioGraph:
         self.park()
 
 
-    def horizontal_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1):
+    def horizontal_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1, reverse=False):
 
         bounds = bounds or self.bounds
 
         if not bounds:
             return "Plotting a test pattern is only possible when BrachioGraph.bounds is set."
 
-        min_x = self.bounds[0]
-        max_x = self.bounds[2]
+        if not reverse:
+            min_x = self.bounds[0]
+            max_x = self.bounds[2]
+        else:
+            max_x = self.bounds[0]
+            min_x = self.bounds[2]
+
         step = (self.bounds[3] - self.bounds[1]) /  lines
         y = self.bounds[1]
         while y <= self.bounds[3]:
