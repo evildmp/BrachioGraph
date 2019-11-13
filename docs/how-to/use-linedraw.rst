@@ -5,6 +5,19 @@ How to use the ``linedraw.py`` library to vectorise images
 
 The ``linedraw.py`` library converts bitmap images to vectors.
 
+Typically, you will find it more convenient not to run linedraw on the Raspberry Pi itself. Even on a reasonably
+powerful computer, vectorising images can take several seconds or even minutes. On a Pi, that will be slower still.
+
+In addition, you will often want to check the result of the vectorisation before drawing it, so it makes much more
+sense to do it on a computer with a screen attached, which may not be the case for your plotter.
+
+The main use you will have for linedraw is to take a bitmap image file as input, and save the vectorised version
+as:
+
+* an SVG file, to check it
+* a JSON file, to draw with the BrachioGraph.
+
+
 Installation
 ------------
 
@@ -21,40 +34,48 @@ Launch a Python shell, and import ``linedraw`` so you have the functions at your
     from linedraw import *
 
 
+Convert an image to JSON using ``image_to_json()``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the ``images`` directory, you'll find an image named ``africa.jpg``.
+
+To convert it to a JSON file in the same directory, run::
+
+    image_to_json("africa", draw_contours=2, draw_hatch=16)
+
+This means:
+
+* find a file in ``images`` called ``africa`` (or ``africa.jpg``, ``africa.png`` or ``africa.tif``)
+* draw its contours, and hatch lines
+* create a JSON file called ``africa.json`` (or ``africa.jpg.json`` etc)
+* create an SVG file called ``africa.svg`` (or ``africa.jpg.svg`` etc)
+
+A value of ``0`` for ``draw_contours`` or ``draw_hatch`` will turn them off. Smaller values mean more detail, higher
+values mean less. It's worth experimenting with these values. Start with a ``draw_contours`` of 2, and then values
+between 0.5 and 4. Start with a ``draw_hatch`` of 16, and then values between 8 and 16.
+
+You can also provide a value for ``repeat_contours`` and ``repeat_hatch``. For example, ``repeat_contours=3`` means
+that the contour data will be added to the JSON file three times in succession; the effect will be to draw them three
+times instead of just once, so the edges of the final image stand out.
+
+Check the results by opening the SVG file. You can draw the JSON file with ``BrachioGraph.plot_file("<file_name>")``.
+
+
 Convert an image to lines using ``vectorise()``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the ``images`` directory, you'll find an image named ``africa.jpg``. To vectorise it, run::
+If you'd like to get hold of the lines in code to process them in a shell or script, use ``vectorise()``, e.g.
 
     lines = vectorise("africa.jpg", draw_hatch=16, draw_contours=2)
+
+(This is in fact what ``image_to_json()`` uses.)
 
 This will generate two things:
 
 * a list of ``lines``, each of which is a list of points
-* an SVG file at ``images/africa.jpg.svg``, which will give you an idea of the vectorised representation
+* an SVG file as described above, to give you an idea of the vectorised representation
 
-You can supply various parameters to ``vectorise()`` to control how it processes the image. For example, a faster
-result can be obtained by not hatching the image::
-
-    lines = vectorise("africa.jpg", draw_hatch=False, draw_contours=2)
-
-See :ref:`vectorise` for more details of the parameters it takes.
-
-``vectorise()`` is useful when you are experimenting with vectorisation values to determine the best parameters
-for processing a particular image.
-
-
-Convert an image to JSON using ``image_to_json()``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-``image_to_json()`` processes the images as above with ``vectorise()`` (taking the same parameters), and saves the
-information as a JSON file to be used by the plotter.
-
-The output file will be saved in ``images`` with a ``.json`` extension.
-
-To plot the file with the plotter (having :ref:`previously set up a plotter instance <get_started>`)::
-
-    bg.plot_file("<file_name>")
+See :ref:`vectorise` for full details of the parameters it takes.
 
 
 Visualise how the plotter will draw the lines using ``draw()``

@@ -29,14 +29,14 @@ except:
 
 def image_to_json(
     image_filename, resolution=1024,
-    draw_contours=False,
-    draw_hatch=False,
+    draw_contours=False, repeat_contours=1,
+    draw_hatch=False, repeat_hatch=1,
     ):
 
     lines=vectorise(
         image_filename, resolution,
-        draw_contours,
-        draw_hatch
+        draw_contours, repeat_contours,
+        draw_hatch, repeat_hatch,
         )
 
     filename = json_folder + image_filename + ".json"
@@ -87,8 +87,8 @@ def draw(lines):
 
 def vectorise(
     image_filename, resolution=1024,
-    draw_contours=False,
-    draw_hatch=False,
+    draw_contours=False, repeat_contours=1,
+    draw_hatch=False, repeat_hatch=1,
     ):
 
     image = None
@@ -117,19 +117,23 @@ def vectorise(
     lines = []
 
     if draw_contours:
-        lines += sortlines(getcontours(
+        contours = sortlines(getcontours(
             image.resize((int(resolution/draw_contours), int(resolution/draw_contours*h/w))),
-            draw_contours,
+            draw_contours
         ))
+        for r in range(repeat_contours):
+            lines += contours
 
     if draw_hatch:
-        lines += sortlines(
+        hatches = sortlines(
             hatch(
                 # image,
                 image.resize((int(resolution/draw_hatch), int(resolution/draw_hatch*h/w))),
-                draw_hatch,
-            )
-        )
+                draw_hatch
+        ))
+        for r in range(repeat_hatch):
+            lines += hatches
+
 
     f = open(svg_folder + image_filename + ".svg", 'w')
     f.write(makesvg(lines))

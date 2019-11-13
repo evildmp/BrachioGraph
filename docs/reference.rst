@@ -105,13 +105,7 @@ The ``linedraw`` library
 * ``draw_hatch``: hatch (shade) the processed image, using the value provided (smaller is more detailed, and slower).
 * ``draw_contours``: find and draw outlines, using the value provided (smaller is more detailed, and slower)
 
-At least one of ``draw_hatch`` and ``draw_contours`` must be provided.
-
-It's worth experimenting with these values.
-
-Start with a ``contour_simplify`` of 2, and then values between 0.5 and 4.
-
-Start with a ``hatch_size`` of 16, and then values between 8 and 16.
+At least one of ``draw_hatch`` and ``draw_contours`` must be given otherwise nothing will be drawn.
 
 ``vectorise`` returns a list of ``lines``, each of which is a list of points. It also creates an SVG file at ``images/<image_filename>.svg``, to give you an idea of the vectorised version.
 
