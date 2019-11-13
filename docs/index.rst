@@ -33,10 +33,9 @@ BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a libra
 
 You can `follow BrachioGraph on Twitter <https://twitter.com/BrachioGraph>`_.
 
-.. image:: /images/brachiograph-with-kant-portrait.jpg
-   :alt: 'The BrachioGraph plotter'
-   :class: 'main-visual'
+.. raw:: html
 
+    <iframe src="https://player.vimeo.com/video/372867891" width="696" height="392" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
 
 
 The hardware
