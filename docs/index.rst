@@ -29,13 +29,20 @@
 BrachioGraph - the cheapest, simplest possible pen-plotter
 ==========================================================
 
-BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a library of simple Python applications.
-
-You can `follow BrachioGraph on Twitter <https://twitter.com/BrachioGraph>`_.
-
 .. raw:: html
 
     <iframe src="https://player.vimeo.com/video/372867891" width="696" height="392" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+
+BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a library of simple Python applications.
+
+
+.. raw:: html
+
+    <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+    <a href="https://twitter.com/BrachioGraph?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @BrachioGraph</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
 
 
 The hardware
