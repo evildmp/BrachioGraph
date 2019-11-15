@@ -1,5 +1,5 @@
-Reference
-=========
+``brachiograph.py``
+==========================
 
 The ``BrachioGraph`` class
 ---------------------------
@@ -66,7 +66,7 @@ paper are not too far from 1500ms - which means that their range is reasonably w
 The ``Pen`` class
 ---------------------------
 
-A ``BrachioGraph`` instance has an instance of a ``Pen`` class, as ``pen``.
+A ``BrachioGraph`` instance has an instance of a ``Pen`` class, as ``BrachioGraph.pen``.
 
 ::
 
@@ -79,46 +79,3 @@ A ``BrachioGraph`` instance has an instance of a ``Pen`` class, as ``pen``.
             pin=18,                     # the GPIO pin
             transition_time=0.25        # how long to wait for up/down movements
             ):
-
-
-The ``linedraw`` library
-------------------------
-
-.. _vectorise:
-
-``vectorise()``
-~~~~~~~~~~~~~~~
-
-::
-
-    def vectorise(
-        image_filename,
-        resolution=1024,
-        draw_hatch=False,
-        hatch_size=16,
-        draw_contours=False,
-        contour_simplify=1,
-        ):
-
-* ``image_filename``:  all images are expected to be found in the ``images`` directory
-* ``resolution``: the number of points that will be processed across the largest dimension of the image - larger is
-  more detailed, but slower - and you're unlikely to find that the resolution of the plotter itself merits increasing
-  this value
-* ``draw_hatch``: should the vectorisation attempt to hatch (shade) the processed image?
-* ``hatch_size``: smaller is more detailed, and slower
-* ``draw_contours``: find and draw outlines
-* ``contour_simplify``: smaller is more detailed, and slower
-
-At least one of ``draw_hatch`` and ``draw_contours`` must be provided.
-
-It's worth experimenting with these values. Note that ``hatch_size`` and ``contour_simplify`` can be less than 1.
-
-``vectorise`` returns a list of ``lines``, each of which is a list of points. It also creates an SVG file at ``images/<image_filename>.svg``, to give you an idea of the vectorised version.
-
-
-``image_to_json()``
-~~~~~~~~~~~~~~~~~~~
-
-``image_to_json()`` takes the same parameters, but saves the result as a JSON file.
-
-``image_to_json("africa.jpg")`` will save a file at ``images/africa.jpg.json`` (and also creates an SVG file, at ``images/africa.jpg.svg``).
