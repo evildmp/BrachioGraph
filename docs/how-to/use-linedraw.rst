@@ -43,20 +43,35 @@ To convert it to a JSON file in the same directory, run::
 
     image_to_json("africa", draw_contours=2, draw_hatch=16)
 
-This means:
+This wll:
 
 * find a file in ``images`` called ``africa`` (or ``africa.jpg``, ``africa.png`` or ``africa.tif``)
 * draw its contours, and hatch lines
 * create a JSON file called ``africa.json`` (or ``africa.jpg.json`` etc)
 * create an SVG file called ``africa.svg`` (or ``africa.jpg.svg`` etc)
 
-A value of ``0`` for ``draw_contours`` or ``draw_hatch`` will turn them off. Smaller values mean more detail, higher
-values mean less. It's worth experimenting with these values. Start with a ``draw_contours`` of 2, and then values
-between 0.5 and 4. Start with a ``draw_hatch`` of 16, and then values between 8 and 16.
+A value of 0 for ``draw_contours`` or ``draw_hatch`` will turn them off.
 
-You can also provide a value for ``repeat_contours`` and ``repeat_hatch``. For example, ``repeat_contours=3`` means
-that the contour data will be added to the JSON file three times in succession; the effect will be to draw them three
-times instead of just once, so the edges of the final image stand out.
+**Smaller values mean more detail**, higher values mean less. It's worth experimenting with these values. Start with a
+``draw_contours`` of 2, and then values between 0.5 and 4. Start with a ``draw_hatch`` of 16, and then values between 8
+and 16.
+
+
+Emphasize the edges
+^^^^^^^^^^^^^^^^^^^
+
+You can also provide a value for ``repeat_contours`` (or even ``repeat_hatch``, though this is less useful).
+
+For example, ``repeat_contours=3`` means that the contour data will be added to the JSON file three times in
+succession; the effect will be to draw them three times instead of just once, so the edges of the final image stand
+out. This is especially effective with pencil drawings as in the example below.
+
+.. image:: /images/immanuel-kant.jpg
+   :alt: 'Immanuel Kant'
+
+
+Use the SVG file to check
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Check the results by opening the SVG file. You can draw the JSON file with ``BrachioGraph.plot_file("<file_name>")``.
 
@@ -65,6 +80,8 @@ Convert an image to lines using ``vectorise()``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you'd like to get hold of the lines in code to process them in a shell or script, use ``vectorise()``, e.g.
+
+::
 
     lines = vectorise("africa.jpg", draw_hatch=16, draw_contours=2)
 
