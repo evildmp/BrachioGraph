@@ -131,5 +131,5 @@ About the documentation
 
     Get started <get-started/index>
     How-to guides <how-to/index>
-    Reference <reference/index  >
+    Reference <reference/index>
     Explanation <explanation/index>
