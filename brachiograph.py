@@ -79,12 +79,13 @@ class BrachioGraph:
             self.servo_2_zero = servo_2_zero
             self.servo_2_degree_ms = servo_2_degree_ms
 
+        # create the pen object, and make sure the pen is up
+        self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down, virtual_mode=self.virtual_mode)
+
         if self.virtual_mode:
 
             print("Initialising virtual BrachioGraph")
 
-            # create the pen object, and make sure the pen is up
-            self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down)
             self.virtual_pw_1 = self.angles_to_pw_1(-90)
             self.virtual_pw_2 = self.angles_to_pw_2(90)
 
@@ -103,9 +104,6 @@ class BrachioGraph:
             # the pulse frequency should be no higher than 100Hz - higher values could (supposedly) damage the servos
             self.rpi.set_PWM_frequency(14, 50)
             self.rpi.set_PWM_frequency(15, 50)
-
-            # create the pen object, and make sure the pen is up
-            self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down)
 
             # Initialise the pantograph with the motors in the centre of their travel
             self.rpi.set_servo_pulsewidth(14, self.angles_to_pw_1(-90))
@@ -730,18 +728,17 @@ class BrachioGraph:
 
 class Pen:
 
-    def __init__(self, bg, pw_up=1500, pw_down=1100, pin=18, transition_time=0.25):
+    def __init__(self, bg, pw_up=1500, pw_down=1100, pin=18, transition_time=0.25, virtual_mode=False):
 
         self.bg = bg
         self.pin = pin
         self.pw_up = pw_up
         self.pw_down = pw_down
         self.transition_time = transition_time
-
-        if bg.virtual_mode:
+        self.virtual_mode = virtual_mode
+        if self.virtual_mode:
 
             print("Initialising virtual Pen")
-            self.virtual_mode = True
 
         else:
 
@@ -759,11 +756,9 @@ class Pen:
     def down(self):
 
         if self.virtual_mode:
-
             self.virtual_pw = self.pw_down
 
         else:
-
             self.rpi.set_servo_pulsewidth(self.pin, self.pw_down)
             sleep(self.transition_time)
 
@@ -771,11 +766,9 @@ class Pen:
     def up(self):
 
         if self.virtual_mode:
-
             self.virtual_pw = self.pw_up
 
         else:
-
             self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
             sleep(self.transition_time)
 
@@ -784,10 +777,8 @@ class Pen:
     def pw(self, pulse_width):
 
         if self.virtual_mode:
-
             self.virtual_pw = pulse_width
 
         else:
-
             self.rpi.set_servo_pulsewidth(self.pin, pulse_width)
 
