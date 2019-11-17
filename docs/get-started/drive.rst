@@ -80,7 +80,7 @@ unwanted movement of the pen, so you need to minimise that. You can experiment w
 
     bg.pen.rpi.set_servo_pulsewidth(18, <value>)
 
-to find a good pair of up/down values. Then you can include them in your initialisation of the
+to find a good pair of up/down values (when the pin lifts the pen away from the paper, ``value`` is 1500). Then you can include them in your initialisation of the
 BrachioGraph, by supplying ``pw_up`` and ``pw_down``
 
 Of course your arms may be a few degrees off. Don't worry about that now.
@@ -100,10 +100,10 @@ Controls:
 * s: ``decrease x position 1cm``
 * A: ``increase x position .1cm``
 * S: ``decrease x position .1cm``
-* k: ``increase y position 1cm``
-* l: ``decrease y position 1cm``
-* K: ``increase y position .1cm``
-* L: ``decrease y position .1cm``
+* l: ``increase y position 1cm``
+* k: ``decrease y position 1cm``
+* L: ``increase y position .1cm``
+* K: ``decrease y position .1cm``
 
 Use this to discover the bounds of the box the BrachioGraph can draw.
 
