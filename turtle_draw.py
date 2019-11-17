@@ -6,9 +6,9 @@ import math
 
 # describe the arm and its joints
 
-inner_radius = 4    # the blue (inner) arm
-outer_radius = 4    # the red (outer) arm
-inner_extent = 120          # the arc covered by each of the two joints
+inner_radius = 8      # the blue (inner) arm
+outer_radius = 8      # the red (outer) arm
+inner_extent = 120    # the arcs covered by each of the two joints
 outer_extent = 120
 joint_angle = 90      # the centre of the outer arm relative to the blue arm
 steps = 5             # number of degrees to step between drawing arcs
