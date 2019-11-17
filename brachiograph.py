@@ -155,6 +155,97 @@ class BrachioGraph:
         if not bounds:
             return "Line plotting is only possible when BrachioGraph.bounds is set."
 
+        lines = self.rotate_and_scale_lines(lines=lines, bounds=bounds, flip=True)
+
+        for line in tqdm.tqdm(lines, desc="Lines", leave=False):
+            x, y = line[0]
+            self.xy(x, y)
+            for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
+                x, y = point
+                self.draw(x, y, wait=wait, interpolate=interpolate)
+
+        self.park()
+
+
+    def draw_line(self, start=(0, 0), end=(0, 0), wait=0, interpolate=10):
+
+        wait = wait or self.wait
+
+        start_x, start_y = start
+        end_x, end_y = end
+
+        self.pen.up()
+        self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
+
+        self.pen.down()
+        self.draw(x=end_x, y=end_y, wait=wait, interpolate=interpolate)
+
+
+    def draw(self, x=0, y=0, wait=0, interpolate=10):
+
+        wait = wait or self.wait
+
+        self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
+
+
+    def pre_start_position(self, start=(0, 0), end=(0, 0)):
+        # Returns an x/y position .5cm before the start of the line. Moving the pen from this point before
+        # starting to draw can help eliminate "dead zones" that occur when the mechanism has to change
+        # drawing direction.
+
+        start_x, start_y = start
+        end_x, end_y = end
+
+        diff_x = start_x - end_x
+        diff_y = start_y - end_y
+
+        if diff_x:
+            pre_x = start_x + (diff_x / abs(diff_x) / 2)
+        else:
+            pre_x = start_x
+
+        if diff_y:
+            pre_y = start_y + (diff_y / abs(diff_y) / 2)
+        else:
+            pre_y = start_y
+
+        return (pre_x, pre_y)
+
+
+    # ----------------- line-processing methods -----------------
+
+    def rotate_and_scale_lines(self, lines=[], rotate=False, flip=False, bounds=None):
+
+        rotate, x_mid_point, y_mid_point, box_x_mid_point, box_y_mid_point, divider = self.analyse_lines(
+            lines=lines, rotate=rotate, bounds=bounds
+        )
+
+        for line in lines:
+
+            for point in line:
+                if rotate:
+                    point[0], point[1] = point[1], point[0]
+
+                x = point[0]
+                x = x - x_mid_point         # shift x values so that they have zero as their mid-point
+                x = x / divider             # scale x values to fit in our box width
+                x = x + box_x_mid_point     # shift x values so that they have the box x midpoint as their endpoint
+
+                if flip ^ rotate:
+                    x = -x
+
+                y = point[1]
+                y = y - y_mid_point
+                y = y / divider
+                y = y + box_y_mid_point
+
+                point[0], point[1] = x, y
+
+        return lines
+
+
+    def analyse_lines(self, lines=[], rotate=False, bounds=None):
+
         # lines is a tuple itself containing a number of tuples, each of which contains a number of 2-tuples
         #
         # [                                                                                     # |
@@ -196,22 +287,17 @@ class BrachioGraph:
 
         # Identify the range they span.
 
-        x_range = max_x - min_x
-        y_range = max_y - min_y
+        x_range, y_range = max_x - min_x, max_y - min_y
+        box_x_range, box_y_range = bounds[2] - bounds[0], bounds[3] - bounds[1]
 
-        x_mid_point = (max_x + min_x) / 2
-        y_mid_point = (max_y + min_y) / 2
+        # And their mid-points.
 
-        box_x_range = bounds[2] - bounds[0]
-        box_y_range = bounds[3] - bounds[1]
-
-        box_x_mid_point = (bounds[0] + bounds[2]) / 2
-        box_y_mid_point = (bounds[1] + bounds[3]) / 2
+        x_mid_point, y_mid_point = (max_x + min_x) / 2, (max_y + min_y) / 2
+        box_x_mid_point, box_y_mid_point = (bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2
 
         # Get a 'divider' value for each range - the value by which we must divide all x and y so that they will
         # fit safely inside the drawing range of the plotter.
 
-        #
         # If both image and box are in portrait orientation, or both in landscape, we don't need to rotate the plot.
 
         if (x_range >= y_range and box_x_range >= box_y_range) or (x_range <= y_range and box_x_range <= box_y_range):
@@ -225,91 +311,8 @@ class BrachioGraph:
             rotate = True
             x_mid_point, y_mid_point = y_mid_point, x_mid_point
 
-        # Now, divide each value, and take into account the offset from zero of each range
+        return rotate, x_mid_point, y_mid_point, box_x_mid_point, box_y_mid_point, divider
 
-        for line in lines:
-
-            for point in line:
-                if rotate:
-                    point[0], point[1] = point[1], point[0]
-
-                x = point[0]
-                x = x - x_mid_point         # shift x values so that they have zero as their mid-point
-                x = x / divider             # scale x values to fit in our box width
-                x = x + box_x_mid_point     # shift x values so that they have the box x midpoint as their endpoint
-
-                if flip ^ rotate:
-                    x = -x
-
-                point[0] = x
-
-                y = point[1]
-                y = y - y_mid_point
-                y = y / divider
-                y = y + box_y_mid_point
-
-                point[1] = y
-
-        for line in tqdm.tqdm(lines, desc="Lines", leave=False):
-
-            if pre_start:
-                pre_x, pre_y = self.pre_start_position(line[0], line[1])
-                self.xy(x=pre_x, y=pre_y, wait=wait, interpolate=interpolate)
-
-            x, y = line[0]
-            self.xy(x, y)
-            for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
-                x, y = point
-                self.xy(x, y, wait=wait, interpolate=interpolate, draw=True)
-
-        self.park()
-
-
-    def draw_line(self, start=(0, 0), end=(0, 0), wait=0, interpolate=10, pre_start=False):
-        # draws a straight line between two points
-
-        wait = wait or self.wait
-
-        start_x, start_y = start
-        end_x, end_y = end
-
-        if pre_start:
-            pre_x, pre_y = self.pre_start_position(start, end)
-            self.xy(x=pre_x, y=pre_y, wait=wait, interpolate=interpolate)
-
-        self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
-        self.xy(x=end_x, y=end_y,     wait=wait, interpolate=interpolate, draw=True)
-
-
-    def draw(self, x=0, y=0, wait=0, interpolate=10):
-
-        wait = wait or self.wait
-
-        self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
-
-
-    def pre_start_position(self, start=(0, 0), end=(0, 0)):
-        # Returns an x/y position .5cm before the start of the line. Moving the pen from this point before
-        # starting to draw can help eliminate "dead zones" that occur when the mechanism has to change
-        # drawing direction.
-
-        start_x, start_y = start
-        end_x, end_y = end
-
-        diff_x = start_x - end_x
-        diff_y = start_y - end_y
-
-        if diff_x:
-            pre_x = start_x + (diff_x / abs(diff_x) / 2)
-        else:
-            pre_x = start_x
-
-        if diff_y:
-            pre_y = start_y + (diff_y / abs(diff_y) / 2)
-        else:
-            pre_y = start_y
-
-        return (pre_x, pre_y)
 
     # ----------------- test pattern methods -----------------
 
