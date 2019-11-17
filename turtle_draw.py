@@ -6,9 +6,10 @@ import math
 
 # describe the arm and its joints
 
-inner_radius = 10    # the blue (inner) arm
-outer_radius = 10    # the red (outer) arm
-extent = 180          # the arc covered by each of the two joints
+inner_radius = 4    # the blue (inner) arm
+outer_radius = 4    # the red (outer) arm
+inner_extent = 120          # the arc covered by each of the two joints
+outer_extent = 120
 joint_angle = 90      # the centre of the outer arm relative to the blue arm
 steps = 5             # number of degrees to step between drawing arcs
 draw_arms_every = 10  # the number of degrees between drawing the arms
@@ -23,7 +24,7 @@ class T(Turtle):
         self.width(2)
 
         # only draw the inner arm every draw_arms_every degrees
-        if (angle/draw_arms_every).is_integer() or angle==extent:
+        if (angle/draw_arms_every).is_integer() or angle==inner_extent:
             self.down()
             self.color("blue")
             self.left(angle)
@@ -51,13 +52,13 @@ class T(Turtle):
         self.rt(-90)
 
         # cover the undrawn part of the arc first
-        self.circle(outer_radius * self.multiplier, (360-extent)/2)
+        self.circle(outer_radius * self.multiplier, (360-outer_extent)/2)
 
         # and then the part we want to draw
         self.color("gray")
         self.down()
         self.width(3)
-        self.circle(outer_radius * self.multiplier, extent)
+        self.circle(outer_radius * self.multiplier, outer_extent)
 
 
 def visualise():
@@ -78,7 +79,7 @@ def visualise():
     t.hideturtle()
 
 
-    for angle in range (0, extent+1, steps):
+    for angle in range (0, inner_extent+1, steps):
         t.draw_inner_arm(angle)
         t.draw_outer_arm()
         t.draw_arc()
