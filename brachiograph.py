@@ -5,7 +5,14 @@ import readchar
 import math
 import numpy
 import json
-import pigpio
+
+try:
+    import pigpio
+    force_virtual_mode = False
+except ModuleNotFoundError:
+    print("pigpio not installed, running in test mode")
+    force_virtual_mode = True
+
 import tqdm
 
 
@@ -15,6 +22,8 @@ class BrachioGraph:
         self,
         inner_arm,                  # the lengths of the arms
         outer_arm,
+        virtual_mode = False,
+        wait=None,
         bounds=None,                # the maximum rectangular drawing area
         servo_1_angle_pws=[],       # pulse-widths for various angles
         servo_2_angle_pws=[],
@@ -30,6 +39,8 @@ class BrachioGraph:
         # set the pantograph geometry
         self.INNER_ARM = inner_arm
         self.OUTER_ARM = outer_arm
+
+        self.virtual_mode = virtual_mode or force_virtual_mode
 
         # the box bounds describe a rectangle that we can safely draw in
         self.bounds = bounds
@@ -68,21 +79,41 @@ class BrachioGraph:
             self.servo_2_zero = servo_2_zero
             self.servo_2_degree_ms = servo_2_degree_ms
 
-        # instantiate this Raspberry Pi as a pigpio.pi() instance
-        self.rpi = pigpio.pi()
-
-        # the pulse frequency should be no higher than 100Hz - higher values could (supposedly) damage the servos
-        self.rpi.set_PWM_frequency(14, 50)
-        self.rpi.set_PWM_frequency(15, 50)
-
         # create the pen object, and make sure the pen is up
-        self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down)
+        self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down, virtual_mode=self.virtual_mode)
 
-        # Initialise the pantograph with the motors in the centre of their travel
-        self.rpi.set_servo_pulsewidth(14, self.angles_to_pw_1(-90))
-        sleep(0.3)
-        self.rpi.set_servo_pulsewidth(15, self.angles_to_pw_2(90))
-        sleep(0.3)
+        if self.virtual_mode:
+
+            print("Initialising virtual BrachioGraph")
+
+            self.virtual_pw_1 = self.angles_to_pw_1(-90)
+            self.virtual_pw_2 = self.angles_to_pw_2(90)
+
+            # by default in virtual mode, we use a wait factor of 0 for speed
+            self.wait = wait or 0
+
+            print("    Pen is up")
+            print("    Pulse-width 1", self.virtual_pw_1)
+            print("    Pulse-width 2", self.virtual_pw_2)
+
+        else:
+
+            # instantiate this Raspberry Pi as a pigpio.pi() instance
+            self.rpi = pigpio.pi()
+
+            # the pulse frequency should be no higher than 100Hz - higher values could (supposedly) damage the servos
+            self.rpi.set_PWM_frequency(14, 50)
+            self.rpi.set_PWM_frequency(15, 50)
+
+            # Initialise the pantograph with the motors in the centre of their travel
+            self.rpi.set_servo_pulsewidth(14, self.angles_to_pw_1(-90))
+            sleep(0.3)
+            self.rpi.set_servo_pulsewidth(15, self.angles_to_pw_2(90))
+            sleep(0.3)
+
+            # by default we use a wait factor of 0.1 for accuracy
+            self.wait = wait or .1
+
 
         # Now the plotter is in a safe physical state.
 
@@ -100,8 +131,9 @@ class BrachioGraph:
     # ----------------- drawing methods -----------------
 
 
-    def plot_file(self, filename="", wait=.1, interpolate=10, bounds=None, pre_start=False):
+    def plot_file(self, filename="", wait=0, interpolate=10, bounds=None, pre_start=False):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -113,12 +145,104 @@ class BrachioGraph:
         self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, pre_start=pre_start, bounds=bounds, flip=True)
 
 
-    def plot_lines(self, lines=[], wait=.1, interpolate=10, pre_start=False, rotate=False, flip=False, bounds=None):
+    def plot_lines(self, lines=[], wait=0, interpolate=10, pre_start=False, rotate=False, flip=False, bounds=None):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
             return "Line plotting is only possible when BrachioGraph.bounds is set."
+
+        lines = self.rotate_and_scale_lines(lines=lines, bounds=bounds, flip=True)
+
+        for line in tqdm.tqdm(lines, desc="Lines", leave=False):
+            x, y = line[0]
+            self.xy(x, y)
+            for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
+                x, y = point
+                self.draw(x, y, wait=wait, interpolate=interpolate)
+
+        self.park()
+
+
+    def draw_line(self, start=(0, 0), end=(0, 0), wait=0, interpolate=10):
+
+        wait = wait or self.wait
+
+        start_x, start_y = start
+        end_x, end_y = end
+
+        self.pen.up()
+        self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
+
+        self.pen.down()
+        self.draw(x=end_x, y=end_y, wait=wait, interpolate=interpolate)
+
+
+    def draw(self, x=0, y=0, wait=0, interpolate=10):
+
+        wait = wait or self.wait
+
+        self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
+
+
+    def pre_start_position(self, start=(0, 0), end=(0, 0)):
+        # Returns an x/y position .5cm before the start of the line. Moving the pen from this point before
+        # starting to draw can help eliminate "dead zones" that occur when the mechanism has to change
+        # drawing direction.
+
+        start_x, start_y = start
+        end_x, end_y = end
+
+        diff_x = start_x - end_x
+        diff_y = start_y - end_y
+
+        if diff_x:
+            pre_x = start_x + (diff_x / abs(diff_x) / 2)
+        else:
+            pre_x = start_x
+
+        if diff_y:
+            pre_y = start_y + (diff_y / abs(diff_y) / 2)
+        else:
+            pre_y = start_y
+
+        return (pre_x, pre_y)
+
+
+    # ----------------- line-processing methods -----------------
+
+    def rotate_and_scale_lines(self, lines=[], rotate=False, flip=False, bounds=None):
+
+        rotate, x_mid_point, y_mid_point, box_x_mid_point, box_y_mid_point, divider = self.analyse_lines(
+            lines=lines, rotate=rotate, bounds=bounds
+        )
+
+        for line in lines:
+
+            for point in line:
+                if rotate:
+                    point[0], point[1] = point[1], point[0]
+
+                x = point[0]
+                x = x - x_mid_point         # shift x values so that they have zero as their mid-point
+                x = x / divider             # scale x values to fit in our box width
+                x = x + box_x_mid_point     # shift x values so that they have the box x midpoint as their endpoint
+
+                if flip ^ rotate:
+                    x = -x
+
+                y = point[1]
+                y = y - y_mid_point
+                y = y / divider
+                y = y + box_y_mid_point
+
+                point[0], point[1] = x, y
+
+        return lines
+
+
+    def analyse_lines(self, lines=[], rotate=False, bounds=None):
 
         # lines is a tuple itself containing a number of tuples, each of which contains a number of 2-tuples
         #
@@ -161,22 +285,17 @@ class BrachioGraph:
 
         # Identify the range they span.
 
-        x_range = max_x - min_x
-        y_range = max_y - min_y
+        x_range, y_range = max_x - min_x, max_y - min_y
+        box_x_range, box_y_range = bounds[2] - bounds[0], bounds[3] - bounds[1]
 
-        x_mid_point = (max_x + min_x) / 2
-        y_mid_point = (max_y + min_y) / 2
+        # And their mid-points.
 
-        box_x_range = bounds[2] - bounds[0]
-        box_y_range = bounds[3] - bounds[1]
-
-        box_x_mid_point = (bounds[0] + bounds[2]) / 2
-        box_y_mid_point = (bounds[1] + bounds[3]) / 2
+        x_mid_point, y_mid_point = (max_x + min_x) / 2, (max_y + min_y) / 2
+        box_x_mid_point, box_y_mid_point = (bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2
 
         # Get a 'divider' value for each range - the value by which we must divide all x and y so that they will
         # fit safely inside the drawing range of the plotter.
 
-        #
         # If both image and box are in portrait orientation, or both in landscape, we don't need to rotate the plot.
 
         if (x_range >= y_range and box_x_range >= box_y_range) or (x_range <= y_range and box_x_range <= box_y_range):
@@ -190,91 +309,14 @@ class BrachioGraph:
             rotate = True
             x_mid_point, y_mid_point = y_mid_point, x_mid_point
 
-        # Now, divide each value, and take into account the offset from zero of each range
+        return rotate, x_mid_point, y_mid_point, box_x_mid_point, box_y_mid_point, divider
 
-        for line in lines:
-
-            for point in line:
-                if rotate:
-                    point[0], point[1] = point[1], point[0]
-
-                x = point[0]
-                x = x - x_mid_point         # shift x values so that they have zero as their mid-point
-                x = x / divider             # scale x values to fit in our box width
-                x = x + box_x_mid_point     # shift x values so that they have the box x midpoint as their endpoint
-
-                if flip ^ rotate:
-                    x = -x
-
-                point[0] = x
-
-                y = point[1]
-                y = y - y_mid_point
-                y = y / divider
-                y = y + box_y_mid_point
-
-                point[1] = y
-
-        for line in tqdm.tqdm(lines, desc="Lines", leave=False):
-
-            if pre_start:
-                pre_x, pre_y = self.pre_start_position(line[0], line[1])
-                self.xy(x=pre_x, y=pre_y, wait=wait, interpolate=interpolate)
-
-            x, y = line[0]
-            self.xy(x, y)
-            for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
-                x, y = point
-                self.xy(x, y, wait=wait, interpolate=interpolate, draw=True)
-
-        self.park()
-
-
-    def draw_line(self, start=(0, 0), end=(0, 0), wait=.5, interpolate=10, pre_start=False):
-        # draws a straight line between two points
-
-        start_x, start_y = start
-        end_x, end_y = end
-
-        if pre_start:
-            pre_x, pre_y = self.pre_start_position(start, end)
-            self.xy(x=pre_x, y=pre_y, wait=wait, interpolate=interpolate)
-
-        self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
-        self.xy(x=end_x, y=end_y,     wait=wait, interpolate=interpolate, draw=True)
-
-
-    def draw(self, x=0, y=0, wait=.5, interpolate=10):
-        self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
-
-
-    def pre_start_position(self, start=(0, 0), end=(0, 0)):
-        # Returns an x/y position .5cm before the start of the line. Moving the pen from this point before
-        # starting to draw can help eliminate "dead zones" that occur when the mechanism has to change
-        # drawing direction.
-
-        start_x, start_y = start
-        end_x, end_y = end
-
-        diff_x = start_x - end_x
-        diff_y = start_y - end_y
-
-        if diff_x:
-            pre_x = start_x + (diff_x / abs(diff_x) / 2)
-        else:
-            pre_x = start_x
-
-        if diff_y:
-            pre_y = start_y + (diff_y / abs(diff_y) / 2)
-        else:
-            pre_y = start_y
-
-        return (pre_x, pre_y)
 
     # ----------------- test pattern methods -----------------
 
-    def test_pattern(self, bounds=None, wait=1, interpolate=10, repeat=1):
+    def test_pattern(self, bounds=None, wait=0, interpolate=10, repeat=1):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -292,8 +334,9 @@ class BrachioGraph:
         self.park()
 
 
-    def vertical_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1, reverse=False):
+    def vertical_lines(self, bounds=None, lines=25, wait=0, interpolate=10, repeat=1, reverse=False):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -315,8 +358,9 @@ class BrachioGraph:
         self.park()
 
 
-    def horizontal_lines(self, bounds=None, lines=25, wait=1, interpolate=10, repeat=1, reverse=False):
+    def horizontal_lines(self, bounds=None, lines=25, wait=0, interpolate=10, repeat=1, reverse=False):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -338,8 +382,9 @@ class BrachioGraph:
         self.park()
 
 
-    def box(self, bounds=None, wait=.15, interpolate=10, repeat=1, reverse=False):
+    def box(self, bounds=None, wait=0, interpolate=10, repeat=1, reverse=False):
 
+        wait = wait or self.wait
         bounds = bounds or self.bounds
 
         if not bounds:
@@ -380,8 +425,10 @@ class BrachioGraph:
         self.quiet()
 
 
-    def xy(self, x=0, y=0, wait=.1, interpolate=10, draw=False):
+    def xy(self, x=0, y=0, wait=0, interpolate=10, draw=False):
         # Moves the pen to the xy position; optionally draws
+
+        wait = wait or self.wait
 
         if draw:
             self.pen.down()
@@ -471,14 +518,33 @@ class BrachioGraph:
 
     def set_pulse_widths(self, pw_1, pw_2):
 
-        self.rpi.set_servo_pulsewidth(14, pw_1)
-        self.rpi.set_servo_pulsewidth(15, pw_2)
+        if self.virtual_mode:
+
+            if (500 < pw_1 < 2500) and (500 < pw_2 < 2500):
+
+                self.virtual_pw_1 = self.angles_to_pw_1(pw_1)
+                self.virtual_pw_2 = self.angles_to_pw_2(pw_2)
+
+            else:
+               raise ValueError
+
+        else:
+
+            self.rpi.set_servo_pulsewidth(14, pw_1)
+            self.rpi.set_servo_pulsewidth(15, pw_2)
 
 
     def get_pulse_widths(self):
 
-        actual_pulse_width_1 = self.rpi.get_servo_pulsewidth(14)
-        actual_pulse_width_2 = self.rpi.get_servo_pulsewidth(15)
+        if self.virtual_mode:
+
+            actual_pulse_width_1 = self.virtual_pw_1
+            actual_pulse_width_2 = self.virtual_pw_2
+
+        else:
+
+            actual_pulse_width_1 = self.rpi.get_servo_pulsewidth(14)
+            actual_pulse_width_2 = self.rpi.get_servo_pulsewidth(15)
 
         return (actual_pulse_width_1, actual_pulse_width_2)
 
@@ -486,6 +552,9 @@ class BrachioGraph:
     def park(self):
 
         # parks the plotter
+
+        if self.virtual_mode:
+            print("Parking")
 
         self.pen.up()
         self.xy(-self.INNER_ARM, self.OUTER_ARM)
@@ -497,8 +566,13 @@ class BrachioGraph:
 
         # stop sending pulses to the servos
 
-        for servo in servos:
-            self.rpi.set_servo_pulsewidth(servo, 0)
+        if self.virtual_mode:
+            print("Going quiet")
+
+        else:
+
+            for servo in servos:
+                self.rpi.set_servo_pulsewidth(servo, 0)
 
 
     # ----------------- trigonometric methods -----------------
@@ -654,16 +728,22 @@ class BrachioGraph:
 
 class Pen:
 
-    def __init__(self, bg, pw_up=1500, pw_down=1100, pin=18, transition_time=0.25):
+    def __init__(self, bg, pw_up=1500, pw_down=1100, pin=18, transition_time=0.25, virtual_mode=False):
 
         self.bg = bg
         self.pin = pin
         self.pw_up = pw_up
         self.pw_down = pw_down
         self.transition_time = transition_time
+        self.virtual_mode = virtual_mode
+        if self.virtual_mode:
 
-        self.rpi = pigpio.pi()
-        self.rpi.set_PWM_frequency(self.pin, 50)
+            print("Initialising virtual Pen")
+
+        else:
+
+            self.rpi = pigpio.pi()
+            self.rpi.set_PWM_frequency(self.pin, 50)
 
         self.up()
         sleep(0.3)
@@ -674,16 +754,31 @@ class Pen:
 
 
     def down(self):
-        self.rpi.set_servo_pulsewidth(self.pin, self.pw_down)
-        sleep(self.transition_time)
+
+        if self.virtual_mode:
+            self.virtual_pw = self.pw_down
+
+        else:
+            self.rpi.set_servo_pulsewidth(self.pin, self.pw_down)
+            sleep(self.transition_time)
 
 
     def up(self):
-        self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
 
-        sleep(self.transition_time)
+        if self.virtual_mode:
+            self.virtual_pw = self.pw_up
+
+        else:
+            self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
+            sleep(self.transition_time)
 
 
     # for convenience, a quick way to set pen motor pulse-widths
     def pw(self, pulse_width):
-        self.rpi.set_servo_pulsewidth(self.pin, pulse_width)
+
+        if self.virtual_mode:
+            self.virtual_pw = pulse_width
+
+        else:
+            self.rpi.set_servo_pulsewidth(self.pin, pulse_width)
+
