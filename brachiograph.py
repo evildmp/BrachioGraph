@@ -121,11 +121,7 @@ class BrachioGraph:
         self.current_x = -self.INNER_ARM
         self.current_y = self.OUTER_ARM
 
-        # Create sets for recording movement of the plotter.
-        self.angles_used_1 = set()
-        self.angles_used_2 = set()
-        self.pulse_widths_used_1 = set()
-        self.pulse_widths_used_2 = set()
+        self.reset_report()
 
 
     # ----------------- drawing methods -----------------
@@ -559,7 +555,7 @@ class BrachioGraph:
         self.pen.up()
         self.xy(-self.INNER_ARM, self.OUTER_ARM)
         sleep(1)
-        self.quiet()
+        # self.quiet()
 
 
     def quiet(self, servos=[14, 15, 18]):
@@ -698,19 +694,24 @@ class BrachioGraph:
 
     def report(self):
 
+        print(f"               -----------------|-----------------")
+        print(f"               Servo 1          |  Servo 2        ")
+        print(f"               -----------------|-----------------")
+
+        pw_1, pw_2 = self.get_pulse_widths()
+        print(f"pulse-width               {pw_1:<4.0f}  |             {pw_2:<4.0f}")
+
+        angle_1, angle_2 = self.angle_1, self.angle_2
+
+        if angle_1 and angle_2:
+
+            print(f"      angle               {angle_1:>4.0f}  |             {angle_2:>4.0f}")
+
+        print(f"               -----------------|-----------------")
+        print(f"               min   max   mid  |  min   max   mid")
+        print(f"               -----------------|-----------------")
+
         if self.angles_used_1 and self.angles_used_2 and self.pulse_widths_used_1 and self.pulse_widths_used_2:
-
-            print(f"                   Servo 1            Servo 2 ")
-            print(f"               min   max   mid    min   max   mid")
-
-            min1 = min(self.angles_used_1)
-            max1 = max(self.angles_used_1)
-            mid1 = (min1 + max1) / 2
-            min2 = min(self.angles_used_2)
-            max2 = max(self.angles_used_2)
-            mid2 = (min2 + max2) / 2
-
-            print(f"      angles  {min1:>4.0f}  {max1:>4.0f}  {mid1:>4.0f}   {min2:>4.0f}  {max2:>4.0f}  {mid2:>4.0f}")
 
             min1 = min(self.pulse_widths_used_1)
             max1 = max(self.pulse_widths_used_1)
@@ -719,11 +720,32 @@ class BrachioGraph:
             max2 = max(self.pulse_widths_used_2)
             mid2 = (min2 + max2) / 2
 
-            print(f"pulse-widths  {min1:>4.0f}  {max1:>4.0f}  {mid1:>4.0f}   {min2:>4.0f}  {max2:>4.0f}  {mid2:>4.0f}")
+            print(f"pulse-widths  {min1:>4.0f}  {max1:>4.0f}  {mid1:>4.0f}  | {min2:>4.0f}  {max2:>4.0f}  {mid2:>4.0f}")
+
+            min1 = min(self.angles_used_1)
+            max1 = max(self.angles_used_1)
+            mid1 = (min1 + max1) / 2
+            min2 = min(self.angles_used_2)
+            max2 = max(self.angles_used_2)
+            mid2 = (min2 + max2) / 2
+
+            print(f"      angles  {min1:>4.0f}  {max1:>4.0f}  {mid1:>4.0f}  | {min2:>4.0f}  {max2:>4.0f}  {mid2:>4.0f}")
 
         else:
 
             print("No data recorded yet. Try calling the BrachioGraph.box() method first.")
+
+
+    def reset_report(self):
+
+        self.angle_1 = self.angle_2 = None
+
+        # Create sets for recording movement of the plotter.
+        self.angles_used_1 = set()
+        self.angles_used_2 = set()
+        self.pulse_widths_used_1 = set()
+        self.pulse_widths_used_2 = set()
+
 
 
 class Pen:
