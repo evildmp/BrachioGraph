@@ -111,7 +111,7 @@ Take a note of the ``bounds`` - the box described by ``[<minimum x>, <minimum y,
 
 Reinitialise your plotter with these values::
 
-    bg = BrachioGraph(inner_arm=<inner_arm>, outer_arm=<outer_arm>, bounds=<bounds)
+    bg = BrachioGraph(inner_arm=<inner_arm>, outer_arm=<outer_arm>, bounds=[<minimum x>, <minimum y, <maximum x>, <maximum y>])
 
 
 .. _start-plotting:
