@@ -12,9 +12,9 @@ example, you might:
 
 *Virtual mode* makes this possible.
 
-To invoke virtual mode, instantiate your ``BrachioGraph`` with the ``virtual_mode`` argument::
+To invoke virtual mode, instantiate your ``BrachioGraph`` with the ``virtual_mode`` argument:
 
-..  code-block:: python
+.. code-block:: python
     :emphasize-lines: 3
 
     bg = BrachioGraph(
