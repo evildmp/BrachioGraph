@@ -21,6 +21,20 @@ Create and activate a `Python virtual environment <https://docs.python.org/3/lib
     source env/bin/activate
 
 
+Tl;dr method (3 commands for the lazy):
+~~~~
+`
+    sudo apt-get install pigpiod python3-pip tmux \
+        libwebp6 libtiff5 libjbig0 liblcms2-2 \
+        libwebpmux3 libopenjp2-7 libzstd1 libwebpdemux2 libjpeg-dev \
+        libatlas3-base libgfortran5 \
+        git
+        
+    pip3 install pigpio pillow numpy tqdm readchar
+
+    git clone https://github.com/evildmp/BrachioGraph.git
+`
+
 tmux
 ~~~~
 
@@ -29,7 +43,7 @@ even if your connection is broken, you can re-join the session without losing yo
 
 Install with::
 
-    sudo apt-get install tmux
+    sudo apt-get install tmux 
 
 
 Pip
