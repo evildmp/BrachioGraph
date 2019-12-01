@@ -633,29 +633,34 @@ class BrachioGraph:
         self.set_pulse_widths(pw_1, pw_2)
 
         while True:
-            key = readchar.readchar()
+            key = readchar.readkey()
 
-            if key == "0":
+            # exit
+            if key == "0" or key == 'q':
                 return
-            elif key=="a":
-                pw_1 = pw_1 - 10
-            elif key=="s":
-                pw_1 = pw_1 + 10
+
+            elif key=="a" or key==readchar.key.RIGHT:
+                pw_1 -= 10
             elif key=="A":
-                pw_1 = pw_1 - 1
+                pw_1 -= 1
+            elif key=="s" or key==readchar.key.LEFT:
+                pw_1 += 10
             elif key=="S":
-                pw_1 = pw_1 + 1
-            elif key=="k":
-                pw_2 = pw_2 - 10
-            elif key=="l":
-                pw_2 = pw_2 + 10
+                pw_1 += 1
+
+            elif key=="k" or key==readchar.key.UP:
+                pw_2 -= 10
             elif key=="K":
-                pw_2 = pw_2 - 1
+                pw_2 -= 1
+            elif key=="l" or key==readchar.key.DOWN:
+                pw_2 += 10
             elif key=="L":
-                pw_2 = pw_2 + 1
+                pw_2 += 1
+            else:
+                print('keypress unknown:', key)
+                continue
 
-            print(pw_1, pw_2)
-
+            print("PW1:%s, PW2:%s" % (pw_1, pw_2))
             self.set_pulse_widths(pw_1, pw_2)
 
 
@@ -663,32 +668,39 @@ class BrachioGraph:
 
         # move the pen up/down and left/right using the keyboard
 
+        new_x = self.current_x
+        new_y = self.current_y
+
         while True:
-            key = readchar.readchar()
+            key = readchar.readkey()
 
-            if key == "0":
+            if key == "0" or key == 'q' or key==readchar.key.ESC:
                 return
-            elif key=="a":
-                self.current_x = self.current_x - 1
-            elif key=="s":
-                self.current_x = self.current_x + 1
+            elif key=="a" or key==readchar.key.LEFT:
+                new_x -= 1
             elif key=="A":
-                self.current_x = self.current_x - .1
+                new_x -= .1
+            elif key=="s" or key==readchar.key.RIGHT:
+                new_x += 1
             elif key=="S":
-                self.current_x = self.current_x + .1
-            elif key=="k":
-                self.current_y = self.current_y - 1
-            elif key=="l":
-                self.current_y = self.current_y + 1
+                new_x += .1
+            elif key=="k" or key==readchar.key.DOWN:
+                new_y -= 1
             elif key=="K":
-                self.current_y = self.current_y - .1
+                new_y -= .1
+            elif key=="l" or key==readchar.key.UP:
+                new_y += 1
             elif key=="L":
-                self.current_y = self.current_y + .1
+                new_y += .1
+            else:
+                print('keypress unknown:', key)
+                continue
 
-            print(self.current_x, self.current_y)
-
-            self.xy(self.current_x, self.current_y)
-
+            # Move
+            self.xy(x=new_x, y=new_y)
+            print("X:%0.1f, Y:%0.1f" % (self.current_x, self.current_y))
+            pw_1, pw_2 = self.get_pulse_widths()
+            print("PW1:%s, PW2:%s" % (pw_1, pw_2))
 
     # ----------------- reporting methods -----------------
 
