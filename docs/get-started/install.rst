@@ -21,10 +21,11 @@ Create and activate a `Python virtual environment <https://docs.python.org/3/lib
     source env/bin/activate
 
 
-Tl;dr method (3 commands for the lazy):
-~~~~
-`
-    sudo apt-get install pigpiod python3-pip tmux \
+Tl;dr method
+~~~~~~~~~~~~
+Three commands to install all the suggested packages and download the repo::
+
+    sudo apt-get install tmux python3-pip pigpiod \
         libwebp6 libtiff5 libjbig0 liblcms2-2 \
         libwebpmux3 libopenjp2-7 libzstd1 libwebpdemux2 libjpeg-dev \
         libatlas3-base libgfortran5 \
@@ -33,7 +34,6 @@ Tl;dr method (3 commands for the lazy):
     pip3 install pigpio pillow numpy tqdm readchar
 
     git clone https://github.com/evildmp/BrachioGraph.git
-`
 
 tmux
 ~~~~
