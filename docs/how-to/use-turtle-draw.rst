@@ -1,3 +1,4 @@
+<<<<<<< Local Changes
 How to optimise your plotter's geometry and drawing area
 ========================================================
 
@@ -57,31 +58,21 @@ The examples below will use the script, but you can equally well use the shell t
 things.
 
 
-Draw the class
+Draw the model
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 An example definition is provided in ``bgt.py``. Edit its ``inner_arm`` and ``outer_arm`` values, then run ``python
 bgt.py``.
 
-    ✗ python
-    >>> from bgt import bgt
 
-
-In general, the ``shoulder_centre_angle`` is always going to be less than 0˚ and more than -90˚, for any practical
-BrachioGraph. The ``elbow_centre_angle`` will generally be very close to 90˚.
-
-
-Drawing
--------
-
-You can choose to draw:
+You can choose what to draw by editing the commands in the script:
 
 * a *grid*
 * *arcs* representing sweeps of the outer arm for positions within the sweep of the inner arm
 * the inner and outer *arms* at various positions within the sweep of the inner arm
 * an *outline* of the plotting area
 
-The ``bgt.py`` module draws all of these by default, using their default values.
+The ``bgt.py`` module draws all of these by default:
 
 .. image:: /images/plotter-geometry/understanding-the-plot.png
    :alt: 'Plotting area'
@@ -89,26 +80,26 @@ The ``bgt.py`` module draws all of these by default, using their default values.
 
 
 The grid
-~~~~~~~~
+^^^^^^^^
 
 Draw a grid with the ``draw_grid()`` method. The grid is based on the dimensions of the plotter at the moment it was
 initialised; *although you can can change its arm lengths afterwards, the grid will not reflect this*.
 
 
 The arcs
-~~~~~~~~
+^^^^^^^^
 
 Use ``draw_arcs()`` to fill in the drawing area with a series of arcs.
 
 
 The arms
-~~~~~~~~
+^^^^^^^^
 
 Use ``draw_arms()`` to show the positions of the arms at various intervals.
 
 
 The outline
-~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 ``draw_outline()`` will trace an outline of the drawing area.
 
@@ -135,3 +126,5 @@ See :ref:`understand_plotter_geometry` for how to interpret the output.
 
 You can set the colour of the entir
 
+=======
+>>>>>>> External Changes
