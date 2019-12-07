@@ -4,234 +4,216 @@ from turtle import *
 import math
 
 
-# describe the arm and its joints
+class BrachioGraphTurtle(Turtle):
 
-inner_radius = 8      # the blue (inner) arm
-outer_radius = 8      # the red (outer) arm
-inner_extent = 120    # the arcs covered by each of the two joints
-outer_extent = 120
-joint_angle = 90      # the centre of the outer arm relative to the blue arm
-steps = 5             # number of degrees to step between drawing arcs
-draw_arms_every = 10  # the number of degrees between drawing the arms
+    def __init__(self,
+        inner_arm=8,          # the length of the inner arm (blue)
+        shoulder_centre_angle=0,  # the starting angle of the inner arm, relative to straight ahead
+        shoulder_sweep=180,     # the arc covered by the shoulder motor
+
+        outer_arm=8,          # the length of the outer arm (red)
+        elbow_centre_angle=90,  # the centre of the outer arm relative to the inner arm
+        elbow_sweep=180,        # the arc covered by the elbow motor
+
+        window_size=800,        # width and height of the turtle canvas
+        speed=0                 # how fast to draw
+        ):
+
+        self.inner_arm = inner_arm
+        self.outer_arm = outer_arm
+        self.shoulder_centre_angle = shoulder_centre_angle
+        self.shoulder_sweep = shoulder_sweep
+        self.elbow_centre_angle = elbow_centre_angle
+        self.elbow_sweep = elbow_sweep
+        self.window_size = window_size
+
+        # some basic dimensions of the drawing area
+
+        grid_size = self.window_size / 1.05  # the grid is a little smaller than the window
+
+        # scale the plotter dimensions to fill the screen
+        self.multiplier = grid_size / 2 / (self.inner_arm + self.outer_arm)
+
+        self.reach = self.inner_arm + self.outer_arm  # the maximum possible distance the arms could reach
+        self.draw_reach = self.reach * self.multiplier * 1.05  # maximum possible drawing reacg
+
+        # set up the screen for the turtle
+
+        self.screen = Screen()
+        self.screen.mode("logo")
+        self.screen.title(f"inner length {self.inner_arm}cm • centre {self.shoulder_centre_angle}˚ • sweep {self.shoulder_sweep}˚  •  outer length {self.outer_arm}cm • centre {self.elbow_centre_angle}˚ • sweep {self.elbow_sweep}˚")
+        self.screen.setup(width=window_size, height=window_size)
+
+        super().__init__()
+
+        self.speed(0)
+        self.hideturtle()
+        self.screen.tracer(speed, 0)
 
 
-class T(Turtle):
+    def simple_title(self, title=""):
+        title = title or "BrachioGraph, multiple values"
+        self.screen.title(title)
 
-    def draw_inner_arm(self, angle):
 
-        self.up()
-        self.home()
-        self.width(2)
+    # ----------------- grid drawing methods -----------------
 
-        # only draw the inner arm every draw_arms_every degrees
-        if (angle/draw_arms_every).is_integer() or angle==inner_extent:
-            self.down()
-            self.color("blue")
-            self.left(angle)
-            self.fd(inner_radius * self.multiplier)
-            self.dot(5, "black")
+    def draw_grid(self):
+        self.draw_grid_lines(draw_every=1, color="gray", width=1, include_numbers=False)
+        self.draw_grid_lines(draw_every=5, color="black", width=2, include_numbers=True)
 
-        else:
-            self.left(angle)
-            self.fd(inner_radius * self.multiplier)
+    def draw_grid_lines(self, draw_every=1, color="gray", width=1, include_numbers=False):
 
-    def draw_outer_arm(self):
+        self.color(color)
+        self.width(width)
 
-        self.rt(joint_angle)
-        self.color("red")
-        # go back to the start of the arm before drawing the arc
-        self.fd(outer_radius * self.multiplier)
-        self.fd(-outer_radius * self.multiplier)
+        for i in range(int(-self.reach), int(self.reach +1)):
+            if not (i % draw_every):
 
-    def draw_arc(self):
+                draw_i = i * self.multiplier
+                self.up()
+                self.goto(draw_i, - self.draw_reach)
+                self.down()
+                self.goto(draw_i, self.draw_reach)
+                self.up()
+                self.goto(- self.draw_reach, draw_i)
+                self.down()
+                self.goto(self.draw_reach, draw_i)
+
+                if include_numbers:
+
+                    self.up()
+                    self.goto(i * self.multiplier, - 1 * self.multiplier)
+                    self.write(" " + str(i), move=False, font=("Helvetica", 16, "bold"))
+                    self.goto(- self.reach * self.multiplier, i * self.multiplier)
+                    self.write(i, move=False, font=("Helvetica", 16, "bold"))
+
+
+
+    # ----------------- arc drawing methods -----------------
+
+    def draw_pen_arc(self, width=1, color="black"):
 
         # get the turtle into the correct position for drawing the arc
         self.up()
         self.rt(180)
-        self.fd(outer_radius * self.multiplier)
+        self.fd(self.outer_arm * self.multiplier)
         self.rt(-90)
 
         # cover the undrawn part of the arc first
-        self.circle(outer_radius * self.multiplier, (360-outer_extent)/2)
+        self.circle(self.outer_arm * self.multiplier, (360 - self.elbow_sweep)/2)
 
         # and then the part we want to draw
-        self.color("gray")
+        self.color(color)
         self.down()
-        self.width(3)
-        self.circle(outer_radius * self.multiplier, outer_extent)
+        self.width(width)
+        self.circle(self.outer_arm * self.multiplier, self.elbow_sweep)
 
+    def draw_arms_arc(self, elbow_centre_angle, width, color="black", reverse=False):
 
-def visualise():
+        # how far do we reach from the origin with this elbow angle?
+        reach = math.sqrt(
+            self.inner_arm ** 2 + self.outer_arm ** 2 - 2 * self.inner_arm * self.outer_arm * math.cos(math.radians(
+                # inner angle of the two arms
+                180 - elbow_centre_angle)
+            )
+        )
+        # angle between the inner arm and the line of maximum reach when the inner arm is fully right
+        # avoid a division by zero error
+        if reach == 0:
+            a = 0
+        elif (self.inner_arm ** 2 + reach ** 2 - self.outer_arm ** 2) / (2 * self.inner_arm * reach) > 1:
+            a = 0
+        else:
+            a = math.acos((self.inner_arm ** 2 + reach ** 2 - self.outer_arm ** 2) / (2 * self.inner_arm * reach))
+        # the angle of the the line of maximum relative to 0
+        heading = self.shoulder_centre_angle + self.shoulder_sweep/2 + math.degrees(a)
 
-    # set up the environment
+        if reverse:
+            sweep = self.shoulder_sweep * -1
+            heading = heading - self.shoulder_sweep
+        else:
+            sweep = self.shoulder_sweep
 
-    s = Screen()
-    s.setup(width=800, height=800)
+        self.draw_arc_around_origin(heading, reach, sweep, width, color)
 
-    mode("logo")
 
-    t = T()
+    def draw_arc_around_origin(self, heading, reach, sweep, width, color):
 
-    t.multiplier = 400/(inner_radius + outer_radius)
+        self.up()
+        self.home()
+        self.rt(heading)
+        self.fd(reach * self.multiplier)
+        self.setheading(heading - 90)
+        self.down()
+        self.width(width)
+        self.color(color)
+        self.circle(reach * self.multiplier, sweep)
 
 
-    t.speed(0)
-    t.hideturtle()
+    # ----------------- outline drawing -----------------
 
+    def draw_outline(self, width=4, color=None, lightness=1):
 
-    for angle in range (0, inner_extent+1, steps):
-        t.draw_inner_arm(angle)
-        t.draw_outer_arm()
-        t.draw_arc()
+        # sweep inner arm with outer arm fully left
+        outer_arm_angle = self.elbow_centre_angle - self.elbow_sweep / 2
+        self.draw_arms_arc(outer_arm_angle, width, color=color or "blue")
 
-    s.exitonclick()
+        # sweep outer arm with inner arm fully left
+        self.up()
+        self.home()
+        self.rt(self.shoulder_centre_angle - self.shoulder_sweep/2)
+        self.fd(self.inner_arm * self.multiplier)
+        self.rt(self.elbow_centre_angle)
+        self.draw_pen_arc(width, color=color or "red")
 
+        # sweep inner arm with outer arm fully right
+        outer_arm_angle = self.elbow_centre_angle + self.elbow_sweep / 2
+        self.draw_arms_arc(outer_arm_angle, width, color=color or "purple4", reverse=True)
 
-class PGT(T):
+        # sweeo outer arm with inner arm fully right
+        self.up()
+        self.home()
+        self.rt(self.shoulder_centre_angle + self.shoulder_sweep/2)
+        self.fd(self.inner_arm * self.multiplier)
+        self.rt(self.elbow_centre_angle)
+        self.draw_pen_arc(width, color=color or "orange")
 
-    def __init__(
-        self,
+        self.screen.update()
 
-        driver=4,                  # the lengths of the arms
-        follower=10,            # the lengths of the arms
 
-        # The angles are relative to each motor, so we need to know where each motor actually is.
-        motor_1_pos = -1, # position of motor 1 on the x axis
-        motor_2_pos = 1,  # position of motor 2 on the x axis
+    def draw_arcs(self, every=2, color="orange"):
 
-        box_bounds=(-3, -3, 3, 3),
+        for angle in range (int(self.shoulder_centre_angle + self.shoulder_sweep/2), int(self.shoulder_centre_angle - self.shoulder_sweep/2 - 1), - every):
 
-        angle_multiplier=1, # set to -1 if necessary to reverse directions
-        correction_1=0,
-        correction_2=0,
+            self.up()
+            self.home()
 
-        centre_1=1350, multiplier_1=425/45,
-        centre_2=1350, multiplier_2=415/45
-        ):
+            self.rt(angle)
+            self.fd(self.inner_arm * self.multiplier)
 
-        # set the pantograph geometry
-        self.DRIVER = driver
-        self.FOLLOWER = follower
-        self.MOTOR_1_POS, self.MOTOR_2_POS = motor_1_pos, motor_2_pos
+            self.rt(self.elbow_centre_angle)
 
-        # the box bounds describe a rectangle that we can safely draw in
-        self.box_bounds = box_bounds
+            self.draw_pen_arc(color=color)
 
-        self.angle_multiplier = angle_multiplier
 
-        self.correction_1 = correction_1
-        self.correction_2 = correction_2
+    def draw_arms(self, every=60):
 
-        self.centre_1, self.centre_2 = centre_1, centre_2
-        self.multiplier_1, self.multiplier_2 = multiplier_1, multiplier_2
+        for angle in range (int(self.shoulder_centre_angle + self.shoulder_sweep/2), int(self.shoulder_centre_angle - self.shoulder_sweep/2 -1), -every):
+            self.up()
+            self.home()
+            self.width(6)
 
-        super().__init__()
+            self.down()
 
+            self.color("blue")
+            self.rt(angle)
+            self.fd(self.inner_arm * self.multiplier)
 
-    def angles_to_xy(self, angle1, angle2):
-        # Given the angle of each arm, returns the x/y co-ordinates
+            self.rt(self.elbow_centre_angle)
+            self.color("red")
+            self.fd(self.outer_arm * self.multiplier)
 
-        angle1 = math.radians(angle1 * self.angle_multiplier)
-        angle2 = math.radians(angle2 * self.angle_multiplier)
 
-        # calculate the x position of the elbows
-        elbow_1_x = math.sin(angle1) * self.DRIVER
-        elbow_2_x = math.sin(angle2) * self.DRIVER
 
-        print("elbows x:", elbow_1_x, elbow_2_x)
-
-        # calculate the y position of the elbows
-        elbow_1_y = math.cos(angle1) * self.DRIVER
-        elbow_2_y = math.cos(angle2) * self.DRIVER
-
-        print("elbows y:", elbow_1_y, elbow_2_y)
-
-        motor_distance = self.MOTOR_2_POS - self.MOTOR_1_POS
-
-        # calculate x and y distances between the elbows
-        elbow_dx = motor_distance + elbow_2_x - elbow_1_x
-        elbow_dy = elbow_2_y - elbow_1_y
-
-        print("elbow distances:", elbow_dx, elbow_dy)
-
-        # calculate the length of the base of the top triangle
-        base_of_top_triangle = math.sqrt(elbow_dx ** 2 + elbow_dy ** 2)
-
-        print("base_of_top_triangle:", base_of_top_triangle)
-
-        # calculate the angle at which the top triangle is tilted
-        angle_of_base_of_top_triangle = math.asin((elbow_dy) / base_of_top_triangle)
-
-        print("angle_of_base_of_top_triangle", math.degrees(angle_of_base_of_top_triangle))
-
-        # calculate the left inner angle of the top triangle
-        corner_of_top_triangle = math.acos((base_of_top_triangle / 2) / self.FOLLOWER)
-
-        print("corner_of_top_triangle", math.degrees(corner_of_top_triangle))
-
-        # calculate the x and y distances to the left elbow
-        x_to_elbow = math.cos(corner_of_top_triangle + angle_of_base_of_top_triangle) * self.FOLLOWER
-        y_to_elbow = math.sin(corner_of_top_triangle + angle_of_base_of_top_triangle) * self.FOLLOWER
-
-        print("x_to_elbow, y_to_elbow", x_to_elbow, y_to_elbow)
-
-        x = elbow_1_x + x_to_elbow + self.MOTOR_1_POS
-        y = elbow_1_y + y_to_elbow
-
-        # return x, y - self.adder
-
-        return x, y
-
-
-def visualisepg():
-
-    # set up the environment
-
-    s = Screen()
-    s.setup(width=800, height=800)
-
-
-    mode("logo")
-
-    t = PGT()
-    t.speed(0)
-    t.up()
-
-    multiplier = 400/(t.DRIVER + t.FOLLOWER)
-
-    t.goto(t.MOTOR_1_POS*multiplier, 0)
-    t.dot(10, "red")
-    t.goto(t.MOTOR_2_POS*multiplier, 0)
-    t.dot(10, "blue")
-
-
-
-    for angle1 in range (-180, 20, steps):
-        for angle2 in range (0, 200, steps):
-            x, y = t.angles_to_xy(angle1, angle2)
-
-            t.goto(t.MOTOR_1_POS*multiplier, 0)
-            t.setheading(angle1)
-            t.down()
-            t.color("red")
-            t.forward(t.DRIVER*multiplier)
-
-            t.color("green")
-            t.goto(x*multiplier, y*multiplier)
-            t.up()
-
-            t.goto(t.MOTOR_2_POS*multiplier, 0)
-            t.setheading(angle2)
-            t.down()
-            t.color("blue")
-            t.forward(t.DRIVER*multiplier)
-
-            t.color("yellow")
-            t.goto(x*multiplier, y*multiplier)
-            t.dot(4 , "blue")
-            t.up()
-
-    s.exitonclick()
-
-visualise()
-mainloop()
+        self.screen.update()
