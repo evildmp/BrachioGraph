@@ -1,5 +1,6 @@
 numpy
 pigpio
 pillow
+pytest
 readchar
 tqdm
