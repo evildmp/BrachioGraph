@@ -43,7 +43,7 @@ To convert it to a JSON file in the same directory, run::
 
     image_to_json("africa", draw_contours=2, draw_hatch=16)
 
-This wll:
+This will:
 
 * find a file in ``images`` called ``africa`` (or ``africa.jpg``, ``africa.png`` or ``africa.tif``)
 * draw its contours, and hatch lines
