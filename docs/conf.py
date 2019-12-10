@@ -164,8 +164,8 @@ texinfo_documents = [
 
 # Spelling check needs an additional module that is not installed by default.
 # Add it only if spelling check is requested so docs can be generated without it.
-# if 'spelling' in sys.argv:
-#     extensions.append("sphinxcontrib.spelling")
+if 'spelling' in sys.argv:
+    extensions.append("sphinxcontrib.spelling")
 
 # Spelling language.
 spelling_lang = 'en_GB'

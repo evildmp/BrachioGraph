@@ -45,8 +45,7 @@ html:
 spelling:
 	. $(VENV); $(SPHINXBUILD) -b spelling $(ALLSPHINXOPTS) . _build/spelling
 	@echo
-	@echo "Check finished. Wrong words can be found in " \
-		"_build/spelling/output.txt."
+	@echo "Check finished. Wrong words can be found in _build/spelling/output.txt."
 
 quickstart:
 	. $(VENV); sphinx-quickstart

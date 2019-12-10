@@ -1,5 +1,5 @@
 sphinx
-# sphinxcontrib-spelling
+sphinxcontrib-spelling
 pyenchant
 sphinx-autobuild
 sphinx_rtd_theme

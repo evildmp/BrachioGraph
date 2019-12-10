@@ -187,7 +187,7 @@ Suppose your values were as follows:
 * Servo 2 0 degrees: 1775
 * Servo 1 90 degrees: 860
 
-Then you would instantiate your PantoGraph obect thus::
+Then you would instantiate your PantoGraph object thus::
 
     pg=PantoGraph(
         centre_1=1060,

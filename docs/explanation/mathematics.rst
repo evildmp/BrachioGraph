@@ -1,7 +1,7 @@
 The mathematics
 ---------------
 
-The BrachioGraph object contains two trignometric methods, to translate x/y co-ordinates of the pen into angles of the
+The BrachioGraph object contains two trigonometric methods, to translate x/y co-ordinates of the pen into angles of the
 motors and vice-versa. Using the example illustrated below, the arms are both 9cm long and the pen is at ``x=4, y=10``.
 
 Translating co-ordinates to angles
@@ -54,5 +54,5 @@ Finally we convert the angle values to degrees and return them::
 Translating angles to co-ordinates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Obtaining angles from co-odinates is essentially the reverse process, in ``angles_to_xy()``. This method isn't
+Obtaining angles from co-ordinates is essentially the reverse process, in ``angles_to_xy()``. This method isn't
 actually used in the ``BrachioGraph``, but can be useful when experimenting.

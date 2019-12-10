@@ -42,7 +42,7 @@ just after ``rootwait``.
 Set a fixed MAC address
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, the Pi will generate a new MAC addresss and appear as a new device to the host each time
+By default, the Pi will generate a new MAC address and appear as a new device to the host each time
 it reboots, which is annoying.
 
 To fix the address, add a file ``/etc/modprobe.d/rndis.conf``. In it, add::

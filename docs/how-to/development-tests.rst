@@ -5,7 +5,7 @@ The BrachioGraph library includes a (minimal, at this point) test suite.
 
 The tests use `pytest <https://docs.pytest.org>`.
 
-To run the tests, ``pytest`` nneds to be installed (``pip install pytest``).
+To run the tests, ``pytest`` needs to be installed (``pip install pytest``).
 
 Executing ``pytest`` in the root directory will run the tests::
 
