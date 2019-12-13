@@ -27,10 +27,12 @@ class BrachioGraph:
         bounds=None,                # the maximum rectangular drawing area
         servo_1_angle_pws=[],       # pulse-widths for various angles
         servo_2_angle_pws=[],
-        servo_1_zero=1500,
-        servo_2_zero=1500,
-        servo_1_degree_ms = -10,    # milliseconds pulse-width per degree
-        servo_2_degree_ms = 10,     # reversed because for mpunting of the elbow servo
+        servo_1_centre=1500,
+        servo_2_centre=1500,
+        servo_1_degree_ms=-10,    # milliseconds pulse-width per degree
+        servo_2_degree_ms=10,     # reversed because for mounting of the elbow servo
+        arm_1_centre=-45,
+        arm_2_centre=90,
         pw_up=1500,                 # pulse-widths for pen up/down
         pw_down=1100,
     ):
@@ -49,6 +51,15 @@ class BrachioGraph:
         # numpy.polyfit(), to produce a function for each one. Otherwise, we will use a simple
         # approximation based on a centre of travel of 1500µS and 10µS per degree
 
+        self.servo_1_centre = servo_1_centre
+        self.servo_1_degree_ms = servo_1_degree_ms
+        self.arm_1_centre = arm_1_centre
+
+        self.servo_2_centre = servo_2_centre
+        self.servo_2_degree_ms = servo_2_degree_ms
+        self.arm_2_centre = arm_2_centre
+
+
         if servo_1_angle_pws:
             servo_1_array = numpy.array(servo_1_angle_pws)
             self.angles_to_pw_1 = numpy.poly1d(
@@ -61,8 +72,6 @@ class BrachioGraph:
 
         else:
             self.angles_to_pw_1 = self.naive_angles_to_pulse_widths_1
-            self.servo_1_zero = servo_1_zero
-            self.servo_1_degree_ms = servo_1_degree_ms
 
         if servo_2_angle_pws:
             servo_2_array = numpy.array(servo_2_angle_pws)
@@ -76,8 +85,7 @@ class BrachioGraph:
 
         else:
             self.angles_to_pw_2 = self.naive_angles_to_pulse_widths_2
-            self.servo_2_zero = servo_2_zero
-            self.servo_2_degree_ms = servo_2_degree_ms
+
 
         # create the pen object, and make sure the pen is up
         self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down, virtual_mode=self.virtual_mode)
@@ -348,7 +356,7 @@ class BrachioGraph:
         step = (self.bounds[2] - self.bounds[0]) /  lines
         x = self.bounds[0]
         while x <= self.bounds[2]:
-            self.draw_line((x, top_y), (x, bottom_y))
+            self.draw_line((x, top_y), (x, bottom_y), interpolate=interpolate)
             x = x + step
 
         self.park()
@@ -372,7 +380,7 @@ class BrachioGraph:
         step = (self.bounds[3] - self.bounds[1]) /  lines
         y = self.bounds[1]
         while y <= self.bounds[3]:
-            self.draw_line((min_x, y), (max_x, y))
+            self.draw_line((min_x, y), (max_x, y), interpolate=interpolate)
             y = y + step
 
         self.park()
@@ -495,10 +503,10 @@ class BrachioGraph:
     #  ----------------- hardware-related methods -----------------
 
     def naive_angles_to_pulse_widths_1(self, angle):
-        return (angle + 90) * self.servo_1_degree_ms + self.servo_1_zero
+        return (angle - self.arm_1_centre) * self.servo_1_degree_ms + self.servo_1_centre
 
     def naive_angles_to_pulse_widths_2(self, angle):
-        return (angle - 90) * self.servo_2_degree_ms + self.servo_2_zero
+        return (angle - self.arm_2_centre) * self.servo_2_degree_ms + self.servo_2_centre
 
 
     def angles_to_pulse_widths(self, angle_1, angle_2):
@@ -621,6 +629,100 @@ class BrachioGraph:
 
         return(x, y)
 
+
+    # ----------------- calibration -----------------
+
+    def calibrate(self, servo=1):
+
+        pin = {1: 14, 2: 15}.get(servo)
+        servo_centre = {1: self.servo_1_centre, 2: self.servo_2_centre}.get(servo)
+        servo_angle_pws = []
+
+        pw = servo_centre
+
+        print(f"Calibrating servo {servo}")
+        print(f"See https://brachiograph.art/how-to/calibrate.html")
+        print()
+        self.rpi.set_servo_pulsewidth(pin, pw)
+        print(f"The servo is now at {pw}µS, in the centre of its range of movement.")
+        print("Mount the arm at a position as close as possible to 0˚ (straight ahead).")
+        print("Now drive the arm to a known angle, as marked on one of the supplied protractors.")
+        print("When the arm reaches the angle, press 1 and record the angle. Do this for as many angles as possible.")
+        print()
+        print("When you have done all the angles, press 2.")
+        print("Press 0 to exit at any time.")
+
+        while True:
+            key = readchar.readchar()
+
+            if key == "0":
+                return
+            elif key == "1":
+                angle = float(input("Enter the angle:"))
+                servo_angle_pws.append([angle, pw])
+            elif key == "2":
+                break
+            elif key=="a":
+                pw = pw - 10
+            elif key=="s":
+                pw = pw + 10
+            elif key=="A":
+                pw = pw - 1
+            elif key=="S":
+                pw = pw + 1
+            else:
+                continue
+
+            print(pw)
+
+            self.rpi.set_servo_pulsewidth(pin, pw)
+
+        print(f"------------------------")
+        print(f"    Recorded angles     ")
+        print(f"------------------------")
+        print(f"  angle  |  pulse-width ")
+        print(f"---------+--------------")
+
+        servo_angle_pws.sort()
+        for [angle, pw] in servo_angle_pws:
+            print(f" {angle:>6.1f}  |  {pw:>4.0f}")
+
+        servo_1_array = numpy.array(servo_angle_pws)
+
+        pw = int(numpy.poly1d(
+            numpy.polyfit(
+                servo_1_array[:,0],
+                servo_1_array[:,1],
+                3
+            )
+        )(0))
+
+        self.rpi.set_servo_pulsewidth(pin, pw)
+        print()
+        print(f"The servo is now at {int(pw)}µS, which should correspond to 0˚ for the arm.")
+        print("Now remount the arm at the centre of its optimal sweep for your drawing area.")
+        print("See brachiograph.art/how-to/optimise-geometry.")
+        print()
+        print("Alternatively as a rule of thumb, if the arms are of equal length, use the position closest to:")
+        print("Inner arm: -60˚")
+        print("Outer arm:  90˚")
+        print("Carefully count how many spline positions you had to move the arm by to get it there.")
+        print("Multiply that by the number of degrees for each spline to get the angle by which you moved it.")
+        offset = float(input("Enter the angle by which you moved the arm (anti-clockwise is negative):"))
+
+        print(f"-------+-------------")
+        print(f"angle  |  pulse-width")
+        print(f"---------------------")
+
+        servo_angle_including_offset_pws = []
+
+        for [angle, pw] in servo_angle_pws:
+            angle_including_offset = round(angle + offset, 1)
+            servo_angle_including_offset_pws.append([angle_including_offset, pw])
+            print(f" {angle_including_offset:>4.0f}  |  {pw:>4.0f}")
+
+        print("Use this list of angles and pulse-widths in your BrachioGraph definition:")
+        print(f"servo_{servo}_angle_pws={servo_angle_including_offset_pws}")
 
     # ----------------- manual driving methods -----------------
 
@@ -747,6 +849,21 @@ class BrachioGraph:
         self.pulse_widths_used_2 = set()
 
 
+    @property
+    def bl(self):
+        return (self.bounds[0], self.bounds[1])
+
+    @property
+    def tl(self):
+        return (self.bounds[0], self.bounds[3])
+
+    @property
+    def tr(self):
+        return (self.bounds[2], self.bounds[3])
+
+    @property
+    def br(self):
+        return (self.bounds[2], self.bounds[1])
 
 class Pen:
 

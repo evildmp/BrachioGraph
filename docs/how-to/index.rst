@@ -8,7 +8,7 @@ Usage
     :maxdepth: 1
 
     Use the linedraw library to vectorise bitmap images <use-linedraw>
-    Improve the calibration of the ploter and its servos <improve-calibration>
+    Improve the calibration of the ploter and its servos <calibrate>
     Run a virtual BrachioGraph in software <virtual-mode>
     Visualise the behaviour of servos <visualise-servo-behaviour>
     Prepare a Raspberry Pi Zero for use with the plotter <prepare-pi>
