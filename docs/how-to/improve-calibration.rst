@@ -34,7 +34,7 @@ Controls:
 
 * 0: ``exit``
 * a: ``increase shoulder motor pulse-width 10µS``
-* a: ``decrease shoulder motor pulse-width 10µS``
+* s: ``decrease shoulder motor pulse-width 10µS``
 * A: ``increase shoulder motor pulse-width 1µS``
 * S: ``decrease shoulder motor pulse-width 1µS``
 * k: ``increase elbow motor pulse-width 10µS``
