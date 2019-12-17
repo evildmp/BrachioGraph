@@ -44,3 +44,11 @@ def test_centre():
 
 def test_report():
     virtual_bg.report()
+
+
+def test_maths_errors():
+    plotter = BrachioGraph(
+      inner_arm=8.2,
+      outer_arm=8.85,
+    )
+    plotter.xy_to_angles(-10.2, 13.85)
