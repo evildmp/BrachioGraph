@@ -245,7 +245,7 @@ Having outer arms longer than the inner arms produces less useful results.
 Donald Trump's hair
 -------------------
 
-Of mild interest but no practical use whatsoever is the fact that the plotting area can be made to look startlingly
+Of mild interest but no practical use whatsoever is the fact that the plotting area can be made to look remarkably
 like Donald Trump's hair, even down to the colour.
 
 .. image:: /images/plotter-geometry/donald-trump-hair.png

@@ -111,11 +111,11 @@ Discover the optimum configuration for your BrachioGraph
 Start by defining your ``BrachioGraphTurtle`` instance with the exact arm lengths you have built, or the ones you
 propose to build.
 
-120˚ sweep values for the inner and outer arms are a safe starting-point, along with values of ˚ and 90 degrees for
-the inner and outer centre positions respectively::
+120˚ sweep values for the inner and outer arms are a safe starting-point, along with values of -60˚ and 90˚ for
+the inner and outer centre positions respectively (if the arms are of equal length)::
 
     >>> from turtle_draw import BrachioGraphTurtle
-    >>> bgt = BrachioGraphTurtle(inner_arm=8, shoulder_centre_angle=-45, shoulder_sweep=120, outer_arm=8,  elbow_centre_angle=90, elbow_sweep=120)
+    >>> bgt = BrachioGraphTurtle(inner_arm=8, shoulder_centre_angle=-60, shoulder_sweep=120, outer_arm=8,  elbow_centre_angle=90, elbow_sweep=120)
 
 Draw the grid and an outline::
 
