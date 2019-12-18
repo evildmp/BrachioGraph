@@ -105,7 +105,6 @@ The outline
 ``draw_outline()`` will trace an outline of the drawing area.
 
 
-
 Discover the optimum configuration for your BrachioGraph
 -----------------------------------------------------------
 
@@ -124,5 +123,3 @@ Draw the grid and an outline::
     >>> bgt.draw_outline()
 
 See :ref:`understand_plotter_geometry` for how to interpret the output.
-
-You can set the colour of the entir
