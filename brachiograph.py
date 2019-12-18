@@ -31,7 +31,7 @@ class BrachioGraph:
         servo_2_centre=1500,
         servo_1_degree_ms=-10,    # milliseconds pulse-width per degree
         servo_2_degree_ms=10,     # reversed because for mounting of the elbow servo
-        arm_1_centre=-45,
+        arm_1_centre=-60,
         arm_2_centre=90,
         pw_up=1500,                 # pulse-widths for pen up/down
         pw_down=1100,
