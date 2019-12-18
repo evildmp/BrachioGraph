@@ -111,8 +111,8 @@ Understanding the mathematics, choosing hardware.
 
 .. rst-class:: column column2
 
-:doc:`Reference <reference>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+:doc:`Reference <reference/index>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Guide to key classes and functions
 

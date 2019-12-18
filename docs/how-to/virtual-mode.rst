@@ -1,7 +1,7 @@
 .. _virtual-mode:
 
 How to run a virtual BrachioGraph in software
----------------------------------------------
+=============================================
 
 Sometimes, you might want to run the BrachioGraph class and its methods without actually plotting anything. For
 example, you might:

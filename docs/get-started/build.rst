@@ -17,9 +17,9 @@ You'll also need some strong adhesive.
 
 See :ref:`the hardware section <hardware>` for details on what components and materials to obtain.
 
-If you are using SG90 motors as suggested, arms of about 8cm are suitable for drawing an area approximately 16cm wide
-by 11cm high. This fits well onto a sheet of A5 paper. To help understand the relationship between arm geometry and the
-drawing area, this can be visualised using the :ref:`script provided <visualise-area>`.
+If you are using SG90 motors as suggested, arms of about 8cm are suitable for drawing an area approximately 14cm wide
+by 9cm high. This fits well onto a sheet of A5 paper. (See :ref:`understand_plotter_geometry` and
+:ref:`optimise-geometry`.)
 
 
 Assembly
