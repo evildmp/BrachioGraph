@@ -101,7 +101,7 @@ Avoiding the origin
 
 The area around the servo at the origin can't be drawn on (because the pen or the servos would obstruct each other).
 This will vary depending on the size of the servos and the way you have mounted the arms, but a minimum distance of 4cm
-is reasonable as a startingpoint. It gives us some options that look like this:
+is reasonable as a starting point. It gives us some options that look like this:
 
 .. image:: /images/plotter-geometry/plotting-area-rectangle.png
    :alt: 'Plotting area'
@@ -196,7 +196,7 @@ The outlines below show plots for ``elbow_centre_angle`` values of 60, 90 and 12
    :alt: 'Plotting area'
    :class: 'main-visual'
 
-In the orange example (``elbow_centre_angle = 60``), the extra leftward movement of the outer arm gives extra us height
+In the orange example (``elbow_centre_angle = -60``), the extra leftward movement of the outer arm gives extra us height
 compared to the blue outline (``elbow_centre_angle = 90``), but we lose more than we gain around the origin.
 
 The red example (``elbow_centre_angle = 120``) loses height at the top, and only gains useless drawing area very close
