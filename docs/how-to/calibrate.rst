@@ -21,7 +21,7 @@ unlikely to coincide with the arms' positions at the optimal centre of their swe
 values to improve upon these assumptions. This section describes how to do that.
 
 
-Advanced calibration
+Basic calibration
 ---------------------
 
 Find the centre angle pulse-widths
@@ -66,13 +66,13 @@ right will help reduce some distortion.
 Adjust ``servo_1_degree_ms`` and ``servo_2_degree_ms``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- to-do!
-
+The ``servo_1_degree_ms`` and ``servo_2_degree_ms`` values by default assume that a 10µS change in pulse-width will
+produce a 1˚ change in angle. This is close, but you can usually discover better values through trial and error.
 
 
 .. _polyfit:
 
-Create better angle-to-pulse-width functions
+Advanced calibration
 --------------------------------------------
 
 Improving values for the motors as described above is a good start. However, it still leaves us with the problem of the
@@ -180,14 +180,13 @@ Add the collected values to your BrachioGraph definition, for example:
     :emphasize-lines: 1, 2
 
     servo_1_angle_pws = [[-86.4, 1970], [-72.0, 1820], [-57.6, 1680], [-43.2, 1510], [-28.8, 1320], [-14.4, 1190], [0.0, 1030], [13.4, 890], [28.8, 760]]
-    servo_2_angle_pws=[[18.0, 760], [36.0, 960], [54.0, 1120], [72.0, 1290], [90.0, 1470], [108.0, 1670], [126.0, 1870], [144.0, 2050], [162.0, 2230]]
+    servo_2_angle_pws = [[18.0, 760], [36.0, 960], [54.0, 1120], [72.0, 1290], [90.0, 1470], [108.0, 1670], [126.0, 1870], [144.0, 2050], [162.0, 2230]]
 
 
     bg = BrachioGraph(
         # the lengths of the arms
         inner_arm=9,
         outer_arm=7,
-        # the drawing area
         servo_1_angle_pws=servo_1_angle_pws,
         servo_2_angle_pws=servo_2_angle_pws,
         [...]
@@ -197,3 +196,37 @@ Next time you use definition, it will be optimised for the servos' actual charac
 
 You can use the included Jupyter notebook to :ref:`visualise the relationship between pulse-widths and servo angles
 <visualise-servo-behaviour>`.
+
+
+Calibrate the pen motor
+-----------------------
+
+To calibrate the pen motor, run the ``Pen.calibrate()`` method. The ``Pen`` object is an attribute of the
+``BrachioGraph`` object, so the best way to do this is::
+
+    from my_calibrated_bg import bg
+    bg.pen.calibrate()
+
+Controls:
+
+* 0: *exit*
+* z: *decrease pen motor pulse-width 10µS*
+* x: *increase pen motor pulse-width 10µS*
+* u: *record this as the pen-up position*
+* d: *record this as the pen-down position*
+* t: *toggle between the two positions*
+
+In addition, to check the pen at different positions over the paper (usually the middle of the paper is fine):
+
+* a: *increase shoulder motor pulse-width 10µS*
+* s: *decrease shoulder motor pulse-width 10µS*
+
+Try to fix the horn for the motor at a position where 1500µS is about half-way between the up and down values.
+
+You can copy the values reported by the calibration method into your BrachioGraph definition, e.g.::
+
+    bg = BrachioGraph(
+        [...]
+        pw_down=1400,
+        pw_up=1650,
+    )

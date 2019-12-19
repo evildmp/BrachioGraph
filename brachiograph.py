@@ -944,7 +944,6 @@ class Pen:
         print(f"Calibrating the pen-lifting servo.")
         print(f"See https://brachiograph.art/how-to/calibrate.html")
 
-
         pw_1, pw_2 = self.bg.get_pulse_widths()
         pw_3 = self.pw_up
 
@@ -968,6 +967,7 @@ class Pen:
             elif key=="l":
                 pw_2 = pw_2 + 10
                 continue
+
             elif key=="t":
                 if pw_3 == self.pw_up:
                     pw_3 = self.pw_down
@@ -998,5 +998,3 @@ class Pen:
         print("Use these values in your BrachioGraph definition:")
         print()
         print(f"pen_up={self.pw_up}, pen_down={self.pw_down}")
-
-
