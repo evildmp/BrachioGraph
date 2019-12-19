@@ -1,0 +1,11 @@
+Changelog
+=========
+
+2019 12 19
+----------
+
+* BrachioGraph servo_1_zero/servo_2_zero attributes are now servo_1_centre/servo_2_centre
+* Added arm_1_centre/arm_2_centre attributes to the BrachioGraph definition
+* Added calibration methods and documentation
+* Added bottom/top/left/right properties to BrachioGraph (bl, tl, tr, br)
+* Created protractors for calibration

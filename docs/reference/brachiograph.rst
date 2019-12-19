@@ -18,6 +18,8 @@ The ``BrachioGraph`` class
           servo_2_centre=1500,
           servo_1_degree_ms = 10,
           servo_2_degree_ms = -10,
+          arm_1_centre=-60,
+          arm_2_centre=90,
           servo_1_angle_pws=[],
           servo_2_angle_pws=[],
           pw_up=1500,
@@ -35,6 +37,8 @@ The ``BrachioGraph`` class
   or y axis. Ignored if the ``servo_<x>_angle_pws`` arguments are provided.
 * ``servo_1_degree_ms`` and ``servo_2_degree_ms``: how many ms per degree of movement. Reverse the sign to reverse the
   direction.
+* ``arm_1_centre`` and ``arm_2_centre``: the angles of the arms when the servo is at
+  ``servo_1_centre``/``servo_1_centre`` respectively
 * ``servo_1_angle_pws`` and ``servo_2_angle_pws``: lists of pulse-width/angle pairs. If provided, then
   :ref:`numpy.polyfit <polyfit>` will be used to produce a function for calculating required pulse-widths. If not, a
   more naive formula will be used.
