@@ -14,8 +14,8 @@ The ``BrachioGraph`` class
           outer_arm,
           virtual_mode=False,
           bounds=None,
-          servo_1_zero=1500,
-          servo_2_zero=1500,
+          servo_1_centre=1500,
+          servo_2_centre=1500,
           servo_1_degree_ms = 10,
           servo_2_degree_ms = -10,
           servo_1_angle_pws=[],
@@ -31,7 +31,7 @@ The ``BrachioGraph`` class
 * ``bounds`` needs to be determined empirically. Or possibly, `computed
   <https://math.stackexchange.com/questions/3293200/how-can-i-calculate-the-area-reachable-by-the-tip-of-an-articulated-
   arm#comment6773872_3293200>`_.
-* ``servo_1_zero`` and ``servo_2_zero``: the pulse-width at which each servo arm is exactly on the plotting grid's x
+* ``servo_1_centre`` and ``servo_2_centre``: the pulse-width at which each servo arm is exactly on the plotting grid's x
   or y axis. Ignored if the ``servo_<x>_angle_pws`` arguments are provided.
 * ``servo_1_degree_ms`` and ``servo_2_degree_ms``: how many ms per degree of movement. Reverse the sign to reverse the
   direction.
