@@ -131,7 +131,7 @@ class BrachioGraph:
 
         self.reset_report()
 
-
+        self.old_angle_1 = self.old_angle_2 = 0
     # ----------------- drawing methods -----------------
 
 
@@ -159,10 +159,12 @@ class BrachioGraph:
 
         lines = self.rotate_and_scale_lines(lines=lines, bounds=bounds, flip=True)
 
-        for line in tqdm.tqdm(lines, desc="Lines", leave=False):
+        for line in lines:
+        # for line in tqdm.tqdm(lines, desc="Lines", leave=False):
             x, y = line[0]
-            self.xy(x, y)
-            for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
+            self.xy(x, y, wait=wait, interpolate=interpolate)
+            for point in line[1:]:
+            # for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
                 x, y = point
                 self.draw(x, y, wait=wait, interpolate=interpolate)
 
@@ -396,7 +398,9 @@ class BrachioGraph:
 
         self.xy(bounds[0], bounds[1], wait, interpolate)
 
-        for r in tqdm.tqdm(tqdm.trange(repeat), desc='Iteration', leave=False):
+        for r in range(repeat):
+
+        # for r in tqdm.tqdm(tqdm.trange(repeat), desc='Iteration', leave=False):
 
             if not reverse:
 
@@ -469,19 +473,39 @@ class BrachioGraph:
 
         (length_of_step_x, length_of_step_y) = (x_length/no_of_steps, y_length/no_of_steps)
 
-        for step in tqdm.tqdm(range(no_of_steps), desc='Interpolation', leave=False, disable=disable_tqdm):
-
+        # for step in tqdm.tqdm(range(no_of_steps), desc='Interpolation', leave=False, disable=disable_tqdm):
+        for step in range(no_of_steps):
             self.current_x = self.current_x + length_of_step_x
             self.current_y = self.current_y + length_of_step_y
 
             angle_1, angle_2 = self.xy_to_angles(self.current_x, self.current_y)
+
+            if angle_1 > self.old_angle_1:
+                a1diff = "+"
+            elif angle_1 < self.old_angle_1:
+                a1diff = "-"
+            else:
+                a1diff = "0"
+
+            if angle_2 > self.old_angle_2:
+                a2diff = "+"
+            elif angle_2 < self.old_angle_2:
+                a2diff = "-"
+            else:
+                a2diff = "0"
+
+            print(f"x: {self.current_x:<4.1f} y: {self.current_y:<4.1f}     1: {angle_1:>4.0f} {a1diff}     2: {angle_2:>4.0f} {a2diff}")
 
             self.set_angles(angle_1, angle_2)
 
             if step + 1 < no_of_steps:
                 sleep(length * wait/no_of_steps)
 
+            self.old_angle_1 = angle_1
+            self.old_angle_2 = angle_2
+
         sleep(length * wait/10)
+
 
 
     def set_angles(self, angle_1=0, angle_2=0):
