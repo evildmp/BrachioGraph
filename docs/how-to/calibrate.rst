@@ -93,8 +93,8 @@ You can supply a ``servo_1_angle_pws`` or ``servo_2_angle_pws`` in the BrachioGr
         [144, 2070],
     ]
 
-The first values are different angles of the motor. The second values are the corresponding pulse-widths. (If you
-use these in the :ref:`provided Jupyter Notebook`, you will see that the curve is not linear.)
+The first values are different angles of the motor. The second values are the corresponding pulse-widths. (If you use
+these in the :ref:`provided Jupyter Notebook <visualise-servo-behaviour>`, you will see that the curve is not linear.)
 
 Servo motors' horns generally attach in positions with 18˚ (for smaller motors with 20 splines) or 14.4˚ (larger motors
 with 25 splines) between each one, a property we can make use of.
