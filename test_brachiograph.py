@@ -15,9 +15,6 @@ virtual_bg = BrachioGraph(
 def test_plot_from_file():
     virtual_bg.plot_file("test-patterns/test-pattern.json")
 
-def test_plot_from_file_with_prestart():
-    virtual_bg.plot_file("test-patterns/test-pattern.json", pre_start=True)
-
 
 # ----------------- test pattern methods -----------------
 
