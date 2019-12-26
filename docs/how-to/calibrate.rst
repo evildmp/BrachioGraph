@@ -14,12 +14,22 @@ For `SG90 motors <http://www.towerpro.com.tw/product/sg90-analog/>`_ or similar:
 * one degree of travel corresponds a difference of about 10µS
 
 This is what the default ``angles_to_pw_1`` and ``angles_to_pw_2`` methods assume when the BrachioGraph is initialised.
-This is sufficient to get started.
 
-However, the correspondence between pulse-widths and angles is not actually linear, and 1500µS in practice will be
-unlikely to coincide with the arms' positions at the optimal centre of their sweep range. So, you can supply some
-values to improve upon these assumptions. This section describes how to do that.
+This is sufficient to get started, but since the values above are nominal values only, they won't provide the best
+results. In addition, the correspondence between pulse-widths and angles is not actually linear, and worse, mechanical
+hysteresis in the system means that the quality of your drawings will be much lower than it ought to be.
 
+All of these issues can be addressed however. In this section:
+
+* :ref:`basic-calibration`, for quick improvements to reduce distortion
+* :ref:`advanced-calibration`, to counteract non-linearity using real-world data
+* :ref:`hysteresiscompensation`, for huge improvements in output quality
+* :ref:`calibrate-pen-lifting`
+
+So, you can supply some values to improve upon these assumptions.
+
+
+.. _basic-calibration:
 
 Basic calibration
 ---------------------
@@ -70,6 +80,7 @@ The ``servo_1_degree_ms`` and ``servo_2_degree_ms`` values by default assume tha
 produce a 1˚ change in angle. This is close, but you can usually discover better values through trial and error.
 
 
+.. _advanced-calibration:
 .. _polyfit:
 
 Advanced calibration
@@ -121,6 +132,8 @@ You will need to mount the protractor such that its centre is exactly at the axi
    :class: 'main-visual'
 
 
+.. _collect-pw-angles:
+
 Collect pulse-widths and angles
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -148,6 +161,11 @@ Now drive the arm over the paper. Controls:
 
 When you reach a precise angle, record it: press *1*, then enter the angle. Do this for as many angles as possible.
 press *2* when you have finished collecting them. The angles and pulse-widths will be displayed.
+
+**Important**: for best results, always collect these values while driving the motor in the same direction (either
+increasing or decreasing the pulse-width values), because the exact pulse-width at which the arms move to a particular
+position depends on whether motor is moving in one direction ot another, due to :ref:`hysteresis
+<hysteresiscompensation>`.
 
 
 Supply the offset angle
@@ -198,8 +216,95 @@ You can use the included Jupyter notebook to :ref:`visualise the relationship be
 <visualise-servo-behaviour>`.
 
 
-Calibrate the pen motor
------------------------
+.. _hysteresiscompensation:
+
+Hysteresis compensation
+--------------------------
+
+The BrachioGraph is subject to mechanical :ref:`hysteresis <about-hysteresis>`, which causes the actual position of the pen
+to be slightly different for a particular target point, depending on which direction it moved there from. This causes
+strokes to be misaligned with each other. In this image, the grid has been drawn twice, in two different directions;
+the two versions of the grid overlay each other very imperfectly:
+
+.. image:: /images/hysteresis.jpg
+   :alt: 'The effect of hysteresis'
+   :class: 'main-visual'
+
+Hysteresis needs to be compensated for in order to achieve the best results. The dead-band of hysteresis is usually a
+few µS. Although a motor *itself* may not have a large dead-band, you will find that the system itself has larger
+dead-bands, especially affecting the shoulder motor.
+
+
+Use the grid to identify misalignment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Draw a grid::
+
+    bg.grid_lines(interpolate=400, both=True)
+
+``both`` draws each line in both directions.
+
+Watch carefully to see where the drawing is misaligned; mark misaligned segments with a direction arrow to help you
+remember which line is which. You will find that the errors occur when the pen lags behind the position at which it
+ought to be.
+
+
+Test compensation values
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The solution is to push it forwards by a corresponding amount. That is: if a motor has been moving in a particular
+direction, command it to a position just a little further in that direction to compensate, until it's time to change
+direction.
+
+The only way to obtain the right compensation values is by experiment. While recording the pulse-width/angles you may
+have had a good idea of the dead-band of the motor, but now we have to deal with hysteresis in the entire system.
+
+Start with the value for the shoulder motor. Any adjustment made by this motor has to be transmitted through both arms,
+both joints and the pen-holding mechanism, and it has more weight and a longer arm to displace, so it's likely to be
+the most significant correction that needs to be made.
+
+Try adding::
+
+    pw1diff=10
+
+to the BrachioGraph definition, and plot the grid forwards and backwards again, again watching carefully to see where
+the errors occur. Pay particular attention to those parts of the lines where the *elbow* motor is *not* changing its
+position, because it's at these positions that you'll most clearly see where the shoulder motor needs to be adjusted
+to improve alignment.
+
+Once you have got the best result possible for these parts of the lines, try a similar adjustment for the elbow motor,
+say::
+
+    pw1diff=2
+
+Since the elbow motor has less weight and a shorter arm of movement to displace, it's likely to need a smaller
+correction value.
+
+*You are very unlikely to get perfect results!* But, with a little trial and error The BrachioGraph can compensate for
+hysteresis very effectively:
+
+.. image:: /images/hysteresis-correction.jpg
+   :alt: 'Hysteresis corrected'
+   :class: 'main-visual'
+
+In practice, this correction improves the quality of drawings enormously, capturing far more detail and eliminating
+many errors that spoil images.
+
+
+Collect more precise pulse-width/angle values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In :ref:`collect-pw-angles` above, we only collected the values going in one direction. In the other direction, they
+will all be slightly different. You could collect them both, and then use an average of the pair for each position.
+
+Given the inherent imprecision of the system, *this is unlikely to have any visible effect*. But if you're determined to
+wring our every last drop of possible precision from the system - try it.
+
+
+.. _calibrate-pen-lifting:
+
+Calibrate the pen lifting motor
+-------------------------------
 
 To calibrate the pen motor, run the ``Pen.calibrate()`` method. The ``Pen`` object is an attribute of the
 ``BrachioGraph`` object, so the best way to do this is::
@@ -223,7 +328,10 @@ In addition, to check the pen at different positions over the paper (usually the
 
 Try to fix the horn for the motor at a position where 1500µS is about half-way between the up and down values.
 
-You can copy the values reported by the calibration method into your BrachioGraph definition, e.g.::
+You can copy the values reported by the calibration method into your BrachioGraph definition, e.g.:
+
+..  code-block:: python
+    :emphasize-lines: 3,4
 
     bg = BrachioGraph(
         [...]
