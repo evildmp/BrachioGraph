@@ -116,7 +116,7 @@ def vectorise(
 
     lines = []
 
-    if draw_contours:
+    if draw_contours and repeat_contours:
         contours = sortlines(getcontours(
             image.resize((int(resolution/draw_contours), int(resolution/draw_contours*h/w))),
             draw_contours
@@ -124,7 +124,7 @@ def vectorise(
         for r in range(repeat_contours):
             lines += contours
 
-    if draw_hatch:
+    if draw_hatch and repeat_hatch:
         hatches = sortlines(
             hatch(
                 # image,
