@@ -214,6 +214,4 @@ class BrachioGraphTurtle(Turtle):
             self.color("red")
             self.fd(self.outer_arm * self.multiplier)
 
-
-
         self.screen.update()
