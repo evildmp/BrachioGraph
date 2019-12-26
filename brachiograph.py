@@ -29,14 +29,15 @@ class BrachioGraph:
         servo_2_angle_pws=[],
         servo_1_centre=1500,
         servo_2_centre=1500,
-        servo_1_degree_ms=-10,    # milliseconds pulse-width per degree
-        servo_2_degree_ms=10,     # reversed because for mounting of the elbow servo
+        servo_1_degree_ms=-10,      # milliseconds pulse-width per degree
+        servo_2_degree_ms=10,       # reversed for the mounting of the elbow servo
         arm_1_centre=-60,
         arm_2_centre=90,
+        hysteresis_correction_1=0,  # hardware error compensation
+        hysteresis_correction_2=0,
         pw_up=1500,                 # pulse-widths for pen up/down
         pw_down=1100,
     ):
-
 
         # set the pantograph geometry
         self.INNER_ARM = inner_arm
@@ -54,11 +55,12 @@ class BrachioGraph:
         self.servo_1_centre = servo_1_centre
         self.servo_1_degree_ms = servo_1_degree_ms
         self.arm_1_centre = arm_1_centre
+        self.hysteresis_correction_1 = hysteresis_correction_1
 
         self.servo_2_centre = servo_2_centre
         self.servo_2_degree_ms = servo_2_degree_ms
         self.arm_2_centre = arm_2_centre
-
+        self.hysteresis_correction_2 = hysteresis_correction_2
 
         if servo_1_angle_pws:
             servo_1_array = numpy.array(servo_1_angle_pws)
@@ -122,7 +124,6 @@ class BrachioGraph:
             # by default we use a wait factor of 0.1 for accuracy
             self.wait = wait or .1
 
-
         # Now the plotter is in a safe physical state.
 
         # Set the x and y position state, so it knows its current x/y position.
@@ -131,11 +132,25 @@ class BrachioGraph:
 
         self.reset_report()
 
+        self.previous_pw_1 = self.previous_pw_2 = 0
+        self.active_hysteresis_correction_1 = self.active_hysteresis_correction_2 = 0
+
+    # methods in this class:
+    # drawing
+    # line-processing
+    # test patterns
+    # pen-moving methods
+    # angles-to-pulse-widths
+    # hardware-related
+    # trigonometric methods
+    # calibration
+    # manual driving methods
+    # reporting methods
 
     # ----------------- drawing methods -----------------
 
 
-    def plot_file(self, filename="", wait=0, interpolate=10, bounds=None, pre_start=False):
+    def plot_file(self, filename="", wait=0, interpolate=10, bounds=None):
 
         wait = wait or self.wait
         bounds = bounds or self.bounds
@@ -146,10 +161,10 @@ class BrachioGraph:
         with open(filename, "r") as line_file:
             lines = json.load(line_file)
 
-        self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, pre_start=pre_start, bounds=bounds, flip=True)
+        self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, bounds=bounds, flip=True)
 
 
-    def plot_lines(self, lines=[], wait=0, interpolate=10, pre_start=False, rotate=False, flip=False, bounds=None):
+    def plot_lines(self, lines=[], wait=0, interpolate=10, rotate=False, flip=False, bounds=None):
 
         wait = wait or self.wait
         bounds = bounds or self.bounds
@@ -161,7 +176,11 @@ class BrachioGraph:
 
         for line in tqdm.tqdm(lines, desc="Lines", leave=False):
             x, y = line[0]
-            self.xy(x, y)
+
+            # only if we are not within 1mm of the start of the line, lift pen and go there
+            if (round(self.current_x, 1), round(self.current_y, 1)) != (round(x, 1), round(y, 1)):
+                self.xy(x, y, wait=wait, interpolate=interpolate)
+
             for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
                 x, y = point
                 self.draw(x, y, wait=wait, interpolate=interpolate)
@@ -169,7 +188,7 @@ class BrachioGraph:
         self.park()
 
 
-    def draw_line(self, start=(0, 0), end=(0, 0), wait=0, interpolate=10):
+    def draw_line(self, start=(0, 0), end=(0, 0), wait=0, interpolate=10, both=False):
 
         wait = wait or self.wait
 
@@ -182,37 +201,17 @@ class BrachioGraph:
         self.pen.down()
         self.draw(x=end_x, y=end_y, wait=wait, interpolate=interpolate)
 
+        if both:
+            self.draw(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
+
+        self.pen.up()
+
 
     def draw(self, x=0, y=0, wait=0, interpolate=10):
 
         wait = wait or self.wait
 
         self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
-
-
-    def pre_start_position(self, start=(0, 0), end=(0, 0)):
-        # Returns an x/y position .5cm before the start of the line. Moving the pen from this point before
-        # starting to draw can help eliminate "dead zones" that occur when the mechanism has to change
-        # drawing direction.
-
-        start_x, start_y = start
-        end_x, end_y = end
-
-        diff_x = start_x - end_x
-        diff_y = start_y - end_y
-
-        if diff_x:
-            pre_x = start_x + (diff_x / abs(diff_x) / 2)
-        else:
-            pre_x = start_x
-
-        if diff_y:
-            pre_y = start_y + (diff_y / abs(diff_y) / 2)
-        else:
-            pre_y = start_y
-
-        return (pre_x, pre_y)
-
 
     # ----------------- line-processing methods -----------------
 
@@ -338,7 +337,7 @@ class BrachioGraph:
         self.park()
 
 
-    def vertical_lines(self, bounds=None, lines=25, wait=0, interpolate=10, repeat=1, reverse=False):
+    def vertical_lines(self, bounds=None, lines=4, wait=0, interpolate=10, repeat=1, reverse=False, both=False):
 
         wait = wait or self.wait
         bounds = bounds or self.bounds
@@ -356,13 +355,13 @@ class BrachioGraph:
         step = (self.bounds[2] - self.bounds[0]) /  lines
         x = self.bounds[0]
         while x <= self.bounds[2]:
-            self.draw_line((x, top_y), (x, bottom_y), interpolate=interpolate)
+            self.draw_line((x, top_y), (x, bottom_y), interpolate=interpolate, both=both)
             x = x + step
 
         self.park()
 
 
-    def horizontal_lines(self, bounds=None, lines=25, wait=0, interpolate=10, repeat=1, reverse=False):
+    def horizontal_lines(self, bounds=None, lines=4, wait=0, interpolate=10, repeat=1, reverse=False, both=False):
 
         wait = wait or self.wait
         bounds = bounds or self.bounds
@@ -377,13 +376,23 @@ class BrachioGraph:
             max_x = self.bounds[0]
             min_x = self.bounds[2]
 
-        step = (self.bounds[3] - self.bounds[1]) /  lines
+        step = (self.bounds[3] - self.bounds[1]) / lines
         y = self.bounds[1]
         while y <= self.bounds[3]:
-            self.draw_line((min_x, y), (max_x, y), interpolate=interpolate)
+            self.draw_line((min_x, y), (max_x, y), interpolate=interpolate, both=both)
             y = y + step
 
         self.park()
+
+
+    def grid_lines(self, bounds=None, lines=4, wait=0, interpolate=10, repeat=1, reverse=False, both=False):
+
+        self.vertical_lines(
+            bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both
+            )
+        self.horizontal_lines(
+            bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both
+            )
 
 
     def box(self, bounds=None, wait=0, interpolate=10, repeat=1, reverse=False):
@@ -416,18 +425,6 @@ class BrachioGraph:
 
 
     # ----------------- pen-moving methods -----------------
-
-
-    def centre(self):
-
-        if not self.bounds:
-            return "Moving to the centre is only possible when BrachioGraph.bounds is set."
-
-        self.pen.up()
-        self.xy(self.bounds[2]/2, self.bounds[3]/2)
-
-        self.quiet()
-
 
     def xy(self, x=0, y=0, wait=0, interpolate=10, draw=False):
         # Moves the pen to the xy position; optionally draws
@@ -466,7 +463,6 @@ class BrachioGraph:
         else:
             disable_tqdm = False
 
-
         (length_of_step_x, length_of_step_y) = (x_length/no_of_steps, y_length/no_of_steps)
 
         for step in tqdm.tqdm(range(no_of_steps), desc='Interpolation', leave=False, disable=disable_tqdm):
@@ -489,18 +485,31 @@ class BrachioGraph:
 
         pw_1, pw_2 = self.angles_to_pulse_widths(angle_1, angle_2)
 
-        self.set_pulse_widths(pw_1, pw_2)
+        if pw_1 > self.previous_pw_1:
+            self.active_hysteresis_correction_1 = self.hysteresis_correction_1
+        elif pw_1 < self.previous_pw_1:
+            self.active_hysteresis_correction_1 = - self.hysteresis_correction_1
+
+        if pw_2 > self.previous_pw_2:
+            self.active_hysteresis_correction_2 = self.hysteresis_correction_2
+        elif pw_2 < self.previous_pw_2:
+            self.active_hysteresis_correction_2 = - self.hysteresis_correction_2
+
+        self.previous_pw_1 = pw_1
+        self.previous_pw_2 = pw_2
+
+        self.set_pulse_widths(pw_1 + self.active_hysteresis_correction_1, pw_2 + self.active_hysteresis_correction_2)
 
         # We record the angles, so we that we know where the arms are for future reference.
         self.angle_1, self.angle_2 = angle_1, angle_2
 
-        self.angles_used_1.add(angle_1)
-        self.angles_used_2.add(angle_2)
-        self.pulse_widths_used_1.add(pw_1)
-        self.pulse_widths_used_2.add(pw_2)
+        self.angles_used_1.add(int(angle_1))
+        self.angles_used_2.add(int(angle_2))
+        self.pulse_widths_used_1.add(int(pw_1))
+        self.pulse_widths_used_2.add(int(pw_2))
 
 
-    #  ----------------- hardware-related methods -----------------
+    #  ----------------- angles-to-pulse-widths methods -----------------
 
     def naive_angles_to_pulse_widths_1(self, angle):
         return (angle - self.arm_1_centre) * self.servo_1_degree_ms + self.servo_1_centre
@@ -519,6 +528,8 @@ class BrachioGraph:
 
         return (pulse_width_1, pulse_width_2)
 
+
+    #  ----------------- hardware-related methods -----------------
 
     def set_pulse_widths(self, pw_1, pw_2):
 
@@ -645,7 +656,7 @@ class BrachioGraph:
                 1: "(straight ahead)",
                 2: "(i.e. to the right) to the inner arm)"
             },
-        "safe_guess": {1: -60, 2: 90}
+        "safe-guess": {1: -60, 2: 90}
         }
 
         pw = servo_centre
@@ -715,7 +726,7 @@ class BrachioGraph:
         print(f"The servo is now at {int(pw)}µS, which should correspond to {texts['nominal-centre'][servo]}˚.")
         print("If necessary, remount the arm at the centre of its optimal sweep for your drawing area.")
         print()
-        print(f"Alternatively as a rule of thumb, if the arms are of equal length, use the position closest to {texts['nominal-centre'][servo]}˚.")
+        print(f"Alternatively as a rule of thumb, if the arms are of equal length, use the position closest to {texts['safe-guess'][servo]}˚.")
 
         print("Carefully count how many spline positions you had to move the arm by to get it there.")
         print("Multiply that by the number of degrees for each spline to get the angle by which you moved it.")

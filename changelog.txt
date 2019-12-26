@@ -9,3 +9,10 @@ Changelog
 * Added calibration methods and documentation
 * Added bottom/top/left/right properties to BrachioGraph (bl, tl, tr, br)
 * Created protractors for calibration
+
+
+2019 12 26
+----------
+
+* Added hysteresis compensation with hysteresis_correction_1/hysteresis_correction_2 values
+* Added calibration and anti-hysteresis documentation
