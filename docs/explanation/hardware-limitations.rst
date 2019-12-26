@@ -3,7 +3,7 @@ Compensating for hardware limitations
 
 Make no mistake: any engineer can tell you that the BrachioGraph is no way to build a plotter. Hobby servo motors are
 underpowered, imprecise and not designed for this kind of job. Ice cream sticks lack rigidity. The pen-lifting
-mechanism also tends to move the pen sideways. And so on.
+mechanism tends to move the pen sideways. And so on.
 
 That is partly what makes it fun, that it does things its parts are not ideally suited to, and does them well enough
 to make the results interesting and worthwhile in their own right.
@@ -43,9 +43,8 @@ Hysteresis
 ----------
 
 The BrachioGraph is susceptible to `hysteresis <https://en.wikipedia.org/wiki/Hysteresis>`_, a tendency of the system
-to maintain its state. In this case, it means that if the device receives a command to move the pen from an origin to
-another point and then return, the actual positions of the pen will not perfectly correspond to the the theoretical
-positions of the pen.
+to maintain its state. In this case, it means that if the device receives a command to move to a certain point, where
+it actually arrives can depend on the direction it was coming from.
 
 
 The motors
@@ -65,7 +64,7 @@ The mechanical system
 
 In addition, the mechanical system - the arms, the joints and the way the pen is held - adds more hysteresis. As the
 motors move, some of that movement will be taken up by flexing and mechanical free-play in the system, so that the
-actual relationship between pen position and pulse-width can suffer from a dead-band of more than 25µS when changing
+actual relationship between pen position and pulse-width can suffer from a dead-band of more than 15µS when changing
 directions.
 
 The result of this hysteresis is imprecision that depends on direction. Drawing a grid with the lines first in one
@@ -85,3 +84,6 @@ constant to the pulse-width value when it is increasing or decreasing will help 
 .. image:: /images/hysteresis-correction.jpg
    :alt: 'Hysteresis corrected'
    :class: 'main-visual'
+
+The correction values are supplied as ``hysteresis_correction_1`` and ``hysteresis_correction_2`` parameters to the
+BrachioGraph instance. See :ref:`hysteresiscompensation` for how to determine these values.

@@ -265,7 +265,7 @@ the most significant correction that needs to be made.
 
 Try adding::
 
-    pw1diff=10
+    hysteresis_correction_1=10
 
 to the BrachioGraph definition, and plot the grid forwards and backwards again, again watching carefully to see where
 the errors occur. Pay particular attention to those parts of the lines where the *elbow* motor is *not* changing its
@@ -275,7 +275,7 @@ to improve alignment.
 Once you have got the best result possible for these parts of the lines, try a similar adjustment for the elbow motor,
 say::
 
-    pw1diff=2
+    hysteresis_correction_2=2
 
 Since the elbow motor has less weight and a shorter arm of movement to displace, it's likely to need a smaller
 correction value.
