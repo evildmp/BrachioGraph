@@ -286,8 +286,6 @@ class BrachioGraph:
         min_x, max_x = min(x_values_in_lines), max(x_values_in_lines)
         min_y, max_y = min(y_values_in_lines), max(y_values_in_lines)
 
-        print(min_x, max_x, min_y, max_y)
-
         # Identify the range they span.
 
         x_range, y_range = max_x - min_x, max_y - min_y
