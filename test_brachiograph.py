@@ -1,6 +1,7 @@
 import pytest
 
 from brachiograph import BrachioGraph
+import linedraw
 
 virtual_bg = BrachioGraph(
     inner_arm=8,
@@ -34,7 +35,7 @@ def test_box():
 # ----------------- pen-moving methods -----------------
 
 def test_centre():
-    virtual_bg.centre()
+    virtual_bg.park()
 
 
 # ----------------- reporting methods -----------------
@@ -45,7 +46,19 @@ def test_report():
 
 def test_maths_errors():
     plotter = BrachioGraph(
-      inner_arm=8.2,
-      outer_arm=8.85,
+        inner_arm=8.2,
+        outer_arm=8.85,
     )
-    plotter.xy_to_angles(-10.2, 13.85)
+    with pytest.raises(Exception):
+        plotter.xy_to_angles(-10.2, 13.85)
+
+
+# ----------------- end-to-end tests -----------------
+
+def test_linedraw_to_plot():
+    linedraw.image_to_json(
+        "../test-patterns/test_pattern", resolution=1024,
+        draw_contours=10, repeat_contours=1,
+        draw_hatch=32, repeat_hatch=1,
+        )
+    virtual_bg.plot_file("images/test_gradient.json")

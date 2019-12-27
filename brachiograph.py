@@ -603,6 +603,10 @@ class BrachioGraph:
         # convert x/y co-ordinates into motor angles
 
         hypotenuse = math.sqrt(x**2+y**2)
+
+        if hypotenuse > self.INNER_ARM + self.OUTER_ARM:
+            raise Exception(f"Cannot reach {hypotenuse}; total arm length is {self.INNER_ARM + self.OUTER_ARM}")
+
         hypotenuse_angle = math.asin(x/hypotenuse)
 
         inner_angle = math.acos(
