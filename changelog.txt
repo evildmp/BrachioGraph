@@ -17,3 +17,8 @@ Changelog
 * Added hysteresis compensation with hysteresis_correction_1/hysteresis_correction_2 values
 * Added calibration and anti-hysteresis documentation
 * Added check for repeat controls in linedraw
+
+2019 12 27
+----------
+
+* Added an exception for out-of-reach condition
