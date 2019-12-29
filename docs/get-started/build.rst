@@ -11,6 +11,7 @@ You'll need:
 * a Raspberry Pi
 * three servo motors
 * two arms
+* jumper wires and GPIO pin header to connect the Pi to the servos
 * other small items mentioned below (such as a clothes-peg) depending on exactly how you build the machine.
 
 You'll also need some strong adhesive.
