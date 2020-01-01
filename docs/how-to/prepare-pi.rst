@@ -8,7 +8,8 @@ The Raspberry Pi Zero is ideal as the engine for the plotter. Here's a recipe fo
 Download the latest Raspbian Lite (minimal image) from the `Raspbian downloads page
 <https://www.raspberrypi.org/downloads/raspbian>`_.
 
-Do whatever needs to be done to put it onto a micro SD card.
+Do whatever `needs to be done
+<https://www.raspberrypi.org/documentation/installation/installing-images/>`_ to put it onto a micro SD card.
 
 
 Enable SSH and OTG Ethernet access
@@ -112,6 +113,14 @@ Install key software components
 -------------------------------
 
 Refer to the :ref:`install-software` section.
+
+
+Add a pin header
+----------------
+
+If you don't already have them, you will need a GPIO (general-purpose input/output) pin header
+to connect the Raspberry Pi to the jumper wires that will connect to the servo motors.
+Different pin headers are available that can be snapped or soldered into place.
 
 
 Start it all up
