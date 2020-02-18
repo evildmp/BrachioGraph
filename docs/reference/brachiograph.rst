@@ -46,6 +46,43 @@ The ``BrachioGraph`` class
   servo horn at a different angle than to change these.
 
 
+Management methods
+~~~~~~~~~~~~~~~~~~
+
+``park()``
+^^^^^^^^^^^^
+
+Sends the arms to the parking position, with the inner arm at -90˚ and the outer arm at 90˚ to it.
+This corresponds to an x/y position:
+
+* x: ``-inner_arm``
+* y: ``outer_arm``
+
+
+Image drawing methods
+~~~~~~~~~~~~~~~~~~~~~~~
+
+``plot_file(image)``
+^^^^^^^^^^^^^^^^^^^^
+
+* ``image``: path to image file
+
+
+Drawing utility methods
+~~~~~~~~~~~~~~~~~~~~~~~
+
+``box()``
+^^^^^^^^^^^^
+
+Draw a box marked out by the ``bounds``.
+
+
+``grid_lines()``
+^^^^^^^^^^^^^^^^^
+
+Draws a grid within the box area marked out by the ``bounds``.
+
+
 Reporting methods
 ~~~~~~~~~~~~~~~~~
 
