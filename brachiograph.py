@@ -584,7 +584,7 @@ class BrachioGraph:
         # self.quiet()
 
 
-    def quiet(self, servos=[self.servo_1_pin, self.servo_2_pin, self.servo_3_pin]):
+    def quiet(self, servos=[14, 15, 18]):
 
         # stop sending pulses to the servos
 
