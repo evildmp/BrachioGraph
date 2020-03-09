@@ -22,3 +22,8 @@ Changelog
 ----------
 
 * Added an exception for out-of-reach condition
+
+2020 03 09
+----------
+
+* Make the GPIO ports/pins for the servos configurable
