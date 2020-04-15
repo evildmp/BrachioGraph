@@ -20,3 +20,8 @@ Documentation
 -------------
 
 `Complete documentation for the project, with detailed instructions on how to build and use it <https://www.brachiograph.art/>`_
+
+3D Printed Version
+-------------
+
+`Parts for 3D printing are available: `_
