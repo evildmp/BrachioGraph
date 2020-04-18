@@ -22,9 +22,14 @@ If you are using SG90 motors as suggested, arms of about 8cm are suitable for dr
 by 9cm high. This fits well onto a sheet of A5 paper. (See :ref:`understand_plotter_geometry` and
 :ref:`optimise-geometry`.)
 
-3D Printed Version
+3D printed version
 ------------------
 For people with a 3D printer there are also `parts for 3D printing available <https://www.thingiverse.com/thing:4295302>`_
+
+.. image:: ../images/3dprintedversion.jpg 
+    :align: center
+    :width: 300px
+
 
 
 Assembly
