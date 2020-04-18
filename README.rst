@@ -24,4 +24,4 @@ Documentation
 3D Printed Version
 -------------
 
-`Parts for 3D printing are available: `_
+`Parts for 3D printing are available: <https://www.thingiverse.com/thing:4295302>`_
