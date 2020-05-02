@@ -161,7 +161,7 @@ class BrachioGraph:
         with open(filename, "r") as line_file:
             lines = json.load(line_file)
 
-        self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, bounds=bounds, flip=True)
+        self.plot_lines(lines=lines, wait=wait, interpolate=interpolate, bounds=bounds)
 
 
     def plot_lines(self, lines=[], wait=0, interpolate=10, rotate=False, flip=False, bounds=None):
@@ -172,7 +172,7 @@ class BrachioGraph:
         if not bounds:
             return "Line plotting is only possible when BrachioGraph.bounds is set."
 
-        lines = self.rotate_and_scale_lines(lines=lines, bounds=bounds, flip=True)
+        lines = self.rotate_and_scale_lines(lines=lines, bounds=bounds, flip=flip)
 
         for line in tqdm.tqdm(lines, desc="Lines", leave=False):
             x, y = line[0]
