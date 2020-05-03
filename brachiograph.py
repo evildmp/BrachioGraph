@@ -232,7 +232,7 @@ class BrachioGraph:
                 x = x / divider             # scale x values to fit in our box width
                 x = x + box_x_mid_point     # shift x values so that they have the box x midpoint as their endpoint
 
-                if flip ^ rotate:
+                if flip:
                     x = -x
 
                 y = point[1]
