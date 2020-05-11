@@ -803,19 +803,19 @@ class BrachioGraph:
                 return
             elif key=="a":
                 self.current_x = self.current_x - 1
-            elif key=="s":
+            elif key=="d":
                 self.current_x = self.current_x + 1
             elif key=="A":
                 self.current_x = self.current_x - .1
-            elif key=="S":
+            elif key=="D":
                 self.current_x = self.current_x + .1
-            elif key=="k":
+            elif key=="w":
                 self.current_y = self.current_y - 1
-            elif key=="l":
+            elif key=="s":
                 self.current_y = self.current_y + 1
-            elif key=="K":
+            elif key=="W":
                 self.current_y = self.current_y - .1
-            elif key=="L":
+            elif key=="S":
                 self.current_y = self.current_y + .1
 
             print(self.current_x, self.current_y)
