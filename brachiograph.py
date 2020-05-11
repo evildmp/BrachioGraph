@@ -809,13 +809,13 @@ class BrachioGraph:
                 self.current_x = self.current_x - .1
             elif key=="D":
                 self.current_x = self.current_x + .1
-            elif key=="w":
-                self.current_y = self.current_y - 1
             elif key=="s":
+                self.current_y = self.current_y - 1
+            elif key=="w":
                 self.current_y = self.current_y + 1
-            elif key=="W":
-                self.current_y = self.current_y - .1
             elif key=="S":
+                self.current_y = self.current_y - .1
+            elif key=="W":
                 self.current_y = self.current_y + .1
 
             print(self.current_x, self.current_y)
