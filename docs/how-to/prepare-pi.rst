@@ -5,8 +5,8 @@ How to prepare a Raspberry Pi Zero to drive the plotter
 
 The Raspberry Pi Zero is ideal as the engine for the plotter. Here's a recipe for a quick set-up, from scratch.
 
-Download the latest Raspbian Lite (minimal image) from the `Raspbian downloads page
-<https://www.raspberrypi.org/downloads/raspbian>`_.
+Download the latest Raspberry Pi OS Lite (minimal image) from the `Raspberry Pi OS downloads page
+<https://www.raspberrypi.org/downloads/raspberry-pi-os>`_.
 
 Do whatever `needs to be done
 <https://www.raspberrypi.org/documentation/installation/installing-images/>`_ to put it onto a micro SD card.
