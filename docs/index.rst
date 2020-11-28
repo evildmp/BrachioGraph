@@ -53,7 +53,7 @@ The plotter is made of:
 * two sticks
 * a pen or pencil
 * a clothes-peg
-* 3 servo motors
+* 3 :ref:`servo motors <hardware-servos>`
 * a Raspberry Pi, to drive the servos and run the custom code
 * glue
 

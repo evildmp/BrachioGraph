@@ -3,11 +3,6 @@
 Get started
 ===========
 
-.. image:: /images/the-author.jpg
-   :alt: 'The author'
-
-Photograph courtesy of `Bartek Pawlik <http://bartpawlik.com>`_.
-
 This section describes building the plotter, and driving it using the ``brachiograph.py`` library.
 
 .. toctree::
@@ -17,3 +12,8 @@ This section describes building the plotter, and driving it using the ``brachiog
     Install the software <install>
     Wire up the plotter to the Pi <wiring>
     Start up the BrachioGraph <drive>
+
+.. image:: /images/the-author.jpg
+   :alt: 'The author'
+
+Photograph courtesy of `Bartek Pawlik <http://bartpawlik.com>`_.

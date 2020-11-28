@@ -124,7 +124,7 @@ Servo limits
 ~~~~~~~~~~~~
 
 Another constraint is the rotational behaviour of the servos. Physically, most servos will rotate up to 90˚ in each
-directly, but most are not actually designed to be used that way. *Some* servos rotate up to 180˚ quite well, even
+direction, but most are not actually designed to be used that way. *Some* servos rotate up to 180˚ quite well, even
 though it's outside their specification (for example the :ref:`Tower Pro SG90s <hardware-servos>`. However it's not a
 good thing to rely on, and it's definitely not a good assumption to make of all servos. This is because:
 

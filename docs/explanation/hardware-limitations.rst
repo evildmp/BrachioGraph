@@ -2,7 +2,7 @@ Compensating for hardware limitations
 ======================================
 
 Make no mistake: any engineer can tell you that the BrachioGraph is no way to build a plotter. Hobby servo motors are
-underpowered, imprecise and not designed for this kind of job. Ice cream sticks lack rigidity. The pen-lifting
+under-powered, imprecise and not designed for this kind of job. Ice cream sticks lack rigidity. The pen-lifting
 mechanism tends to move the pen sideways. And so on.
 
 That is partly what makes it fun, that it does things its parts are not ideally suited to, and does them well enough

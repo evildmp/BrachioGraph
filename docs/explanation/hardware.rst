@@ -15,10 +15,13 @@ up a Pi Zero <prepare-pi>` is included.
 When using OTG power with larger servos, you may find that the machine occasionally reboots, because of lack of power.
 A separate power supply for the Pi will be more reliable.
 
+
 .. _hardware-servos:
 
 The servo motors
 ~~~~~~~~~~~~~~~~
+
+..  important:: Read :ref:`digital-motors`, below.
 
 There are basically two kinds of servos:
 
@@ -27,6 +30,7 @@ There are basically two kinds of servos:
 
 You need fixed-range servos. About 180 degrees of rotation is fine. You can do with less - but the drawing area will
 be smaller.
+
 
 Servos for the arms
 ^^^^^^^^^^^^^^^^^^^
@@ -37,6 +41,7 @@ Servos for the arms
   motors from different manufacturers in this class, that weigh about 9g and have approximately 180 degrees rotation.
 * *Futaba S3001* motors, which are larger, more powerful and more accurate, worked well and produced even better
   results.
+* *Miuzei SG90 9G* is another small cheap model that has performed well.
 
 Note that while more powerful motors produce better results, they will also draw more current and your
 Raspberry Pi may struggle to meet the demand.
@@ -48,18 +53,20 @@ Servos for the pen
 For the pen-lifting servo, the lighter and smaller the better ("sub-micro" servos are available). Power and accuracy
 are not required.
 
+.. _digital-motors:
 
-Analog vs digital servo motors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Why more expensive digital motors are worse
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 SG90 motors are **analog**. Analog motors use a small circuit to convert the pulse-widths into motor angles.
 **Digital** servo motors also exist, including digital versions of the SG90; they tend to be faster and more powerful.
 
-However, *small digital motors do not work well*. They are twitchy and try to correct for errors much faster than
-analog motors. This means that in a mechanism such as this, they quickly start oscillating wildly, as each movement
-overshoots and corrects (this is made worse by having two motors affecting each other).
+However, *small digital motors do not work well*, for example the TowerPro SG92R. They are twitchy and try to correct
+for errors much faster than analog motors. This means that in a mechanism such as this, they quickly start oscillating
+wildly, as each movement overshoots and corrects (this is made worse by having two motors affecting each other).
 
-More powerful digital servo motors have not been tested. Please share your experiences using other motors.
+More powerful digital servo motors have not been tested. `Please share your experiences using other motors
+<https://github.com/evildmp/BrachioGraph/issues/31>`_.
 
 
 Beware of fakes

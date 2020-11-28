@@ -10,7 +10,7 @@ Power up the Raspberry Pi. Run::
 
     sudo pigpiod
     cd BrachioGraph
-    python3
+    python  # python3, if you not using a virtual environment
 
 And then, using the ``inner_arm`` and ``outer_arm`` length measurements (in cm) that you noted earlier::
 

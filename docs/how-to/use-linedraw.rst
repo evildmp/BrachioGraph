@@ -57,7 +57,7 @@ A value of 0 for ``draw_contours`` or ``draw_hatch`` will turn them off.
 and 16.
 
 
-Emphasize the edges
+Emphasise the edges
 ^^^^^^^^^^^^^^^^^^^
 
 You can also provide a value for ``repeat_contours`` (or even ``repeat_hatch``, though this is less useful).

@@ -20,6 +20,11 @@ Create and activate a `Python virtual environment <https://docs.python.org/3/lib
     python3 -m venv env
     source env/bin/activate
 
+You may get an error when trying to create the virtual environment, in which case you will need to install
+``python-venv`` first::
+
+    sudo apt-get install python3-venv
+
 
 tmux
 ~~~~
@@ -109,6 +114,6 @@ If you haven't already done so, clone the ``BrachioGraph`` repository::
 
     git clone git@github.com:evildmp/BrachioGraph.git
 
-or, if you need to use HTTPS instead::
+You will need to have set up a public key using ``ssh-keygen`` and added your public key to your GitHub account for this to work. Or, you can use HTTPS instead::
 
     git clone https://github.com/evildmp/BrachioGraph.git
