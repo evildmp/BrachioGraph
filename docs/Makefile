@@ -4,21 +4,25 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = PantoGrah
+SPHINXPROJ    = BrachioGraph
 SOURCEDIR     = .
 BUILDDIR      = _build
 
 VENV = env/bin/activate
 PORT = 8004
 
-# Put it first so that "make" without argument is like "make help".
+# list the targets that we don't want confused with files in the directory
+.PHONY: help install clean run Makefile
+
+# "help" is first so that "make" without an argument acts like "make help".
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 install:
 	@echo "... setting up virtualenv"
-	python3.6 -m venv env
+	python3.8 -m venv env
 	. $(VENV); pip install --upgrade -r requirements.txt
+
 	@echo "\n" \
 	  "--------------------------------------------------------------- \n" \
       "* watch, build and serve the documentation: make run \n" \
@@ -29,7 +33,7 @@ install:
 	  "--------------------------------------------------------------- \n"
 
 clean:
-	-rm -rf _build/*
+	-rm -r $(BUILDDIR)/*
 
 run:
 	. $(VENV); sphinx-autobuild $(ALLSPHINXOPTS) --ignore ".git/*" --ignore "*.scss" . -a _build/html --host 0.0.0.0 --port $(PORT)
@@ -49,8 +53,6 @@ spelling:
 
 quickstart:
 	. $(VENV); sphinx-quickstart
-
-.PHONY: help install clean run Makefile
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
