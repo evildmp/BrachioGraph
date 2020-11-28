@@ -1,0 +1,14 @@
+python3-venv
+pigpiod
+libwebp6
+libtiff5
+libjbig0
+liblcms2-2
+libwebpmux3
+libopenjp2-7
+libzstd1
+libwebpdemux2
+libjpeg-dev
+libatlas3-base
+libgfortran5
+git
