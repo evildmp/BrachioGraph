@@ -18,7 +18,7 @@ We connect:
 * elbow motor: GPIO pin 15
 * lifting motor: GPIO pin 18
 
-These correspond to pins 2-12 on the Pi's header. See https://pinout.xyz.
+These correspond to pins 4-12 on the Pi's header. See https://pinout.xyz.
 
 .. image:: /images/pin-connections.jpg
    :alt: 'Pin connections'
