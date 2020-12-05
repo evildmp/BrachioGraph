@@ -29,7 +29,7 @@
 BrachioGraph - the cheapest, simplest possible pen-plotter
 ==========================================================
 
-.. raw:: html
+..  raw:: html
 
     <iframe src="https://player.vimeo.com/video/372867891" width="696" height="392" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
 
@@ -42,30 +42,17 @@ BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a libra
 
     <a href="https://twitter.com/BrachioGraph?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @BrachioGraph</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
+---------------
 
+A BrachioGraph can be built in an hour or so without any special skills. The total cost of all components can be as low
+as €15 or so. Apart from a Raspberry Pi computer and some hobby servo motors, the plotter can be built with everyday
+household items such as a clothes-peg. The software in the `BrachioGraph <https://github.com/evildmp/BrachioGraph>`_
+library includes code to :ref:`drive the hardware <start-plotting>` and :ref:`vectorise bit-map images <use-linedraw>`.
 
-
-The hardware
--------------
-
-The plotter is made of:
-
-* two sticks
-* a pen or pencil
-* a clothes-peg
-* 3 :ref:`servo motors <hardware-servos>`
-* a Raspberry Pi, to drive the servos and run the custom code
-* glue
-
-Total cost: ~€14
-
-
-The software
-------------
-
-The software in the `BrachioGraph <https://github.com/evildmp/BrachioGraph>`_ library includes code to :ref:`drive the
-hardware <start-plotting>` and :ref:`vectorise bit-map images <use-linedraw>`.
-
+BrachioGraphs benefits from contributions from the open-source community, and independently-created :ref:`community
+resources <community-resources>`. These include videos, `brachio.me <https://brachio.me>`_, a web version of the
+linedraw software used to vectorise images and `3D printed plotter components
+<https://www.thingiverse.com/thing:4295302>`_.
 
 .. rst-class:: clearfix row
 
