@@ -20,21 +20,21 @@ class BrachioGraph:
 
     def __init__(
         self,
-        inner_arm,                  # the lengths of the arms
-        outer_arm,
-        virtual_mode = False,
-        wait=None,
-        bounds=None,                # the maximum rectangular drawing area
+        inner_arm=8,                # the lengths of the arms
+        outer_arm=8,
+        servo_1_centre=1500,        # shoulder motor centre pulse-width
+        servo_2_centre=1500,        # elbow motor centre pulse-width
         servo_1_angle_pws=[],       # pulse-widths for various angles
         servo_2_angle_pws=[],
-        servo_1_centre=1500,
-        servo_2_centre=1500,
         servo_1_degree_ms=-10,      # milliseconds pulse-width per degree
         servo_2_degree_ms=10,       # reversed for the mounting of the elbow servo
         arm_1_centre=-60,
         arm_2_centre=90,
         hysteresis_correction_1=0,  # hardware error compensation
         hysteresis_correction_2=0,
+        bounds=[-8, 4, 6, 13],      # the maximum rectangular drawing area
+        wait=None,
+        virtual_mode = False,
         pw_up=1500,                 # pulse-widths for pen up/down
         pw_down=1100,
     ):

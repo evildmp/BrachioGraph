@@ -1,49 +1,99 @@
+.. raw:: html
+
+    <style>
+        table.docutils { width: 100%; table-layout: fixed;}
+        table.docutils th, table.docutils td { white-space: normal }
+    </style>
+
+
 ``brachiograph.py``
 ==========================
 
 The ``BrachioGraph`` class
 ---------------------------
 
+
 ::
 
     class BrachioGraph:
 
-      def __init__(
-          self,
-          inner_arm,
-          outer_arm,
-          virtual_mode=False,
-          bounds=None,
-          servo_1_centre=1500,
-          servo_2_centre=1500,
-          servo_1_degree_ms = 10,
-          servo_2_degree_ms = -10,
-          arm_1_centre=-60,
-          arm_2_centre=90,
-          servo_1_angle_pws=[],
-          servo_2_angle_pws=[],
-          pw_up=1500,
-          pw_down=1100,
-      ):
+        def __init__(
+            self,
+            inner_arm=8,                # the lengths of the arms
+            outer_arm=8,
+            servo_1_centre=1500,        # shoulder motor centre pulse-width
+            servo_2_centre=1500,        # elbow motor centre pulse-width
+            servo_1_angle_pws=[],       # pulse-widths for various angles
+            servo_2_angle_pws=[],
+            servo_1_degree_ms=-10,      # milliseconds pulse-width per degree
+            servo_2_degree_ms=10,       # reversed for the mounting of the elbow servo
+            arm_1_centre=-60,
+            arm_2_centre=90,
+            hysteresis_correction_1=0,  # hardware error compensation
+            hysteresis_correction_2=0,
+            bounds=[-8, 4, 6, 13],      # the maximum rectangular drawing area
+            wait=None,
+            virtual_mode = False,
+            pw_up=1500,                 # pulse-widths for pen up/down
+            pw_down=1100,
+        ):
 
-* ``inner_arm``, ``outer_arm`` need to be measured from the actual plotter. They don't need to be equal, but some
-  combinations are uselessly restrictive. Use the ``turtle_draw.py`` script to :ref:`see how different geometries
-  affect the plottable area <understand-plotter-geometry>`.
-* ``virtual_mode`` allows you to :ref:`run a BrachioGraph without hardware attached <virtual-mode>`
-* ``bounds`` needs to be determined empirically. Or possibly, `computed
-  <https://math.stackexchange.com/questions/3293200/how-can-i-calculate-the-area-reachable-by-the-tip-of-an-articulated-
-  arm#comment6773872_3293200>`_.
-* ``servo_1_centre`` and ``servo_2_centre``: the pulse-width at which each servo arm is exactly on the plotting grid's x
-  or y axis. Ignored if the ``servo_<x>_angle_pws`` arguments are provided.
-* ``servo_1_degree_ms`` and ``servo_2_degree_ms``: how many ms per degree of movement. Reverse the sign to reverse the
-  direction.
-* ``arm_1_centre`` and ``arm_2_centre``: the angles of the arms when the servo is at
-  ``servo_1_centre``/``servo_1_centre`` respectively
-* ``servo_1_angle_pws`` and ``servo_2_angle_pws``: lists of pulse-width/angle pairs. If provided, then
-  :ref:`numpy.polyfit <polyfit>` will be used to produce a function for calculating required pulse-widths. If not, a
-  more naive formula will be used.
-* ``pw_up`` and ``pw_down``: pulse width values at which the pen is up/down. It makes more sense to attach the lifting
-  servo horn at a different angle than to change these.
+
+..  list-table:: ``BrachioGraph`` attributes
+    :header-rows: 1
+    :widths: 28, 20, 52
+
+    * - attribute
+      - default
+      - description
+
+    * - ``inner_arm``, ``outer_arm``
+      - 8
+      - length of each arm in centimetres
+
+    * - ``servo_1_centre``, ``servo_2_centre``
+      - 1500
+      - motor centre pulse-widths; ignored if the ``servo_<x>_angle_pws`` arguments (below) are provided
+
+    * - ``servo_1_angle_pws``, ``servo_2_angle_pws``
+      - ``[]``
+      - a list of empirically-derived pulse-width/angle pairs; if provided, will be used to provide a function for
+        calculating pulse-widths; see :ref:`advanced-calibration`
+
+    * - ``servo_1_degree_ms``, ``servo_2_degree_ms``
+      - -10, 10
+      - milliseconds pulse-width change per degree of motor movement; see :ref:`pulse-width-degrees`
+
+    * - ``arm_1_centre``
+      - -60
+      - angle in degrees of the shoulder motor's centre of movement (i.e. at ``servo_1_centre``) relative to the
+        drawing grid; see :ref:`basic-calibration`
+
+    * - ``arm_2_centre``
+      - 90
+      - angle in degrees of the elbow motor's centre of movement (i.e. at ``servo_2_centre``) relative to the inner
+        arm; see :ref:`basic-calibration`
+
+    * - ``hysteresis_correction_1``, ``hysteresis_correction_2``
+      - 0
+      - empirically-derived hardware error compensation values, in mS; see :ref:`hysteresiscompensation`
+
+    * - ``bounds``
+      - ``[-8, 4, 6, 13]``
+      - the box within which the BrachioGraph will draw; see :ref:`understand_plotter_geometry`
+
+    * - ``virtual_mode``
+      - ``False``
+      - :ref:`runs the BrachioGraph without attached hardware <virtual-mode>`
+
+    * - ``wait``
+      - ``None``
+      - a factor that influences the time before the next movement is commanded
+
+    * - ``pw_up``, ``pw_down``
+      - 1500, 1100
+      - pulse width values at which the pen is in the up/down positions
+
 
 
 Management methods
