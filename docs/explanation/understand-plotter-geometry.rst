@@ -22,9 +22,9 @@ To use it with some default values, run::
 
     python bgt.py
 
-.. image:: /images/plotter-geometry/understanding-the-plot.png
-   :alt: 'Plotting area'
-   :class: 'main-visual'
+..  image:: /images/plotter-geometry/understanding-the-plot.png
+    :alt: 'Plotting area'
+    :class: 'main-visual'
 
 
 The grid
@@ -114,10 +114,10 @@ is reasonable as a starting point. It gives us some options that look like this:
     shoulder_sweep:         180
     elbow_sweep:            180
 
-    rectangles: 15 x  9 = 125
+    rectangles: 15 x  9 = 135
                 13 x 10 = 130
 
-(Note that these all subsequent examples are approximations to the nearest centimetre.)
+(Note that these and all subsequent examples are approximations to the nearest centimetre.)
 
 
 Servo limits
@@ -142,6 +142,8 @@ Set the ``shoulder_sweep`` and ``elbow_sweep`` values both to 120:
 
 As you can see, we have lost quite a lot of the plotting area as a result.
 
+
+.. _rotating-drawing-area:
 
 Rotating the drawing area
 ------------------------------
