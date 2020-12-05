@@ -34,3 +34,10 @@ Examples:
 * :mod:`Link to a module <python:datetime>`
 * :doc:`Link to a document <django:topics/email>`
 * :class:`Link to a class <django-cms:cms.models.Page>`
+
+
+Colours for squares in turtle graphics plots
+----------------------------------------------
+
+* blue #00A0FF 50% opacity
+* yellow #FFFF00 50% opacity
