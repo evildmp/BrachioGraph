@@ -5,115 +5,65 @@ Install the software
 
 See also :ref:`prepare-pi`, which gives step-by-step directions specifically for using a Pi Zero as the plotter engine.
 
-``brachiograph.py`` requires a few additional components. It's recommended to use a virtualenv for the Python
-packages; either way, make sure you are in a Python 3 environment.
+``brachiograph.py`` requires a few additional components, and needs to be run in a Python 3 environment,
 
 
-For convenience (optional but recommended)
------------------------------------------------
+Install system packages
+-----------------------
 
-Virtual environment
-~~~~~~~~~~~~~~~~~~~
+You may have some of these installed already, but that shouldn't matter.
+
+::
+
+    sudo apt install -y python3-venv pigpiod libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git
+
+The packages include:
+
+* ``venv``, for managing virtual environments under Python 3
+* `PIGPIO <http://abyz.me.uk/rpi/pigpio/index.html>`_, an excellent library that provides hardware control of the
+  Pi's GPIO pins - important for accurate timing of pulses. It comes with a Python interface to the lower-level code.
+* various system libraries required by the Pillow Python imaging library
+* ``libatlas3-base`` and ``libgfortran5``, required by the Numpy Python mathematics library
+* Git
+
+.. _set-up-venv:
+
+Set up a virtual environment
+----------------------------
 
 Create and activate a `Python virtual environment <https://docs.python.org/3/library/venv.html>`_ to work in::
 
     python3 -m venv env
     source env/bin/activate
 
-You may get an error when trying to create the virtual environment, in which case you will need to install
-``python-venv`` first::
-
-    sudo apt-get install python3-venv
+You will need to ensure the environment is activated by running ``source env/bin/activate`` - in this directory - if
+you return to it later.
 
 
-tmux
-~~~~
+Install Python packages
+-----------------------
 
-`tmux <https://thoughtbot.com/blog/a-tmux-crash-course>`_ is a very handy way of managing terminal sessions, so that
-even if your connection is broken, you can re-join the session without losing your place.
+Pinned versions of the Python packages are listed in ``requirements.txt``; install with::
 
-Install with::
+    pip install -r requirements.txt
 
-    sudo apt-get install tmux
+This will install:
 
-
-Pip
----
-
-If not already installed, or if you're not using a virtual environment::
-
-    sudo apt-get install python3-pip
-
-This version of pip needs to be invoked with ``pip3``, so if you are not using a Python virtual environment,
-replace ``pip`` with ``pip3`` in the examples below.
-
-
-PIGPIO
-------
-
-`PIGPIO <http://abyz.me.uk/rpi/pigpio/index.html>`_ is an excellent library that provides hardware control
-of the Pi's GPIO pins - important for accurate timing of pulses. It comes with a Python interface to the
-lower-level code.
-
-::
-
-    sudo apt-get install pigpiod
-    pip install pigpio  # use pip3 if not using a virtual environment
-
-
-Pillow
-------
-
-`Pillow <http://pillow.readthedocs.io>`_ is a Python imaging library. You'll need it to process convert bitmap images
-to vectors, but it's not required to drive the plotter.
-
-Install the required system libraries (listed at https://www.piwheels.org/project/Pillow/), followed by
-Pillow itself::
-
-    sudo apt install libwebp6 libtiff5 libjbig0 liblcms2-2 libwebpmux3 libopenjp2-7 libzstd1 libwebpdemux2 libjpeg-dev
-    pip install pillow  # use pip3 if not using a virtual environment
-
-
-Numpy
------
-
-`Numpy <numpy>`_ is a Python mathematics library.
-
-Install the required system libraries (listed at https://www.piwheels.org/project/numpy/), followed by
-Numpy itself::
-
-    sudo apt install libatlas3-base libgfortran5
-    pip install numpy  # use pip3 if not using a virtual environment
-
-
-Git
----
-
-If not already installed::
-
-    sudo apt-get install git
-
-
-Other Python packages
----------------------
-
-Use pip to install Python 3 versions of:
-
-* ``tqdm``      # for the progress indicator while drawing
-* ``readchar``  # to allow the ``BrachioGraph.drive()`` methods to accept user input
-
-::
-
-    pip install tqdm readchar  # use pip3 if not using a virtual environment
+* `Numpy <numpy>`_, a Python mathematics library
+* PIGPIO's Python library
+* `Pillow <http://pillow.readthedocs.io>`_, the most widely-used Python imaging library.
+* ``tqdm``, for the progress indicator while drawing
+* ``readchar``, to allow the ``BrachioGraph.drive()`` methods to accept user input
 
 
 Clone the BrachioGraph repository
 ---------------------------------
 
-If you haven't already done so, clone the ``BrachioGraph`` repository::
+Clone the ``BrachioGraph`` repository::
 
     git clone git@github.com:evildmp/BrachioGraph.git
 
-You will need to have set up a public key using ``ssh-keygen`` and added your public key to your GitHub account for this to work. Or, you can use HTTPS instead::
+You will need to have set up a public key using ``ssh-keygen`` and `added your public key to your GitHub account
+<https://github.com/settings/ssh/new>`_ for this to work. Or, you can use HTTPS instead::
 
     git clone https://github.com/evildmp/BrachioGraph.git

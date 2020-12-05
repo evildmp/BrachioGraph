@@ -10,7 +10,8 @@ You'll need:
 
 * a Raspberry Pi
 * three :ref:`servo motors <hardware-servos>`
-* two arms
+* sticks or stiff card to make two arms, each about 10cm long (to give you 8cm arms with a centimetre to spare at each
+  end)
 * jumper wires and GPIO pin header to connect the Pi to the servos
 * other small items mentioned below (such as a clothes-peg) depending on exactly how you build the machine.
 
@@ -18,8 +19,8 @@ You'll also need some strong adhesive or a hot glue gun.
 
 See :ref:`the hardware section <hardware>` for details on what components and materials to obtain.
 
-If you are using SG90 motors as suggested, arms of about 8cm are suitable for drawing an area approximately 14cm wide
-by 9cm high. This fits well onto a sheet of A5 paper. (See :ref:`understand_plotter_geometry` and
+The system uses centimetres as its basic unit of length. 8cm arms are suitable for drawing an area approximately 14cm
+wide by 9cm high. This fits well onto a sheet of A5 paper. (See :ref:`understand_plotter_geometry` and
 :ref:`optimise-geometry`.)
 
 
@@ -39,8 +40,8 @@ be raised a little above the level of the base.
 The inner arm
 ~~~~~~~~~~~~~
 
-Glue the servo horns to the inner arm, so that the centres of rotation are about 8cm (or whatever you have selected)
-apart.
+Glue the servo horns to the inner arm, so that the centres of rotation are exactly 8cm apart (you can use other
+dimensions, but for a first build, use 8cm).
 
 .. image:: /images/arm.jpg
    :alt: 'the horns glued to the inner arm'
@@ -50,8 +51,8 @@ The outer arm, clothes-peg and servos
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Glue a servo and a clothes-peg to the outer arm, so that a pen in the clothes-peg and the centre of rotation of the arm
-will also be the appropriate distance apart. Glue the final servo in such a position that its horn can rotate safely,
-and will be able to lift the pen clear of the paper. (See also an :ref:`alternative arrangement <no-clothes-peg>`.)
+will also be 8cm apart. Glue the final servo in such a position that its horn can rotate safely, and will be able to
+lift the pen clear of the paper. (See also an :ref:`alternative arrangement <no-clothes-peg>`.)
 
 .. image:: /images/outer-arm.jpg
    :alt: 'The outer arm, clothes-peg and servos'
@@ -60,11 +61,9 @@ and will be able to lift the pen clear of the paper. (See also an :ref:`alternat
 The assembled BrachioGraph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The BrachioGraph software needs to know the length of each arm, in values provided as ``inner_arm`` and ``outer_arm``.
+If you measure them carefully, both should be 8cm.
+
 .. image:: /images/brachiograph-top-view-arms.jpg
    :alt: 'Arms and motors'
    :class: 'main-visual'
-
-The system uses centimetres as its basic unit of length.
-
-Measure precisely the distance between the axis of the two servo horns on the upper arm (``inner_arm``), and the
-distance between the axis of the servo motor and the pen on the other (``outer_arm``). You'll need these values shortly.

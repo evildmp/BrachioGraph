@@ -108,10 +108,41 @@ to update the software.
 This will take a while.
 
 
-Install key software components
+Install the software
 -------------------------------
 
-Refer to the :ref:`install-software` section.
+Refer to the :ref:`install-software` section if you need more information about what will be installed by the following commands.
+
+
+System packages
+~~~~~~~~~~~~~~~
+
+Run::
+
+    sudo apt install -y python3-venv pigpiod libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git tmux
+
+tmux
+^^^^
+
+This also installs `tmux <https://thoughtbot.com/blog/a-tmux-crash-course>`_, a very handy way of managing terminal
+sessions, so that even if your connection is broken, you can re-join the session without losing your place - when working with a Raspberry Pi Zero connected using OTG Ethernet, this is a great convenience.
+
+
+Download the BrachioGraph library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    git clone git@github.com:evildmp/BrachioGraph.git  # if you have provided GitHub with your public key
+    git clone https://github.com/evildmp/BrachioGraph.git  # if you have not
+
+
+Python packages
+~~~~~~~~~~~~~~~
+
+In a :ref:`Python 3 virtual environment <set-up-venv>`::
+
+    pip install -r Brachiograph/requirements.txt
 
 
 Add a pin header
