@@ -18,6 +18,9 @@ Hardware
 `3D printed plotter components <https://www.thingiverse.com/thing:4295302>`_, including arms and stand-offs, by `Ringo
 <https://github.com/ringo2k>`_
 
+.. image:: ../images/3dprintedversion.jpg
+     :width: 300px
+
 
 Videos
 ----------------------------
