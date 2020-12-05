@@ -1,7 +1,7 @@
 .. _calibrate:
 
-Improve the plotter calibration
-===============================
+How to improve the plotter calibration
+======================================
 
 Each servo motor is different, so the BrachioGraph can be calibrated exactly for your servos. To get you started
 however, it makes some assumptions about the servos.
@@ -39,8 +39,8 @@ Find the centre angle pulse-widths
 
 By default, the BrachioGraph is initialised with::
 
-    servo_1_centre=1500  # shoulder motor centre pulse-width
-    servo_2_centre=1500  # elbow motor centre pulse-width
+    servo_1_centre = 1500  # shoulder motor centre pulse-width
+    servo_2_centre = 1500  # elbow motor centre pulse-width
 
 Probably, at the nominal "zero" angles (-90 and 90 degrees respectively) the arms will probably not be quite at the
 those angles. You can use ``bg.drive()`` to discover what pulse-widths correspond to the centre positions.
@@ -48,14 +48,10 @@ those angles. You can use ``bg.drive()`` to discover what pulse-widths correspon
 Controls:
 
 * 0: ``exit``
-* a: ``increase shoulder motor pulse-width 10µS``
-* s: ``decrease shoulder motor pulse-width 10µS``
-* A: ``increase shoulder motor pulse-width 1µS``
-* S: ``decrease shoulder motor pulse-width 1µS``
-* k: ``increase elbow motor pulse-width 10µS``
-* l: ``decrease elbow motor pulse-width 10µS``
-* K: ``increase elbow motor pulse-width 1µS``
-* L: ``decrease elbow motor pulse-width 1µS``
+* a: ``decrease shoulder motor pulse-width 10µS`` (A: 1µS)
+* s: ``increase shoulder motor pulse-width 10µS`` (S: 1µS)
+* k: ``decrease elbow motor pulse-width 10µS`` (K: 1µS)
+* l: ``increase elbow motor pulse-width 10µS`` (L: 1µS)
 
 Now you can initialise the BrachioGraph with the two zero-position values you have discovered, adding ``servo_1_centre``
 and ``servo_2_centre`` to the ``bg = BrachioGraph`` instantiation, for example:
@@ -73,7 +69,9 @@ Getting the ``servo_1_centre`` right will align the drawing better with your pap
 right will help reduce some distortion.
 
 
-Adjust ``servo_1_degree_ms`` and ``servo_2_degree_ms``
+.. _pulse-width-degrees:
+
+Adjust pulse-width to movement factor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``servo_1_degree_ms`` and ``servo_2_degree_ms`` values by default assume that a 10µS change in pulse-width will
