@@ -5,7 +5,8 @@ Install the software
 
 See also :ref:`prepare-pi`, which gives step-by-step directions specifically for using a Pi Zero as the plotter engine.
 
-``brachiograph.py`` requires a few additional components, and needs to be run in a Python 3 environment,
+``brachiograph.py`` requires a few additional components, and needs to be run in a Python 3 environment, using
+Python 3.6 or later.
 
 
 Install system packages
