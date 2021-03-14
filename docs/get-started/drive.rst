@@ -25,7 +25,7 @@ The BrachioGraph is initialised with default values. For example, it assumes tha
     outer_arm = 8
 
 but these and other values can be changed, and supplied to when initialising the BrachioGraph, e.g. ``bg =
-BrachioGraph(inner_arm=10, outer_arm=10``.
+BrachioGraph(inner_arm=10, outer_arm=10)``.
 
 The system will create a BrachioGraph instance and initialise itself, adjusting the motors so that the pen will be at
 a nominal:
