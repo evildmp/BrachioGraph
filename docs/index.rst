@@ -109,7 +109,7 @@ Guide to key classes and functions
 About the documentation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-`Why is the documentation structured this way? <https://www.divio.com/blog/documentation>`_
+This documentation uses the `Diátaxis dcumentation structure <https://diataxis.fr/>`_
 
 
 .. toctree::
