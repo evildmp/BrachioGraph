@@ -109,7 +109,7 @@ Guide to key classes and functions
 About the documentation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-This documentation uses the `Diátaxis dcumentation structure <https://diataxis.fr/>`_
+This documentation uses the `Diátaxis documentation structure <https://diataxis.fr/>`_
 
 
 .. toctree::
