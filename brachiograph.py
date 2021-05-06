@@ -195,10 +195,8 @@ class BrachioGraph:
         start_x, start_y = start
         end_x, end_y = end
 
-        self.pen.up()
         self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
 
-        self.pen.down()
         self.draw(x=end_x, y=end_y, wait=wait, interpolate=interpolate)
 
         if both:
