@@ -41,22 +41,6 @@ You will need to ensure the environment is activated by running ``source env/bin
 you return to it later.
 
 
-Install Python packages
------------------------
-
-Pinned versions of the Python packages are listed in ``requirements.txt``; install with::
-
-    pip install -r requirements.txt
-
-This will install:
-
-* `Numpy <numpy>`_, a Python mathematics library
-* PIGPIO's Python library
-* `Pillow <http://pillow.readthedocs.io>`_, the most widely-used Python imaging library.
-* ``tqdm``, for the progress indicator while drawing
-* ``readchar``, to allow the ``BrachioGraph.drive()`` methods to accept user input
-
-
 Clone the BrachioGraph repository
 ---------------------------------
 
@@ -68,3 +52,19 @@ You will need to have set up a public key using ``ssh-keygen`` and `added your p
 <https://github.com/settings/ssh/new>`_ for this to work. Or, you can use HTTPS instead::
 
     git clone https://github.com/evildmp/BrachioGraph.git
+
+Install Python packages
+-----------------------
+
+Pinned versions of the Python packages are listed in ``requirements.txt`` in the BrachioGraph directory; install with::
+
+    cd BrachioGraph
+    pip install -r requirements.txt
+
+This will install:
+
+* `Numpy <numpy>`_, a Python mathematics library
+* PIGPIO's Python library
+* `Pillow <http://pillow.readthedocs.io>`_, the most widely-used Python imaging library.
+* ``tqdm``, for the progress indicator while drawing
+* ``readchar``, to allow the ``BrachioGraph.drive()`` methods to accept user input
