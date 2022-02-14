@@ -20,7 +20,7 @@ help:
 
 install:
 	@echo "... setting up virtualenv"
-	python3.8 -m venv env
+	python3 -m venv env
 	. $(VENV); pip install --upgrade -r requirements.txt
 
 	@echo "\n" \

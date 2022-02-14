@@ -1,5 +1,5 @@
-sphinx
-sphinxcontrib-spelling
-pyenchant
-sphinx-autobuild
-sphinx_rtd_theme
+Sphinx==4.4.0
+sphinxcontrib-spelling==7.3.2
+pyenchant==3.2.2
+sphinx-autobuild==2021.3.14
+furo==2022.1.2
