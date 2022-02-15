@@ -12,8 +12,7 @@ The documentation is written in `Restructured Text
 <https://docutils.readthedocs.io/en/sphinx-docs/user/rst/quickstart.html>`_, built with `Sphinx
 <https://www.sphinx-doc.org/en/master/>`_ and hosted at `Read the Docs <https://readthedocs.com>`_.
 
-The documentation follows a system developed at Divio and described at https://www.divio.com/blog/documentation/,
-which strictly separates
+The documentation uses the `Diátaxis framework <https://diataxis.fr>`_:
 
 * :doc:`tutorials </get-started/index>`
 * :doc:`how-to guides </how-to/index>`

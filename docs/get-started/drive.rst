@@ -3,6 +3,12 @@
 Start up the BrachioGraph
 =========================
 
+Detach the inner arm
+--------------------
+
+Before doing anything else, detach the inner arm from the servos - otherwise you risk having the
+machine flail around wildly when the servos are energised.
+
 Create a ``BrachioGraph`` instance
 ----------------------------------
 
@@ -17,15 +23,25 @@ And then in the Python shell::
 
     from brachiograph import BrachioGraph
 
+When you :ref:`assembled the BrachioGraph earlier <build-inner-arm>`, you measured, the arm lengths.
+
+..  important::
+
+    The arm lengths are not the lengths of the actual sticks or card, but the distances between the
+    key points on them:
+
+    * ``inner_arm``: between the centres of the two servo horns
+    * ``outer_arm``: between the spindle of the motor and the pen
+
+Initialise the BrachioGraph with the correct values, for example::
+
+  bg = BrachioGraph(inner_arm=8.2, outer_arm=7.9)
+
+If you managed to make them both exactly 8cm long, you're in luck and instead can simply do::
+
     bg = BrachioGraph()
 
-The BrachioGraph is initialised with default values. For example, it assumes that the arms are both 8cm long::
-
-    inner_arm = 8
-    outer_arm = 8
-
-but these and other values can be changed, and supplied to when initialising the BrachioGraph, e.g. ``bg =
-BrachioGraph(inner_arm=10, outer_arm=10)``.
+because its defaults assume that the arms are both 8cm long.
 
 The system will create a BrachioGraph instance and initialise itself, adjusting the motors so that the pen will be at
 a nominal:

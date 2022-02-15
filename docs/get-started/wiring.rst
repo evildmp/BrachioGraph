@@ -3,28 +3,65 @@
 Wire up the plotter to the Pi
 =============================
 
-The three servos need to be connected to the Raspberry Pi
+..  important:: **Make sure the Raspberry Pi is turned off while you're wiring it up.**
 
-The Raspberry Pi doesn't have enough 5V pins to use one for each servo, so you will either need to solder together a
-wiring loom from some strands of ribbon cable as shown below, or use a breadboard.
+    Although the Raspberry Pis can take a lot of abuse, you run the risk of causing damage if you
+    get the wiring wrong. Do it with the power off, take your time, and double-check your work.
 
-.. image:: /images/loom.jpg
-   :alt: 'Wiring loom'
-   :class: 'main-visual'
+The three servos need to be connected to the Raspberry Pi. Each servo has three wires: 5V, Ground
+and signal. At least two of the servos will need to share a 5V connection, since the Raspberry Pi
+has only two available.
 
-We connect:
+How you achieve this will depend on what you have available.
 
-* shoulder motor: GPIO pin 14
-* elbow motor: GPIO pin 15
-* lifting motor: GPIO pin 18
+..  tab:: Using a breadboard
 
-These correspond to pins 4-12 on the Pi's header. See https://pinout.xyz.
+    If you have a breadboard, you can wire the servos up so:
 
-.. image:: /images/pin-connections.jpg
-   :alt: 'Pin connections'
-   :class: 'main-visual'
+    .. image:: /images/wiring.png
+       :alt:
 
-It's wise to do this with the Pi turned off until you become confident that you're doing the right thing and won't
-destroy your Raspberry Pi.
+..  tab:: Make a wiring loom
 
-On the other hand it seems that these devices can take a great deal of abuse very well.
+    I prefer to make a little wiring loom out of jumper cables, that the servo's leads connect to,
+    so that they all share a single connector for 5V, and a single connector for Ground. That way,
+    you can use just 5 pins on the Raspberry Pi, all next to each other. It looks like this:
+
+    .. image:: /images/loom.jpg
+       :alt:
+
+    This connects to the Raspberry Pi like so:
+
+    .. image:: /images/pin-connections.jpg
+       :alt:
+
+
+Check the connections
+---------------------
+
+**Double-check** each connection all the way from the servo to the Raspberry Pi.
+
+.. list-table::
+   :widths: 30 30 40
+   :header-rows: 1
+
+   * - servo lead
+     - GPIO pin
+     - physical pin
+   * - all 5V leads
+     - any 5V power pin
+     - 2 or 4
+   * - all Ground leads
+     - any Ground pin
+     - 6, 9, 14, 20, 25, 30, 34, 36, 39
+   * - shoulder motor signal
+     - 14
+     - 8
+   * - elbow motor signal
+     - 15
+     - 10
+   * - lifting motor signal
+     - 18
+     - 12
+
+..  note:: https://pinout.xyz has some useful information about the pins.

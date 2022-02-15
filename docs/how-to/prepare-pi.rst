@@ -39,7 +39,7 @@ Edit ``cmdline.txt``, adding::
 
 just after ``rootwait``.
 
-Eject the card and put it into the Pi and start it up.
+Eject the card and put it into the Pi.
 
 
 Connect to the Pi via OTG USB
