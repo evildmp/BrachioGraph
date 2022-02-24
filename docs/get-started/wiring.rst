@@ -6,24 +6,30 @@ Wire up the plotter to the Pi
 ..  important:: **Make sure the Raspberry Pi is turned off while you're wiring it up.**
 
     Although the Raspberry Pis can take a lot of abuse, you run the risk of causing damage if you
-    get the wiring wrong. Do it with the power off, take your time, and double-check your work.
+    get the wiring wrong. Do it with the power off, take your time, and **double-check your work**.
 
-The three servos need to be connected to the Raspberry Pi. Each servo has three wires: 5V, Ground
-and signal. At least two of the servos will need to share a 5V connection, since the Raspberry Pi
-has only two available.
+The three servos need to be connected to the Raspberry Pi. Each servo has three wires:
 
-How you achieve this will depend on what you have available.
+* 5V (power)
+* Ground
+* Signal
 
-..  tab:: Using a breadboard
+5V and ground are required to power the servo; the signal wire carries a pulse, whose width (i.e. length in
+milliseconds) determines the position of the motor.
+
+**At least two of the servos will need to share a 5V connection**, since the Raspberry Pi
+has only two available. How you achieve this will depend on what you have available.
+
+..  tab:: Use a breadboard
 
     If you have a breadboard, you can wire the servos up so:
 
     .. image:: /images/wiring.png
        :alt:
 
-..  tab:: Make a wiring loom
+..  tab:: Solder a wiring loom
 
-    I prefer to make a little wiring loom out of jumper cables, that the servo's leads connect to,
+    I prefer to solder a little wiring loom out of jumper cables, that the servo's leads connect to,
     so that they all share a single connector for 5V, and a single connector for Ground. That way,
     you can use just 5 pins on the Raspberry Pi, all next to each other. It looks like this:
 

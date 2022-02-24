@@ -6,196 +6,130 @@ Start up the BrachioGraph
 Detach the inner arm
 --------------------
 
-Before doing anything else, detach the inner arm from the servos - otherwise you risk having the
+Before doing anything else, **detach the inner arm from the servos** - otherwise you risk having the
 machine flail around wildly when the servos are energised.
 
 Create a ``BrachioGraph`` instance
 ----------------------------------
 
-Power up the Raspberry Pi. Run (assuming that you :ref:`installed the required software in a virtual environment <set-up-venv>`)::
+Power up the Raspberry Pi. Run::
 
     sudo pigpiod
     source env/bin/activate
     cd BrachioGraph
     python
 
-And then in the Python shell::
+And then in the Python shell, import the ``BrachioGraph`` class from the ``brachiograph`` module::
 
     from brachiograph import BrachioGraph
 
-When you :ref:`assembled the BrachioGraph earlier <build-inner-arm>`, you measured, the arm lengths.
+Create a BrachioGraph instance from the class::
 
-..  important::
+  bg = BrachioGraph()
 
-    The arm lengths are not the lengths of the actual sticks or card, but the distances between the
-    key points on them:
+This initialises a BrachioGraph instance ``bg`` that you can interact with.
 
-    * ``inner_arm``: between the centres of the two servo horns
-    * ``outer_arm``: between the spindle of the motor and the pen
-
-Initialise the BrachioGraph with the correct values, for example::
-
-  bg = BrachioGraph(inner_arm=8.2, outer_arm=7.9)
-
-If you managed to make them both exactly 8cm long, you're in luck and instead can simply do::
-
-    bg = BrachioGraph()
-
-because its defaults assume that the arms are both 8cm long.
-
-The system will create a BrachioGraph instance and initialise itself, adjusting the motors so that the pen will be at
-a nominal:
-
-* x = ``-inner_arm`` (-8)
-* y = ``outer_arm`` (8)
-
-And this will correspond to:
-
-* the upper arm at approximately -90 degrees, 1800µS pulse-width
-* the lower arm at approximately 90 degrees to it, 1500µS pulse-width
-* the lifting motor in the pen up position, 1700µS pulse width
+You'll hear the motors buzz as it sets them to their default, parked, position.
 
 
-.. _check-movement:
+Reattach the inner arm
+-----------------------
 
-Initial checks
-------------------
-
-We must make sure that the arms move in the direction we expect. Run::
-
-    bg.set_angles(angle_1=-90, angle_2=90)
-
-This shouldn't do anything; the arms should already be at those angles.
-
-Now try changing the values in five-degree increments, e.g.::
-
-    bg.set_angles(angle_1=-85, angle_2=95)
-
-then::
-
-    bg.set_angles(angle_1=-80, angle_2=100)
-
-Increasing the values should move the arms clockwise; decreasing them should move them anti-clockwise. To avoid violent
-movement, don't move them more than five or ten degrees at a time.
-
-If the movements are reversed (perhaps because you're using different motors, or have mounted a motor differently),
-you can account for this in the BrachioGraph definition. The defaults are::
-
-    servo_1_degree_ms = -10
-    servo_2_degree_ms = 10
-
-meaning that a 1 degree positive movement of motor 1 corresponds to a -10mS change in pulse-width, and a 1 degree
-positive movement of motor 1 corresponds to a 10mS change in pulse-width. You can reverse either of these if necessary.
-
-
-Finish building the plotter
----------------------------
-
-Your plotter should look something like the example below. The arms may be a few degrees off the perpendicular, but
-don't worry about that now.
+Now reattach the inner arm, so that the machine now looks more or less like this.
 
 .. image:: /images/starting-position.jpg
-   :alt: 'Starting position'
-   :class: 'main-visual'
+   :alt:
+
+The arms should be as close to perpendicular as possible, but don't worry if they are not perfectly
+at 90˚ to the drawing area or to each other - we will adjust that later.
+
+
+Add the pen-lifting horn
+------------------------
 
 Attach the horn to the lifting motor.
 
 .. image:: /images/lifting-mechanism.jpg
    :alt: 'Pen-lifting mechanism'
 
-The default up and down values for the pen are::
 
-    pw_up = 1500
-    pw_down = 1100
-
-You need the pen to be just clear of the paper in the *up* position. The lifting movement can cause unwanted movement
-of the pen, so you need to minimise that. You can try using different values around 1500 (plus or minus 200 or so)::
-
-    bg.pen.rpi.set_servo_pulsewidth(18, <value>)
-
-to find a good pair of up/down values. Then you can include them in your initialisation of the
-BrachioGraph, by supplying ``pw_up`` and ``pw_down``
-
-
-Take the BrachioGraph for a drive
----------------------------------
-
-::
-
-    bg.drive_xy()
-
-Controls:
-
-* 0: ``exit``
-* a: ``decrease x position 1cm`` (A: ``.1cm``)
-* s: ``increase x position 1cm`` (S: ``.1cm``)
-* k: ``decrease y position 1cm`` (K: ``.1cm``)
-* l: ``increase y position 1cm`` (L: ``.1cm``)
-
-Use this to discover the bounds of the area the BrachioGraph can draw. Theoretically, the drawable area looks something
-like this:
-
-..  image:: /images/plotter-geometry/brachiograph-default-plotting-area.png
-    :alt: 'Plotting area'
-    :class: 'main-visual'
-
-If you exceed the bounds of what is mathematically, physically or electronically possible, you'll get an error. In such
-cases, it's often easiest to start again with ``bg = BrachioGraph()``.
-
-The default BrachioGraph will draw within the limits of a box that has its bottom-left at -8, 4 and its upper-right at
-6, 13 and that fits comfortably inside the area. It's initialised with::
-
-    bounds = [-8, 4, 6, 13]
-
-These are values that work well.
-
-.. _start-plotting:
-
-Test it
--------
-
-Draw a box, using the ``bounds``::
-
-    bg.box()
-
-and a test pattern::
-
-    bg.test_pattern()
-
-If the lines are reasonably straight and the box is reasonably square, try plotting a file::
-
-    bg.plot_file("test-patterns/accuracy.json")
-
-However, almost certainly, the BrachioGraph will need some calibration to improve the output.
-
-
-Basic calibration
+Do a status check
 -----------------
 
-The simplest calibration is to ensure that at somewhere near the centre of its movement, the outer arm is at exactly
-90˚ to the inner arm. The defaults assumed for the two motors (servo 1 is the shoulder, servo 2 is the elbow) are::
+Run::
 
-    servo_1_centre = 1500
-    servo_2_centre = 1500
+  bg.status()
 
-Use ``bg.drive()`` to discover what pulse-width actually corresponds to 90˚ (ignore the shoulder motor for now).
+The BrachioGraph will report its status::
 
-Controls:
+  ------------------------------------------
+                        | Servo 1 | Servo 2
+                        | Shoulder| Elbow
+  ----------------------|---------|---------
+            pulse-width |    1800 |    1500
+                  angle |     -90 |      90
+  hysteresis correction |     0.0 |     0.0
+  ------------------------------------------
 
-* 0: ``exit``
-* a: ``decrease shoulder motor pulse-width 10µS`` (A: 1µS)
-* s: ``increase shoulder motor pulse-width 10µS`` (S: 1µS)
-* k: ``decrease elbow motor pulse-width 10µS`` (K: 1µS)
-* l: ``increase elbow motor pulse-width 10µS`` (L: 1µS)
-
-Use this value in the BrachioGraph definition, e.g. ``bg = BrachioGraph(servo_2_centre=1430)``; you should now get
-at least slightly better results (i.e. slightly straighter lines).
-
-See :ref:`calibrate` for more sophisticated calibration.
+  ------------------------------------------
+  pen: up
+  ------------------------------------------
+  bottom left: (-8, 4) top right: (6, 13)
+  ------------------------------------------
 
 
-Save your BrachioGraph definition
----------------------------------
+.. _tutorial-move-arms:
 
-The file ``bg.py`` is a good place to save your defined ``BrachioGraph`` instances  for future use. It
-already contains examples for units built during the development process.
+Move the arms
+-------------
+
+The ``BrachioGraph.set_pulse_widths()`` method is a manual way of setting the pulse-widths that
+determine the position of a servo. Try this::
+
+  bg.set_pulse_widths(1800, 1500)
+
+Nothing should happen, because those are already the pulse-widths it's applying. But try
+incrementing the first servo pulse-width by 100 (milliseconds) - make sure you get the numbers
+right, because a wrong value can send the arms flying::
+
+  bg.set_pulse_widths(1900, 1500)
+
+This should move the inner arm a few degrees anti-clockwise. Try some different values for the two
+servos, changing them by no more than 100 at a time, until the arms seem to be perpendicular to
+each other and the drawing area.
+
+Make a note of those two values; we'll use them in the next step.
+
+
+.. _tutorial-custom-brachiograph:
+
+Initialise a custom BrachioGraph
+--------------------------------
+
+Let's say the two values you noted in the previous step were 1870 for the shoulder motor and 1450 for the elbow motor.
+In that case, re-initialise the BrachioGraph with the values (but use whatever values you discovered)::
+
+  bg=BrachioGraph(servo_1_centre=1870, servo_2_centre=1450)
+
+
+Adjust the pen lifting motor
+----------------------------
+
+The pen motor should be in the *up* position. Try lowering and lifting it:
+
+  bg.pen.down()
+  bg.pen.up()
+
+Adjust the horn on the motor and the position of the pen in the clothes peg so that in the *down*
+position the pen touches the paper, and in the *up* position it doesn't.
+
+
+Start drawing
+-------------
+
+Now you should be able to draw a box::
+
+  bg.box()
+
+The BrachioGraph will draw a box. It will be a wobbly, imperfect box, but it should be a
+recognisable box, about 14cm wide and 9cm tall.

@@ -4,3 +4,4 @@ pyenchant==3.2.2
 sphinx-autobuild==2021.3.14
 furo==2022.1.2
 sphinx-inline-tabs
+sphinx-design==0.0.13

@@ -33,7 +33,7 @@ The ``BrachioGraph`` class
             hysteresis_correction_2=0,
             bounds=[-8, 4, 6, 13],      # the maximum rectangular drawing area
             wait=None,
-            virtual_mode = False,
+            virtual = False,
             pw_up=1500,                 # pulse-widths for pen up/down
             pw_down=1100,
         ):
@@ -82,7 +82,7 @@ The ``BrachioGraph`` class
       - ``[-8, 4, 6, 13]``
       - the box within which the BrachioGraph will draw; see :ref:`understand_plotter_geometry`
 
-    * - ``virtual_mode``
+    * - ``virtual``
       - ``False``
       - :ref:`runs the BrachioGraph without attached hardware <virtual-mode>`
 

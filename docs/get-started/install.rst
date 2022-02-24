@@ -3,8 +3,10 @@
 Install the software
 =====================
 
-``brachiograph.py`` requires a few additional components, and needs to be run in a Python 3 environment, using
-Python 3.6 or later.
+The next step is to install the software. Raspberry PiOS Bullseye Lite has been tested.
+
+The BrachioGraph library requires a few additional components. It needs to be run in a Python 3 environment, using
+Python 3.6 or later. Raspberry PiOS Bullseye will provide Python 3.9 or later.
 
 
 Install system packages
@@ -35,14 +37,16 @@ Create and activate a `Python virtual environment <https://docs.python.org/3/lib
     python3 -m venv env
     source env/bin/activate
 
-You will need to ensure the environment is activated by running ``source env/bin/activate`` - in this directory - if
-you return to it later.
+You will need to ensure the environment is *activated* by running ``source env/bin/activate`` once again, in this
+directory, if you return to it later. You can tell when the virtual environment is active from the bash prompt::
+
+  (env) pi@raspberrypi:~ $
 
 
 Clone the BrachioGraph repository
 ---------------------------------
 
-Clone the ``BrachioGraph`` repository::
+Use Git to clone the ``BrachioGraph`` repository from https://github.com/evildmp/brachiograph::
 
     git clone git@github.com:evildmp/BrachioGraph.git
 
@@ -51,10 +55,12 @@ You will need to have set up a public key using ``ssh-keygen`` and `added your p
 
     git clone https://github.com/evildmp/BrachioGraph.git
 
+
 Install Python packages
 -----------------------
 
-Pinned versions of the Python packages are listed in ``requirements.txt`` in the BrachioGraph directory; install with::
+Pinned versions of the Python packages are listed in ``requirements.txt`` in the BrachioGraph directory. Install them
+by running::
 
     cd BrachioGraph
     pip install -r requirements.txt
@@ -66,3 +72,7 @@ This will install:
 * `Pillow <http://pillow.readthedocs.io>`_, the most widely-used Python imaging library.
 * ``tqdm``, for the progress indicator while drawing
 * ``readchar``, to allow the ``BrachioGraph.drive()`` methods to accept user input
+* ``pytest``, to run the test suite
+
+You only need to install them once in your virtual environment. Next time you activate the virtual environment, you'll
+find that they're still there.
