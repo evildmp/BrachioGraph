@@ -26,6 +26,8 @@ class BrachioGraph:
         servo_2_centre=1500,        # elbow motor centre pulse-width
         servo_1_angle_pws=[],       # pulse-widths for various angles
         servo_2_angle_pws=[],
+        servo_1_angle_pws_bidi = [],
+        servo_2_angle_pws_bidi = [],
         servo_1_degree_ms=-10,      # milliseconds pulse-width per degree
         servo_2_degree_ms=10,       # reversed for the mounting of the elbow servo
         arm_1_centre=-60,
@@ -62,6 +64,24 @@ class BrachioGraph:
         self.arm_2_centre = arm_2_centre
         self.hysteresis_correction_2 = hysteresis_correction_2
 
+        # set some initial values required for moving methods
+        self.previous_pw_1 = self.previous_pw_2 = 0
+        self.active_hysteresis_correction_1 = self.active_hysteresis_correction_2 = 0
+        self.reset_report()
+
+        # Set the x and y position state, so it knows its current x/y position.
+        self.current_x = -self.INNER_ARM
+        self.current_y = self.OUTER_ARM
+
+        if servo_1_angle_pws_bidi:
+            servo_1_angle_pws = []
+            differences = []
+            for angle, pws in servo_1_angle_pws_bidi.items():
+                pw = (pws['ascending'] + pws['descending']) / 2
+                servo_1_angle_pws.append([angle, pw])
+                differences.append((pws['ascending'] - pws['descending']) / 2)
+            self.hysteresis_correction_1 = numpy.mean(differences)
+
         if servo_1_angle_pws:
             servo_1_array = numpy.array(servo_1_angle_pws)
             self.angles_to_pw_1 = numpy.poly1d(
@@ -74,6 +94,16 @@ class BrachioGraph:
 
         else:
             self.angles_to_pw_1 = self.naive_angles_to_pulse_widths_1
+
+        if servo_2_angle_pws_bidi:
+            servo_2_angle_pws = []
+            differences = []
+            for angle, pws in servo_2_angle_pws_bidi.items():
+                pw = (pws['ascending'] + pws['descending']) / 2
+                servo_2_angle_pws.append([angle, pw])
+                differences.append((pws['ascending'] - pws['descending']) / 2)
+            self.hysteresis_correction_2 = numpy.mean(differences)
+            print(servo_2_angle_pws)
 
         if servo_2_angle_pws:
             servo_2_array = numpy.array(servo_2_angle_pws)
@@ -116,24 +146,19 @@ class BrachioGraph:
             self.rpi.set_PWM_frequency(15, 50)
 
             # Initialise the pantograph with the motors in the centre of their travel
-            self.rpi.set_servo_pulsewidth(14, self.angles_to_pw_1(-90))
-            sleep(0.3)
-            self.rpi.set_servo_pulsewidth(15, self.angles_to_pw_2(90))
-            sleep(0.3)
+            # self.rpi.set_servo_pulsewidth(14, self.angles_to_pw_1(-90))
+            # sleep(0.3)
+            # self.rpi.set_servo_pulsewidth(15, self.angles_to_pw_2(90))
+            # sleep(0.3)
+
+            self.set_angles(-90, 90)
 
             # by default we use a wait factor of 0.1 for accuracy
             self.wait = wait or .1
 
         # Now the plotter is in a safe physical state.
 
-        # Set the x and y position state, so it knows its current x/y position.
-        self.current_x = -self.INNER_ARM
-        self.current_y = self.OUTER_ARM
 
-        self.reset_report()
-
-        self.previous_pw_1 = self.previous_pw_2 = 0
-        self.active_hysteresis_correction_1 = self.active_hysteresis_correction_2 = 0
 
     # methods in this class:
     # drawing
@@ -317,24 +342,10 @@ class BrachioGraph:
 
     # ----------------- test pattern methods -----------------
 
-    def test_pattern(self, bounds=None, wait=0, interpolate=10, repeat=1):
+    def test_pattern(self, bounds=None, lines=4, wait=0, interpolate=10, repeat=1, reverse=False, both=False):
 
-        wait = wait or self.wait
-        bounds = bounds or self.bounds
-
-        if not bounds:
-            return "Plotting a test pattern is only possible when BrachioGraph.bounds is set."
-
-        for r in tqdm.tqdm(tqdm.trange(repeat, desc='Iteration'), leave=False):
-
-            for y in range(bounds[1], bounds[3], 2):
-
-                self.xy(bounds[0],   y,     wait, interpolate)
-                self.draw(bounds[2], y,     wait, interpolate)
-                self.xy(bounds[2],   y + 1, wait, interpolate)
-                self.draw(bounds[0], y + 1, wait, interpolate)
-
-        self.park()
+        self.vertical_lines(bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both)
+        self.horizontal_lines(bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both)
 
 
     def vertical_lines(self, bounds=None, lines=4, wait=0, interpolate=10, repeat=1, reverse=False, both=False):
@@ -352,11 +363,12 @@ class BrachioGraph:
             bottom_y = self.bounds[1]
             top_y =    self.bounds[3]
 
-        step = (self.bounds[2] - self.bounds[0]) /  lines
-        x = self.bounds[0]
-        while x <= self.bounds[2]:
-            self.draw_line((x, top_y), (x, bottom_y), interpolate=interpolate, both=both)
-            x = x + step
+        for n in range(repeat):
+            step = (self.bounds[2] - self.bounds[0]) /  lines
+            x = self.bounds[0]
+            while x <= self.bounds[2]:
+                self.draw_line((x, top_y), (x, bottom_y), interpolate=interpolate, both=both)
+                x = x + step
 
         self.park()
 
@@ -376,11 +388,12 @@ class BrachioGraph:
             max_x = self.bounds[0]
             min_x = self.bounds[2]
 
-        step = (self.bounds[3] - self.bounds[1]) / lines
-        y = self.bounds[1]
-        while y <= self.bounds[3]:
-            self.draw_line((min_x, y), (max_x, y), interpolate=interpolate, both=both)
-            y = y + step
+        for n in range(repeat):
+            step = (self.bounds[3] - self.bounds[1]) / lines
+            y = self.bounds[1]
+            while y <= self.bounds[3]:
+                self.draw_line((min_x, y), (max_x, y), interpolate=interpolate, both=both)
+                y = y + step
 
         self.park()
 
@@ -437,7 +450,7 @@ class BrachioGraph:
             self.pen.up()
 
         (angle_1, angle_2) = self.xy_to_angles(x, y)
-        (pulse_width_1, pulse_width_2) = self.angles_to_pulse_widths(angle_1, angle_2)
+        (pulse_width_1, pulse_width_2) = self.angles_to_pw_1(angle_1), self.angles_to_pw_2(angle_2)
 
         # if they are the same, we don't need to move anything
         if (pulse_width_1, pulse_width_2) == self.get_pulse_widths():
@@ -480,33 +493,44 @@ class BrachioGraph:
         sleep(length * wait/10)
 
 
-    def set_angles(self, angle_1=0, angle_2=0):
+    def set_angles(self, angle_1=None, angle_2=None):
         # moves the servo motor
 
-        pw_1, pw_2 = self.angles_to_pulse_widths(angle_1, angle_2)
+        pw_1 = pw_2 = None
 
-        if pw_1 > self.previous_pw_1:
-            self.active_hysteresis_correction_1 = self.hysteresis_correction_1
-        elif pw_1 < self.previous_pw_1:
-            self.active_hysteresis_correction_1 = - self.hysteresis_correction_1
+        if angle_1:
+            pw_1 = self.angles_to_pw_1(angle_1)
 
-        if pw_2 > self.previous_pw_2:
-            self.active_hysteresis_correction_2 = self.hysteresis_correction_2
-        elif pw_2 < self.previous_pw_2:
-            self.active_hysteresis_correction_2 = - self.hysteresis_correction_2
+            if pw_1 > self.previous_pw_1:
+                self.active_hysteresis_correction_1 = self.hysteresis_correction_1
+            elif pw_1 < self.previous_pw_1:
+                self.active_hysteresis_correction_1 = - self.hysteresis_correction_1
 
-        self.previous_pw_1 = pw_1
-        self.previous_pw_2 = pw_2
+            self.previous_pw_1 = pw_1
 
-        self.set_pulse_widths(pw_1 + self.active_hysteresis_correction_1, pw_2 + self.active_hysteresis_correction_2)
+            pw_1 = pw_1 + self.active_hysteresis_correction_1
 
-        # We record the angles, so we that we know where the arms are for future reference.
-        self.angle_1, self.angle_2 = angle_1, angle_2
+            self.angle_1 = angle_1
+            self.angles_used_1.add(int(angle_1))
+            self.pulse_widths_used_1.add(int(pw_1))
 
-        self.angles_used_1.add(int(angle_1))
-        self.angles_used_2.add(int(angle_2))
-        self.pulse_widths_used_1.add(int(pw_1))
-        self.pulse_widths_used_2.add(int(pw_2))
+        if angle_2:
+            pw_2 = self.angles_to_pw_2(angle_2)
+
+            if pw_2 > self.previous_pw_2:
+                self.active_hysteresis_correction_2 = self.hysteresis_correction_2
+            elif pw_2 < self.previous_pw_2:
+                self.active_hysteresis_correction_2 = - self.hysteresis_correction_2
+
+            self.previous_pw_2 = pw_2
+
+            pw_2 = pw_2 + self.active_hysteresis_correction_2
+
+            self.angle_2 = angle_2
+            self.angles_used_2.add(int(angle_2))
+            self.pulse_widths_used_2.add(int(pw_2))
+
+        self.set_pulse_widths(pw_1, pw_2)
 
 
     #  ----------------- angles-to-pulse-widths methods -----------------
@@ -517,36 +541,41 @@ class BrachioGraph:
     def naive_angles_to_pulse_widths_2(self, angle):
         return (angle - self.arm_2_centre) * self.servo_2_degree_ms + self.servo_2_centre
 
-
-    def angles_to_pulse_widths(self, angle_1, angle_2):
-        # Given a pair of angles, returns the appropriate pulse widths.
-
-        # at present we assume only one method of calculating, using the angles_to_pw_1 and angles_to_pw_2
-        # functions created using numpy
-
-        pulse_width_1, pulse_width_2 = self.angles_to_pw_1(angle_1), self.angles_to_pw_2(angle_2)
-
-        return (pulse_width_1, pulse_width_2)
+    # def angles_to_pulse_widths(self, angle_1, angle_2):
+    #     # Given a pair of angles, returns the appropriate pulse widths.
+    #
+    #     # at present we assume only one method of calculating, using the angles_to_pw_1 and angles_to_pw_2
+    #     # functions created using numpy
+    #
+    #     pulse_width_1, pulse_width_2 = self.angles_to_pw_1(angle_1), self.angles_to_pw_2(angle_2)
+    #
+    #     return (pulse_width_1, pulse_width_2)
 
 
     #  ----------------- hardware-related methods -----------------
 
-    def set_pulse_widths(self, pw_1, pw_2):
+    def set_pulse_widths(self, pw_1=None, pw_2=None):
 
         if self.virtual_mode:
 
-            if (500 < pw_1 < 2500) and (500 < pw_2 < 2500):
+            if pw_1:
+                if 500 < pw_1 < 2500:
+                    self.virtual_pw_1 = self.angles_to_pw_1(pw_1)
+                else:
+                   raise ValueError
 
-                self.virtual_pw_1 = self.angles_to_pw_1(pw_1)
-                self.virtual_pw_2 = self.angles_to_pw_2(pw_2)
-
-            else:
-               raise ValueError
+            if pw_2:
+                if 500 < pw_2 < 2500:
+                    self.virtual_pw_2 = self.angles_to_pw_2(pw_2)
+                else:
+                   raise ValueError
 
         else:
 
-            self.rpi.set_servo_pulsewidth(14, pw_1)
-            self.rpi.set_servo_pulsewidth(15, pw_2)
+            if pw_1:
+                self.rpi.set_servo_pulsewidth(14, pw_1)
+            if pw_2:
+                self.rpi.set_servo_pulsewidth(15, pw_2)
 
 
     def get_pulse_widths(self):
@@ -646,6 +675,18 @@ class BrachioGraph:
 
 
     # ----------------- calibration -----------------
+
+    def auto_calibrate(self):
+        self.park()
+
+        for elbow in range(90, 136):
+            self.set_angles(None, elbow)
+            sleep(.01)
+
+        for shoulder in range(-90, -140, -1):
+            self.set_angles(shoulder, None)
+            sleep(.01)
+
 
     def calibrate(self, servo=1):
 
@@ -775,17 +816,17 @@ class BrachioGraph:
             elif key=="s":
                 pw_1 = pw_1 + 10
             elif key=="A":
-                pw_1 = pw_1 - 1
+                pw_1 = pw_1 - 2
             elif key=="S":
-                pw_1 = pw_1 + 1
+                pw_1 = pw_1 + 2
             elif key=="k":
                 pw_2 = pw_2 - 10
             elif key=="l":
                 pw_2 = pw_2 + 10
             elif key=="K":
-                pw_2 = pw_2 - 1
+                pw_2 = pw_2 - 2
             elif key=="L":
-                pw_2 = pw_2 + 1
+                pw_2 = pw_2 + 2
 
             print(pw_1, pw_2)
 
@@ -830,6 +871,9 @@ class BrachioGraph:
         print(f"               -----------------|-----------------")
         print(f"               Servo 1          |  Servo 2        ")
         print(f"               -----------------|-----------------")
+
+        h1, h2 = self.hysteresis_correction_1, self.hysteresis_correction_2
+        print(f"hysteresis                 {h1:>2.1f}  |              {h2:>2.1f}")
 
         pw_1, pw_2 = self.get_pulse_widths()
         print(f"pulse-width               {pw_1:<4.0f}  |             {pw_2:<4.0f}")
