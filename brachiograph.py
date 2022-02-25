@@ -509,7 +509,7 @@ class BrachioGraph:
 
         pw_1 = pw_2 = None
 
-        if angle_1:
+        if angle_1 is not None:
             pw_1 = self.angles_to_pw_1(angle_1)
 
             if pw_1 > self.previous_pw_1:
@@ -525,7 +525,7 @@ class BrachioGraph:
             self.angles_used_1.add(int(angle_1))
             self.pulse_widths_used_1.add(int(pw_1))
 
-        if angle_2:
+        if angle_2 is not None:
             pw_2 = self.angles_to_pw_2(angle_2)
 
             if pw_2 > self.previous_pw_2:
