@@ -44,7 +44,7 @@ def image_to_json(
 
 
 def makesvg(lines):
-    print("generating svg file...")
+    print("Generating svg file...")
     width = math.ceil(max([max([p[0]*0.5 for p in l]) for l in lines]))
     height = math.ceil(max([max([p[1]*0.5 for p in l]) for l in lines]))
     out = '<svg xmlns="http://www.w3.org/2000/svg" height="%spx" width="%spx" version="1.1">' % (height, width)
@@ -121,6 +121,7 @@ def vectorise(
             image.resize((int(resolution/draw_contours), int(resolution/draw_contours*h/w))),
             draw_contours
         ))
+        contours = join_lines(contours, closeness=draw_contours)
         for r in range(repeat_contours):
             lines += contours
 
@@ -131,25 +132,27 @@ def vectorise(
                 image.resize((int(resolution/draw_hatch), int(resolution/draw_hatch*h/w))),
                 draw_hatch
         ))
+        hatches = join_lines(hatches, closeness=draw_hatch)
+
         for r in range(repeat_hatch):
             lines += hatches
 
+    segments = 0
+    for line in lines:
+        segments = segments + len(line) -1
+    print(len(lines), "lines,", segments, "segments.")
 
     f = open(svg_folder + image_filename + ".svg", 'w')
     f.write(makesvg(lines))
     f.close()
-    segments = 0
-    for line in lines:
-        segments = segments + len(line)
-    print(len(lines), "strokes,", segments, "points.")
-    print("done.")
+
     return lines
 
 
 # -------------- vectorisation options --------------
 
 def getcontours(image, draw_contours=2):
-    print("generating contours...")
+    print("Generating contours...")
     image = find_edges(image)
     IM1 = image.copy()
     IM2 = image.rotate(-90,expand=True).transpose(Image.FLIP_LEFT_RIGHT)
@@ -186,7 +189,7 @@ def hatch(image, draw_hatch=16):
 
     t0 = time.time()
 
-    print("hatching using hatch()...")
+    print("Hatching...")
     pixels = image.load()
     w, h = image.size
     lg1 = []
@@ -219,7 +222,7 @@ def hatch(image, draw_hatch=16):
 
     t1 = time.time()
 
-    print("wrangling points...")
+    print("Making segments into lines...")
 
     # Make segments into lines
     line_groups = [lg1, lg2]
@@ -246,9 +249,9 @@ def hatch(image, draw_hatch=16):
 
     t2 = time.time()
 
-    print("hatching   : ", t1 - t0)
-    print("wrangling:   ", t2 - t1)
-    print("total:       ", t2 - t0)
+    print(f"{'Hatching:':>15}",     f"{t1 - t0:>3.1}s")
+    print(f"{'Making lines:':>15}", f"{t2 - t1:>3.1}s")
+    print(f"{'Total:':>15}",        f"{t2 - t0:>3.1}s")
 
     return lines
 
@@ -256,7 +259,7 @@ def hatch(image, draw_hatch=16):
 # -------------- supporting functions for drawing contours --------------
 
 def find_edges(image):
-    print("finding edges...")
+    print("Finding edges...")
     if no_cv:
         #appmask(IM,[F_Blur])
         appmask(image,[F_SobelX,F_SobelY])
@@ -269,7 +272,7 @@ def find_edges(image):
 
 
 def getdots(IM):
-    print("getting contour points...")
+    print("Getting contour points...")
     PX = IM.load()
     dots = []
     w,h = IM.size
@@ -289,7 +292,7 @@ def getdots(IM):
 
 
 def connectdots(dots):
-    print("connecting contour points...")
+    print("Connecting contour points...")
     contours = []
     for y in range(len(dots)):
         for x,v in dots[y]:
@@ -324,7 +327,7 @@ def connectdots(dots):
 # -------------- optimisation for pen movement --------------
 
 def sortlines(lines):
-    print("optimizing stroke sequence...")
+    print("Optimising line sequence...")
     clines = lines[:]
     slines = [clines.pop(0)]
     while clines != []:
@@ -343,6 +346,35 @@ def sortlines(lines):
         slines.append(x)
     return slines
 
+
+def join_lines(lines, closeness):
+    # When the start of a new line is close to the end of the previous one, make
+    # them one line - this reduces pen up-and-down movement. "Close" means no
+    # further away than twice the draw_hatch/draw_contours values.
+
+    previous_line = None
+    new_lines = []
+
+    for line in lines:
+        if not previous_line:
+            new_lines.append(line)
+            previous_line = line
+
+        else:
+
+            xdiff = abs(previous_line[-1][0] - line[0][0])
+            ydiff = abs(previous_line[-1][1] - line[0][1])
+            if xdiff ** 2 + ydiff ** 2 <= (closeness ** 2) * 2:
+                previous_line.extend(line)
+
+            else:
+                new_lines.append(line)
+                previous_line = line
+
+    print(f"Reduced {len(lines)} lines to {len(new_lines)} lines.")
+    lines = new_lines
+
+    return lines
 
 
 def lines_to_file(lines, filename):
