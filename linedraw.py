@@ -121,7 +121,7 @@ def vectorise(
             image.resize((int(resolution/draw_contours), int(resolution/draw_contours*h/w))),
             draw_contours
         ))
-        contours = join_lines(contours, closeness=draw_contours)
+        contours = join_lines(contours)
         for r in range(repeat_contours):
             lines += contours
 
@@ -132,7 +132,7 @@ def vectorise(
                 image.resize((int(resolution/draw_hatch), int(resolution/draw_hatch*h/w))),
                 draw_hatch
         ))
-        hatches = join_lines(hatches, closeness=draw_hatch)
+        hatches = join_lines(hatches)
 
         for r in range(repeat_hatch):
             lines += hatches
@@ -347,7 +347,7 @@ def sortlines(lines):
     return slines
 
 
-def join_lines(lines, closeness):
+def join_lines(lines, closeness=128):
     # When the start of a new line is close to the end of the previous one, make
     # them one line - this reduces pen up-and-down movement. "Close" means no
     # further away than twice the draw_hatch/draw_contours values.
@@ -364,7 +364,7 @@ def join_lines(lines, closeness):
 
             xdiff = abs(previous_line[-1][0] - line[0][0])
             ydiff = abs(previous_line[-1][1] - line[0][1])
-            if xdiff ** 2 + ydiff ** 2 <= (closeness ** 2) * 2:
+            if xdiff ** 2 + ydiff ** 2 <= closeness:
                 previous_line.extend(line)
 
             else:
