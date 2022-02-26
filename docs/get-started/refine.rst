@@ -17,8 +17,8 @@ previously. For example::
   from brachiograph import BrachioGraph
 
   bg = BrachioGraph(
-      servo_1_centre=1550,
-      servo_2_centre=1450,
+      servo_1_parked_pw=1870,
+      servo_2_parked_pw=1450,
   )
 
 Save the file. From now on, you will initialise BrachioGraph in the Python shell using this definition - do it now::
@@ -307,8 +307,8 @@ Basic calibration
 The simplest calibration is to ensure that at somewhere near the centre of its movement, the outer arm is at exactly
 90˚ to the inner arm. The defaults assumed for the two motors (servo 1 is the shoulder, servo 2 is the elbow) are::
 
-    servo_1_centre = 1500
-    servo_2_centre = 1500
+    servo_1_parked_pw = 1500
+    servo_2_parked_pw = 1500
 
 Use ``bg.drive()`` to discover what pulse-width actually corresponds to 90˚ (ignore the shoulder motor for now).
 
@@ -320,7 +320,7 @@ Controls:
 * k: ``decrease elbow motor pulse-width 10µS`` (K: 1µS)
 * l: ``increase elbow motor pulse-width 10µS`` (L: 1µS)
 
-Use this value in the BrachioGraph definition, e.g. ``bg = BrachioGraph(servo_2_centre=1430)``; you should now get
+Use this value in the BrachioGraph definition, e.g. ``bg = BrachioGraph(servo_2_parked_pw=1430)``; you should now get
 at least slightly better results (i.e. slightly straighter lines).
 
 See :ref:`calibrate` for more sophisticated calibration.

@@ -21,14 +21,14 @@ The ``BrachioGraph`` class
             self,
             inner_arm=8,                # the lengths of the arms
             outer_arm=8,
-            servo_1_centre=1500,        # shoulder motor centre pulse-width
-            servo_2_centre=1500,        # elbow motor centre pulse-width
+            servo_1_parked_pw=1500,        # shoulder motor centre pulse-width
+            servo_2_parked_pw=1500,        # elbow motor centre pulse-width
             servo_1_angle_pws=[],       # pulse-widths for various angles
             servo_2_angle_pws=[],
             servo_1_degree_ms=-10,      # milliseconds pulse-width per degree
             servo_2_degree_ms=10,       # reversed for the mounting of the elbow servo
-            arm_1_centre=-60,
-            arm_2_centre=90,
+            servo_1_parked_angle=-60,
+            servo_2_parked_angle=90,
             hysteresis_correction_1=0,  # hardware error compensation
             hysteresis_correction_2=0,
             bounds=[-8, 4, 6, 13],      # the maximum rectangular drawing area
@@ -51,7 +51,7 @@ The ``BrachioGraph`` class
       - 8
       - length of each arm in centimetres
 
-    * - ``servo_1_centre``, ``servo_2_centre``
+    * - ``servo_1_parked_pw``, ``servo_2_parked_pw``
       - 1500
       - motor centre pulse-widths; ignored if the ``servo_<x>_angle_pws`` arguments (below) are provided
 
@@ -64,14 +64,14 @@ The ``BrachioGraph`` class
       - -10, 10
       - milliseconds pulse-width change per degree of motor movement; see :ref:`pulse-width-degrees`
 
-    * - ``arm_1_centre``
+    * - ``servo_1_parked_angle``
       - -60
-      - angle in degrees of the shoulder motor's centre of movement (i.e. at ``servo_1_centre``) relative to the
+      - angle in degrees of the shoulder motor's centre of movement (i.e. at ``servo_1_parked_pw``) relative to the
         drawing grid; see :ref:`basic-calibration`
 
-    * - ``arm_2_centre``
+    * - ``servo_2_parked_angle``
       - 90
-      - angle in degrees of the elbow motor's centre of movement (i.e. at ``servo_2_centre``) relative to the inner
+      - angle in degrees of the elbow motor's centre of movement (i.e. at ``servo_2_parked_pw``) relative to the inner
         arm; see :ref:`basic-calibration`
 
     * - ``hysteresis_correction_1``, ``hysteresis_correction_2``

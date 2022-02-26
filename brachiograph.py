@@ -21,7 +21,7 @@ class BrachioGraph:
     def __init__(
         self,
 
-        #  ----------------- geometry of tyhe plotter -----------------
+        #  ----------------- geometry of the plotter -----------------
 
         inner_arm=8,                    # the lengths of the arms
         outer_arm=8,
@@ -30,11 +30,11 @@ class BrachioGraph:
 
         #  ----------------- servo angles and pulse-widths -----------------
 
-        servo_1_centre=1500,            # pulse-widths at the centre of travel
-        servo_2_centre=1500,
+        servo_1_parked_pw=1500,            # pulse-widths at the centre of travel
+        servo_2_parked_pw=1500,
 
-        arm_1_centre=-60,               # the arm angle for the centre position
-        arm_2_centre=90,
+        servo_1_parked_angle=-60,               # the arm angle for the centre position
+        servo_2_parked_angle=90,
 
         servo_1_degree_ms=-10,          # milliseconds pulse-width per degree
         servo_2_degree_ms=10,           # reversed for the mounting of the elbow servo
@@ -77,14 +77,14 @@ class BrachioGraph:
         # numpy.polyfit(), to produce a function for each one. Otherwise, we will use a simple
         # approximation based on a centre of travel of 1500µS and 10µS per degree
 
-        self.servo_1_centre = servo_1_centre
+        self.servo_1_parked_pw = servo_1_parked_pw
         self.servo_1_degree_ms = servo_1_degree_ms
-        self.arm_1_centre = arm_1_centre
+        self.servo_1_parked_angle = servo_1_parked_angle
         self.hysteresis_correction_1 = hysteresis_correction_1
 
-        self.servo_2_centre = servo_2_centre
+        self.servo_2_parked_pw = servo_2_parked_pw
         self.servo_2_degree_ms = servo_2_degree_ms
-        self.arm_2_centre = arm_2_centre
+        self.servo_2_parked_angle = servo_2_parked_angle
         self.hysteresis_correction_2 = hysteresis_correction_2
 
         # set some initial values required for moving methods
@@ -547,10 +547,10 @@ class BrachioGraph:
     #  ----------------- angles-to-pulse-widths methods -----------------
 
     def naive_angles_to_pulse_widths_1(self, angle):
-        return (angle - self.arm_1_centre) * self.servo_1_degree_ms + self.servo_1_centre
+        return (angle - self.servo_1_parked_angle) * self.servo_1_degree_ms + self.servo_1_parked_pw
 
     def naive_angles_to_pulse_widths_2(self, angle):
-        return (angle - self.arm_2_centre) * self.servo_2_degree_ms + self.servo_2_centre
+        return (angle - self.servo_2_parked_angle) * self.servo_2_degree_ms + self.servo_2_parked_pw
 
     # def angles_to_pulse_widths(self, angle_1, angle_2):
     #     # Given a pair of angles, returns the appropriate pulse widths.
@@ -703,7 +703,7 @@ class BrachioGraph:
 
         pin = {1: 14, 2: 15}[servo]
 
-        servo_centre = {1: self.servo_1_centre, 2: self.servo_2_centre}.get(servo)
+        servo_centre = {1: self.servo_1_parked_pw, 2: self.servo_2_parked_pw}.get(servo)
         servo_angle_pws = []
         texts = {
             "arm-name": {1: "inner", 2: "outer"},

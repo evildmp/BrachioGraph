@@ -50,7 +50,7 @@ Add the pen-lifting horn
 Attach the horn to the lifting motor.
 
 .. image:: /images/lifting-mechanism.jpg
-   :alt: 'Pen-lifting mechanism'
+   :alt:
 
 
 Do a status check
@@ -109,13 +109,13 @@ Initialise a custom BrachioGraph
 Let's say the two values you noted in the previous step were 1870 for the shoulder motor and 1450 for the elbow motor.
 In that case, re-initialise the BrachioGraph with the values (but use whatever values you discovered)::
 
-  bg=BrachioGraph(servo_1_centre=1870, servo_2_centre=1450)
+  bg=BrachioGraph(servo_1_parked_pw=1870, servo_2_parked_pw=1450)
 
 
 Adjust the pen lifting motor
 ----------------------------
 
-The pen motor should be in the *up* position. Try lowering and lifting it:
+The pen motor should be in the *up* position. Try lowering and lifting it::
 
   bg.pen.down()
   bg.pen.up()
@@ -129,7 +129,18 @@ Start drawing
 
 Now you should be able to draw a box::
 
-  bg.box()
+  bg.box(bounds=[-2, 7, 2, 11])
 
-The BrachioGraph will draw a box. It will be a wobbly, imperfect box, but it should be a
-recognisable box, about 14cm wide and 9cm tall.
+This means: draw a rectangle defined by the co-ordinates -2, 7 at one corner and 2, 11 at the opposite corner (the shoulder motor is always at 0,0):
+
+.. image:: /images/box.png
+   :alt:
+
+The BrachioGraph will draw your square. It will be a wobbly, imperfect square, but it should be a
+recognisable square, about 4cm wide and tall.
+
+Try increasing the dimensions oof the box progressively, for example::
+
+  bg.box(bounds=[-3, 6, 3, 12])
+
+The next job is to improve the accuracy and precision of the plotter.

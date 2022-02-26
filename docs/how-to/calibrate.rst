@@ -39,8 +39,8 @@ Find the centre angle pulse-widths
 
 By default, the BrachioGraph is initialised with::
 
-    servo_1_centre = 1500  # shoulder motor centre pulse-width
-    servo_2_centre = 1500  # elbow motor centre pulse-width
+    servo_1_parked_pw = 1500  # shoulder motor centre pulse-width
+    servo_2_parked_pw = 1500  # elbow motor centre pulse-width
 
 Probably, at the nominal "zero" angles (-90 and 90 degrees respectively) the arms will probably not be quite at the
 those angles. You can use ``bg.drive()`` to discover what pulse-widths correspond to the centre positions.
@@ -53,8 +53,8 @@ Controls:
 * k: ``decrease elbow motor pulse-width 10µS`` (K: 1µS)
 * l: ``increase elbow motor pulse-width 10µS`` (L: 1µS)
 
-Now you can initialise the BrachioGraph with the two zero-position values you have discovered, adding ``servo_1_centre``
-and ``servo_2_centre`` to the ``bg = BrachioGraph`` instantiation, for example:
+Now you can initialise the BrachioGraph with the two zero-position values you have discovered, adding ``servo_1_parked_pw``
+and ``servo_2_parked_pw`` to the ``bg = BrachioGraph`` instantiation, for example:
 
 ..  code-block:: python
     :emphasize-lines: 4
@@ -62,10 +62,10 @@ and ``servo_2_centre`` to the ``bg = BrachioGraph`` instantiation, for example:
     bg = BrachioGraph(
         inner_arm=9, outer_arm=9,
         bounds=bounds=(-8, 3, 8, 15),
-        servo_1_centre=1695, servo_2_centre=1480
+        servo_1_parked_pw=1695, servo_2_parked_pw=1480
     )
 
-Getting the ``servo_1_centre`` right will align the drawing better with your paper. Getting the ``servo_2_centre``
+Getting the ``servo_1_parked_pw`` right will align the drawing better with your paper. Getting the ``servo_2_parked_pw``
 right will help reduce some distortion.
 
 

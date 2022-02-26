@@ -22,3 +22,9 @@ Changelog
 ----------
 
 * Added an exception for out-of-reach condition
+
+2022 02 26
+----------
+
+* Renamed arm_1_centre, arm_2_centre to servo_1_parked_angle, servo_2_parked_angle
+* Renamed servo_1_centre, servo_2_centre to servo_1_parked_pw, servo_2_parked_pw
