@@ -11,6 +11,8 @@ to make the results interesting and worthwhile in their own right.
 To get the best results involves understanding the limitations of the hardware, and finding ways to compensate for them.
 
 
+.. _explanation-non-linearity:
+
 Non-linearity
 -------------
 
