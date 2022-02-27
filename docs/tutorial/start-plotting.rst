@@ -12,7 +12,7 @@ determine the position of a servo. Try this::
   bg.set_pulse_widths(1500, 1500)
 
 Nothing should happen, because those are already the pulse-widths it's applying. But try
-incrementing the first servo pulse-width by 100 (milliseconds) - make sure you get the numbers
+incrementing the first servo pulse-width by 100 (microseconds) - make sure you get the numbers
 right, because a wrong value can send the arms flying::
 
   bg.set_pulse_widths(1400, 1500)
@@ -42,7 +42,7 @@ On a scrap of paper, note down those two values; we'll use them in the next step
 Initialise a custom BrachioGraph
 --------------------------------
 
-By default, a BrachioGraph is initialised with values of 1500 for both servos (for most servos, 1500 ms places them at
+By default, a BrachioGraph is initialised with values of 1500 for both servos (for most servos, 1500 µs places them at
 the centre of their movement). However you probably found that slightly different values are needed to line up the
 arms at the correct angles. Let's say the two values you noted in the previous step were:
 

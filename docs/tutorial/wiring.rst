@@ -15,7 +15,7 @@ The three servos need to be connected to the Raspberry Pi. Each servo has three 
 * Signal
 
 5V and ground are required to power the servo; the signal wire carries a pulse, whose width (its length in
-milliseconds) determines the position of the motor.
+microseconds) determines the position of the motor.
 
 **At least two of the servos will need to share a 5V connection**, since the Raspberry Pi
 has only two available. How you achieve this will depend on what you have available.

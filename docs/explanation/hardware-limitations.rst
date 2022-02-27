@@ -21,7 +21,7 @@ the pulse-width required for a particular angle is::
 
     pw = 1500 + angle x 10
 
-(1500µS is the nominal centre of a servo's sweep, and a change of 10µS generally seems to correspond to 1˚ of movement.)
+(1500µs is the nominal centre of a servo's sweep, and a change of 10µs generally seems to correspond to 1˚ of movement.)
 
 See the ``naive_angles_to_pulse_widths`` methods for how this formula is implemented.
 
@@ -53,11 +53,11 @@ The motors
 ~~~~~~~~~~
 
 The motors themselves, even more accurate and expensive ones with metal gears and high torque, exhibit hysteresis, even
-when under no load. For example, say that at 1500µS your motor is at 0˚. You may find that changing the pulse-width
-from 1500µS to 1510µS moves the arm anti-clockwise by 1˚, but setting it back to 1500µS does nothing, and the motor
-does not move back to 0˚ until the pulse-width is set to 1490µS.
+when under no load. For example, say that at 1500µs your motor is at 0˚. You may find that changing the pulse-width
+from 1500µs to 1510µs moves the arm anti-clockwise by 1˚, but setting it back to 1500µs does nothing, and the motor
+does not move back to 0˚ until the pulse-width is set to 1490µs.
 
-In other words, the position of the motor at 1500µS is dependent upon the its previous state; in this example it will
+In other words, the position of the motor at 1500µs is dependent upon the its previous state; in this example it will
 be 0˚ when moving anti-clockwise and -1˚ when moving clockwise.
 
 
@@ -66,7 +66,7 @@ The mechanical system
 
 In addition, the mechanical system - the arms, the joints and the way the pen is held - adds more hysteresis. As the
 motors move, some of that movement will be taken up by flexing and mechanical free-play in the system, so that the
-actual relationship between pen position and pulse-width can suffer from a dead-band of more than 15µS when changing
+actual relationship between pen position and pulse-width can suffer from a dead-band of more than 15µs when changing
 directions.
 
 The result of this hysteresis is imprecision that depends on direction. Drawing a grid with the lines first in one

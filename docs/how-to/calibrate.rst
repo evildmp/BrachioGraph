@@ -9,9 +9,9 @@ however, it makes some assumptions about the servos.
 For `SG90 motors <http://www.towerpro.com.tw/product/sg90-analog/>`_ or similar:
 
 * they have almost 180˚ of rotation, though they are specified for 120˚ and that's the better value to assume
-* they operate on pulse-widths from about 500µS to about 2600µS, though the official values are 1000µS to 2000µS and those are better values to use
-* the centre of their travel is around 1500µS
-* one degree of travel corresponds a difference of about 10µS
+* they operate on pulse-widths from about 500µs to about 2600µs, though the official values are 1000µs to 2000µs and those are better values to use
+* the centre of their travel is around 1500µs
+* one degree of travel corresponds a difference of about 10µs
 
 This is what the default ``angles_to_pw_1`` and ``angles_to_pw_2`` methods assume when the BrachioGraph is initialised.
 
@@ -48,10 +48,10 @@ those angles. You can use ``bg.drive()`` to discover what pulse-widths correspon
 Controls:
 
 * 0: ``exit``
-* a: ``decrease shoulder motor pulse-width 10µS`` (A: 1µS)
-* s: ``increase shoulder motor pulse-width 10µS`` (S: 1µS)
-* k: ``decrease elbow motor pulse-width 10µS`` (K: 1µS)
-* l: ``increase elbow motor pulse-width 10µS`` (L: 1µS)
+* a: ``decrease shoulder motor pulse-width 10µs`` (A: 1µs)
+* s: ``increase shoulder motor pulse-width 10µs`` (S: 1µs)
+* k: ``decrease elbow motor pulse-width 10µs`` (K: 1µs)
+* l: ``increase elbow motor pulse-width 10µs`` (L: 1µs)
 
 Now you can initialise the BrachioGraph with the two zero-position values you have discovered, adding ``servo_1_parked_pw``
 and ``servo_2_parked_pw`` to the ``bg = BrachioGraph`` instantiation, for example:
@@ -74,7 +74,7 @@ right will help reduce some distortion.
 Adjust pulse-width to movement factor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``servo_1_degree_ms`` and ``servo_2_degree_ms`` values by default assume that a 10µS change in pulse-width will
+The ``servo_1_degree_ms`` and ``servo_2_degree_ms`` values by default assume that a 10µs change in pulse-width will
 produce a 1˚ change in angle. This is close, but you can usually discover better values through trial and error.
 
 
@@ -143,7 +143,7 @@ Import the definition and invoke ``calibrate()``::
     from my_calibrated_bg import bg
     bg.calibrate()
 
-The servo will move to its centre position (1500µS, unless you have specified otherwise). Mount the arm on the servo at
+The servo will move to its centre position (1500µs, unless you have specified otherwise). Mount the arm on the servo at
 a position as close as possible to 0˚ (if you are working on the inner arm) or 90˚ (if you are working on the outer
 arm).
 
@@ -152,10 +152,10 @@ Now drive the arm over the paper. Controls:
 * 0: *exit*
 * 1: *record an angle*
 * 2: *report collected angles*
-* a: *increase shoulder motor pulse-width 10µS*
-* s: *decrease shoulder motor pulse-width 10µS*
-* A: *increase shoulder motor pulse-width 1µS*
-* S: *decrease shoulder motor pulse-width 1µS*
+* a: *increase shoulder motor pulse-width 10µs*
+* s: *decrease shoulder motor pulse-width 10µs*
+* A: *increase shoulder motor pulse-width 1µs*
+* S: *decrease shoulder motor pulse-width 1µs*
 
 When you reach a precise angle, record it: press *1*, then enter the angle. Do this for as many angles as possible.
 press *2* when you have finished collecting them. The angles and pulse-widths will be displayed.
@@ -229,7 +229,7 @@ the two versions of the grid overlay each other very imperfectly:
    :class: 'main-visual'
 
 Hysteresis needs to be compensated for in order to achieve the best results. The dead-band of hysteresis is usually a
-few µS. Although a motor *itself* may not have a large dead-band, you will find that the system itself has larger
+few µs. Although a motor *itself* may not have a large dead-band, you will find that the system itself has larger
 dead-bands, especially affecting the shoulder motor.
 
 
@@ -313,18 +313,18 @@ To calibrate the pen motor, run the ``Pen.calibrate()`` method. The ``Pen`` obje
 Controls:
 
 * 0: *exit*
-* z: *decrease pen motor pulse-width 10µS*
-* x: *increase pen motor pulse-width 10µS*
+* z: *decrease pen motor pulse-width 10µs*
+* x: *increase pen motor pulse-width 10µs*
 * u: *record this as the pen-up position*
 * d: *record this as the pen-down position*
 * t: *toggle between the two positions*
 
 In addition, to check the pen at different positions over the paper (usually the middle of the paper is fine):
 
-* a: *increase shoulder motor pulse-width 10µS*
-* s: *decrease shoulder motor pulse-width 10µS*
+* a: *increase shoulder motor pulse-width 10µs*
+* s: *decrease shoulder motor pulse-width 10µs*
 
-Try to fix the horn for the motor at a position where 1500µS is about half-way between the up and down values.
+Try to fix the horn for the motor at a position where 1500µs is about half-way between the up and down values.
 
 You can copy the values reported by the calibration method into your BrachioGraph definition, e.g.:
 

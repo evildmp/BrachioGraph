@@ -67,8 +67,8 @@ to exit the Python shell and import the definition into a new one each time you 
 Adjust the angle calculations
 ---------------------------------
 
-The default definition assumes that a 10 ms difference in pulse-width will result in a 1 degree difference in the
-motor's position. In practice, you'll likely find that it's not quite 10 ms. This will introduce distortion into the
+The default definition assumes that a 10 µs difference in pulse-width will result in a 1 degree difference in the
+motor's position. In practice, you'll likely find that it's not quite 10 µs. This will introduce distortion into the
 drawings. Assuming that when you do ``bg.park()``, the inner arm is exactly at -90˚, try this::
 
     bg.set_angles(angle_1=0)

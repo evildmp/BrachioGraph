@@ -25,7 +25,7 @@ The ``BrachioGraph`` class
             servo_2_parked_pw=1500,        # elbow motor centre pulse-width
             servo_1_angle_pws=[],       # pulse-widths for various angles
             servo_2_angle_pws=[],
-            servo_1_degree_ms=-10,      # milliseconds pulse-width per degree
+            servo_1_degree_ms=-10,      # microseconds pulse-width per degree
             servo_2_degree_ms=10,       # reversed for the mounting of the elbow servo
             servo_1_parked_angle=-60,
             servo_2_parked_angle=90,
@@ -62,7 +62,7 @@ The ``BrachioGraph`` class
 
     * - ``servo_1_degree_ms``, ``servo_2_degree_ms``
       - -10, 10
-      - milliseconds pulse-width change per degree of motor movement; see :ref:`pulse-width-degrees`
+      - microseconds pulse-width change per degree of motor movement; see :ref:`pulse-width-degrees`
 
     * - ``servo_1_parked_angle``
       - -60
@@ -76,7 +76,7 @@ The ``BrachioGraph`` class
 
     * - ``hysteresis_correction_1``, ``hysteresis_correction_2``
       - 0
-      - empirically-derived hardware error compensation values, in mS; see :ref:`hysteresiscompensation`
+      - empirically-derived hardware error compensation values, in µs; see :ref:`hysteresiscompensation`
 
     * - ``bounds``
       - ``[-8, 4, 6, 13]``

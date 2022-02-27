@@ -128,7 +128,7 @@ direction, but most are not actually designed to be used that way. *Some* servos
 though it's outside their specification (for example the :ref:`Tower Pro SG90s <hardware-servos>`. However it's not a
 good thing to rely on, and it's definitely not a good assumption to make of all servos. This is because:
 
-* although many servos respond to pulse-widths from 500 to 2500 ms, most are specified for 1000-2000 ms (corresponding
+* although many servos respond to pulse-widths from 500 to 2500 µs, most are specified for 1000-2000 µs (corresponding
   to 120˚) and *can be damaged by inputs outside this range*
 * beyond 120˚, some motors become unusably twitchy and inaccurate
 * for most servos, even the SG90s that seem to cope with 180˚ of rotation, the actual specification is for 120˚ so it's
