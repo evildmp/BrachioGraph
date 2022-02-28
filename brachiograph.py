@@ -28,16 +28,18 @@ class BrachioGraph:
 
         bounds=[-8, 4, 6, 13],          # the maximum rectangular drawing area
 
-        #  ----------------- servo angles and pulse-widths -----------------
+        #  ----------------- naive calculation values -----------------
 
-        servo_1_parked_pw=1500,            # pulse-widths at the centre of travel
+        servo_1_parked_pw=1500,         # pulse-widths when parked
         servo_2_parked_pw=1500,
 
-        servo_1_parked_angle=-60,               # the arm angle for the centre position
+        servo_1_degree_ms=-10,          # milliseconds pulse-width per degree
+        servo_2_degree_ms=10,           # reversed for the mounting of the shoulder servo
+
+        servo_1_parked_angle=-90,       # the arm angle in the parked position
         servo_2_parked_angle=90,
 
-        servo_1_degree_ms=-10,          # milliseconds pulse-width per degree
-        servo_2_degree_ms=10,           # reversed for the mounting of the elbow servo
+        #  ----------------- hysteresis -----------------
 
         hysteresis_correction_1=0,      # hardware error compensation
         hysteresis_correction_2=0,
