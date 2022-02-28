@@ -51,7 +51,7 @@ BrachioGraph plots cheerful, low-fi drawings, and can produce robotic sketches u
 Contents
 ------------
 
-:doc:`Tutorial <get-started/index>`
+:doc:`Tutorial <tutorial/index>`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Start here**: build the machine, install the software, make your first drawings
@@ -113,7 +113,7 @@ This documentation uses the `Diátaxis documentation structure <https://diataxis
     :maxdepth: 1
     :hidden:
 
-    Get started <get-started/index>
+    Tutorial <tutorial/index>
     How-to guides <how-to/index>
     Reference <reference/index>
     Explanation <explanation/index>
