@@ -1,3 +1,5 @@
+.. _tutorial-sophisticated-calibration:
+
 Apply more sophisticated calibration
 ====================================
 
@@ -29,6 +31,8 @@ Use screws, if you like
 You can run the arms without screwing them into place; friction is quite enough. But for better results, make a hole in
 the arms so that you can screw them onto their motors more firmly. This reduces flex.
 
+
+.. _polyfit:
 
 Conduct a sweep
 ---------------

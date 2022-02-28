@@ -1,4 +1,4 @@
-Compensating for hardware limitations
+ Compensating for hardware limitations
 ======================================
 
 Make no mistake: any engineer can tell you that the BrachioGraph is no way to build a plotter. Hobby servo motors are
@@ -9,6 +9,26 @@ That is partly what makes it fun, that it does things its parts are not ideally 
 to make the results interesting and worthwhile in their own right.
 
 To get the best results involves understanding the limitations of the hardware, and finding ways to compensate for them.
+
+
+About the servo motors
+------------------------
+
+Each servo motor is different, so the BrachioGraph can be calibrated exactly for your servos. To get you started
+however, it makes some assumptions about the servos.
+
+For `SG90 motors <http://www.towerpro.com.tw/product/sg90-analog/>`_ or similar:
+
+* they have almost 180˚ of rotation, though they are specified for 120˚ and that's the better value to assume
+* they operate on pulse-widths from about 500µs to about 2600µs, though the official values are 1000µs to 2000µs and those are better values to use
+* the centre of their travel is around 1500µs
+* one degree of travel corresponds a difference of about 10µs
+
+This is what the default ``angles_to_pw_1`` and ``angles_to_pw_2`` methods assume when the BrachioGraph is initialised.
+
+This is sufficient to get started, but since the values above are nominal values only, they won't provide the best
+results. In addition, the correspondence between pulse-widths and angles is not actually linear, and worse, mechanical
+hysteresis in the system means that the quality of your drawings will be much lower than it ought to be.
 
 
 .. _explanation-non-linearity:
@@ -89,3 +109,6 @@ constant to the pulse-width value when it is increasing or decreasing will help 
 
 The correction values are supplied as ``hysteresis_correction_1`` and ``hysteresis_correction_2`` parameters to the
 BrachioGraph instance. See :ref:`hysteresiscompensation` for how to determine these values.
+
+If you're using more sophisticated calibration using ``servo_1_angle_pws_bidi`` and ``servo_2_angle_pws_bidi``, the
+hysteresis values will be calculated for you.

@@ -26,6 +26,8 @@ Save the file. From now on, you will initialise BrachioGraph in the Python shell
     from custom import bg
 
 
+.. _hysteresiscompensation:
+
 Counteract hysteresis
 ---------------------
 
@@ -63,6 +65,7 @@ Try the test pattern again, in both directions, by using the ``both`` option::
 Now you should get better results. Try hysteresis correction values between 7 and 20, to see what works best. Remember
 to exit the Python shell and import the definition into a new one each time you change it.
 
+.. _pulse-width-degrees:
 
 Adjust the angle calculations
 ---------------------------------
