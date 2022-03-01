@@ -33,7 +33,7 @@ class BrachioGraph:
         servo_1_parked_pw=1500,         # pulse-widths when parked
         servo_2_parked_pw=1500,
 
-        servo_1_degree_ms=-10,          # milliseconds pulse-width per degree
+        servo_1_degree_ms=-10,          # microseconds pulse-width per degree
         servo_2_degree_ms=10,           # reversed for the mounting of the shoulder servo
 
         servo_1_parked_angle=-90,       # the arm angle in the parked position
@@ -57,7 +57,7 @@ class BrachioGraph:
         #  ----------------- the pen -----------------
 
         pw_up=1500,                     # pulse-widths for pen up/down
-        pw_down=1100,
+        pw_down=900,
 
         #  ----------------- misc -----------------
 
