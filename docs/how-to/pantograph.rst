@@ -154,7 +154,7 @@ Start with motor 1; run::
 
     pg.set_pulse_widths(pin=14, pw=1500)
 
-1500 µS is the nominal pulse width corresponding to the nominal central or neutral position of
+1500 µs is the nominal pulse width corresponding to the nominal central or neutral position of
 most servo motors.
 
 Now attach attach a long horn to the servo, so that you can more easily judge its angles. If 0

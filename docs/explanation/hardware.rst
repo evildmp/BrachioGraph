@@ -85,4 +85,4 @@ The arms
 If you're using card for the arms, it needs to be stiff in both directions. Picture-mounting board is ideal. A
 picture-framing shop will almost certainly give you free off-cuts.
 
-:ref:`Wooden sticks as illustrated <get_started>` don't require cutting and are easy to obtain.
+:ref:`Wooden sticks as illustrated <tutorial>` don't require cutting and are easy to obtain.

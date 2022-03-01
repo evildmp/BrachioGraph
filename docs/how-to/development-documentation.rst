@@ -14,7 +14,7 @@ The documentation is written in `Restructured Text
 
 The documentation uses the `Diátaxis framework <https://diataxis.fr>`_:
 
-* :doc:`tutorials </get-started/index>`
+* :doc:`tutorials </tutorial/index>`
 * :doc:`how-to guides </how-to/index>`
 * :doc:`reference material </reference/index>`
 * :doc:`explanation </explanation/index>`

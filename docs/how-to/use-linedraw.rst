@@ -1,9 +1,9 @@
 .. _use-linedraw:
 
-How to use the ``linedraw.py`` library to vectorise images
+How to use the ``linedraw.py`` module to vectorise images
 ==========================================================
 
-The ``linedraw.py`` library converts bitmap images to vectors.
+The ``linedraw.py`` module converts bitmap images to vectors.
 
 Typically, you will find it more convenient not to run linedraw on the Raspberry Pi itself. Even on a reasonably
 powerful computer, vectorising images can take several seconds or even minutes. On a Pi, that will be slower still.

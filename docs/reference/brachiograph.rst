@@ -21,19 +21,19 @@ The ``BrachioGraph`` class
             self,
             inner_arm=8,                # the lengths of the arms
             outer_arm=8,
-            servo_1_centre=1500,        # shoulder motor centre pulse-width
-            servo_2_centre=1500,        # elbow motor centre pulse-width
-            servo_1_angle_pws=[],       # pulse-widths for various angles
-            servo_2_angle_pws=[],
-            servo_1_degree_ms=-10,      # milliseconds pulse-width per degree
+            servo_1_parked_pw=1500,     # shoulder motor centre pulse-width
+            servo_2_parked_pw=1500,     # elbow motor centre pulse-width
+            servo_1_angle_pws_bidi={},  # pulse-widths for various angles
+            servo_1_angle_pws_bidi={},
+            servo_1_degree_ms=-10,      # microseconds pulse-width per degree
             servo_2_degree_ms=10,       # reversed for the mounting of the elbow servo
-            arm_1_centre=-60,
-            arm_2_centre=90,
+            servo_1_parked_angle=-90,
+            servo_2_parked_angle=90,
             hysteresis_correction_1=0,  # hardware error compensation
             hysteresis_correction_2=0,
             bounds=[-8, 4, 6, 13],      # the maximum rectangular drawing area
             wait=None,
-            virtual_mode = False,
+            virtual = False,
             pw_up=1500,                 # pulse-widths for pen up/down
             pw_down=1100,
         ):
@@ -51,38 +51,38 @@ The ``BrachioGraph`` class
       - 8
       - length of each arm in centimetres
 
-    * - ``servo_1_centre``, ``servo_2_centre``
+    * - ``servo_1_parked_pw``, ``servo_2_parked_pw``
       - 1500
       - motor centre pulse-widths; ignored if the ``servo_<x>_angle_pws`` arguments (below) are provided
 
-    * - ``servo_1_angle_pws``, ``servo_2_angle_pws``
-      - ``[]``
+    * - ``servo_1_angle_pws_bidi``, ``servo_2_angle_pws_bidi``
+      - ``{}``
       - a list of empirically-derived pulse-width/angle pairs; if provided, will be used to provide a function for
-        calculating pulse-widths; see :ref:`advanced-calibration`
+        calculating pulse-widths; see :ref:`tutorial-sophisticated-calibration`
 
     * - ``servo_1_degree_ms``, ``servo_2_degree_ms``
       - -10, 10
-      - milliseconds pulse-width change per degree of motor movement; see :ref:`pulse-width-degrees`
+      - microseconds pulse-width change per degree of motor movement; see :ref:`pulse-width-degrees`
 
-    * - ``arm_1_centre``
-      - -60
-      - angle in degrees of the shoulder motor's centre of movement (i.e. at ``servo_1_centre``) relative to the
-        drawing grid; see :ref:`basic-calibration`
-
-    * - ``arm_2_centre``
+    * - ``servo_1_parked_angle``
       - 90
-      - angle in degrees of the elbow motor's centre of movement (i.e. at ``servo_2_centre``) relative to the inner
-        arm; see :ref:`basic-calibration`
+      - angle in degrees of the shoulder motor's centre of movement (i.e. at ``servo_1_parked_pw``) relative to the
+        drawing grid
+
+    * - ``servo_2_parked_angle``
+      - 90
+      - angle in degrees of the elbow motor's centre of movement (i.e. at ``servo_2_parked_pw``) relative to the inner
+        arm
 
     * - ``hysteresis_correction_1``, ``hysteresis_correction_2``
       - 0
-      - empirically-derived hardware error compensation values, in mS; see :ref:`hysteresiscompensation`
+      - empirically-derived hardware error compensation values, in µs; see :ref:`hysteresiscompensation`
 
     * - ``bounds``
       - ``[-8, 4, 6, 13]``
       - the box within which the BrachioGraph will draw; see :ref:`understand_plotter_geometry`
 
-    * - ``virtual_mode``
+    * - ``virtual``
       - ``False``
       - :ref:`runs the BrachioGraph without attached hardware <virtual-mode>`
 

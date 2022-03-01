@@ -31,30 +31,51 @@ BrachioGraph - the cheapest, simplest possible pen-plotter
 
 ..  raw:: html
 
-    <iframe src="https://player.vimeo.com/video/372867891" width="696" height="392" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-
-BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a library of simple Python applications.
-
-
-.. raw:: html
-
-    <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Share on Twitter</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
     <a href="https://twitter.com/BrachioGraph?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @BrachioGraph</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
+    <iframe src="https://player.vimeo.com/video/372867891" width="696" height="392" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+
+
 ---------------
 
-A BrachioGraph can be built in an hour or so without any special skills. The total cost of all components can be as low
-as €15 or so. Apart from a Raspberry Pi computer and some hobby servo motors, the plotter can be built with everyday
-household items such as a clothes-peg. The software in the `BrachioGraph <https://github.com/evildmp/BrachioGraph>`_
-library includes code to :ref:`drive the hardware <start-plotting>` and :ref:`vectorise bit-map images <use-linedraw>`.
+BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a library of simple Python applications.
 
-BrachioGraphs benefits from contributions from the open-source community, and independently-created :ref:`community
-resources <community-resources>`. These include videos, `brachio.me <https://brachio.me>`_, a web version of the
-linedraw software used to vectorise images and `3D printed plotter components
-<https://www.thingiverse.com/thing:4295302>`_.
+A BrachioGraph can be built for about €15 in an hour or so, using a Raspberry Pi computer, hobby servo motors and
+household items. The `BrachioGraph library <https://github.com/evildmp/brachiograph>`_ is published on GitHub abd
+includes simple Python code to drive the plotter and vectorise bit-map images.
 
-.. rst-class:: clearfix row
+BrachioGraph plots cheerful, low-fi drawings, and can produce robotic sketches using a variety of drawing implements.
+
+Contents
+------------
+
+:doc:`Tutorial <tutorial/index>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Start here**: build the machine, install the software, make your first drawings
+
+
+:doc:`How-to guides <how-to/index>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Improve the calibration, process images, visualise plotter behaviour, alternative designs
+
+
+:doc:`Explanation <explanation/index>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Understanding the mathematics, choosing hardware.
+
+
+:doc:`Reference <reference/index>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Guide to key classes and functions
+
+
+
 
 From bitmap to plot via vectorisation
 -------------------------------------
@@ -68,46 +89,22 @@ From bitmap to plot via vectorisation
    :alt: 'Prague'
 
 
-Contents
-------------
-
-.. rst-class:: clearfix row
-
-.. rst-class:: column column2
-
-:doc:`Get started <get-started/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Build the machine, install the software, make basic tests
-
-.. rst-class:: column column2
-
-:doc:`How-to guides <how-to/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Improve the calibration, process images, visualise plotter behaviour, alternative designs
-
-.. rst-class:: clearfix row
-
-.. rst-class:: column column2
-
-:doc:`Explanation <explanation/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Understanding the mathematics, choosing hardware.
-
-.. rst-class:: column column2
-
-:doc:`Reference <reference/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Guide to key classes and functions
 
 
 .. rst-class:: clearfix row
+
+
+The BrachioGraph community
+--------------------------
+
+BrachioGraphs benefits from contributions from the open-source community, and independently-created :ref:`community
+resources <community-resources>`. These include videos, `brachio.me <https://brachio.me>`_, a web version of the
+linedraw software used to vectorise images and `3D printed plotter components
+<https://www.thingiverse.com/thing:4295302>`_.
+
 
 About the documentation
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 This documentation uses the `Diátaxis documentation structure <https://diataxis.fr/>`_
 
@@ -116,7 +113,7 @@ This documentation uses the `Diátaxis documentation structure <https://diataxis
     :maxdepth: 1
     :hidden:
 
-    Get started <get-started/index>
+    Tutorial <tutorial/index>
     How-to guides <how-to/index>
     Reference <reference/index>
     Explanation <explanation/index>
