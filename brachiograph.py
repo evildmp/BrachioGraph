@@ -982,6 +982,17 @@ class BrachioGraph:
         return (self.bounds[2], self.bounds[1])
 
 
+    def sweepi(self):
+        self.park()
+
+        for a in range(-90, -135, -1):
+            self.set_angles(a); sleep(0.05)
+        for a in range(-135, 15, 1):
+            self.set_angles(a); sleep(0.05)
+        self.park()
+
+
+
 class Pen:
 
     def __init__(self, bg, pw_up=1700, pw_down=1300, pin=18, transition_time=0.25, virtual=False):
