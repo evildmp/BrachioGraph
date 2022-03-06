@@ -16,7 +16,7 @@ You may have some of these installed already, but that shouldn't matter.
 
 ::
 
-    sudo apt install -y python3-venv pigpiod libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git
+    sudo apt install -y python3-venv python3-tk pigpiod libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git
 
 The packages include:
 
@@ -25,6 +25,7 @@ The packages include:
   Pi's GPIO pins - important for accurate timing of pulses. It comes with a Python interface to the lower-level code.
 * various system libraries required by the Pillow Python imaging library
 * ``libatlas3-base`` and ``libgfortran5``, required by the Numpy Python mathematics library
+* ``python3-tk``, for the Turtle graphics integration
 * Git
 
 .. _set-up-venv:

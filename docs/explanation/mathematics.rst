@@ -26,7 +26,7 @@ find the angle between the line of the hypotenuse of the first triangle and the 
 ::
 
     inner_angle = math.acos(
-        (hypotenuse ** 2 + self.INNER_ARM ** 2 - self.OUTER_ARM ** 2) / (2 * hypotenuse * self.INNER_ARM)
+        (hypotenuse ** 2 + self.inner_arm ** 2 - self.outer_arm ** 2) / (2 * hypotenuse * self.inner_arm)
     )
 
 which is 53.25 degrees. The ``hypotenuse_angle`` minus the ``inner_angle`` gives us the angle of the shoulder motor
@@ -39,7 +39,7 @@ in other words, -31.45 degrees. So now we know what angle to set the shoulder mo
 And similarly, we can find the angle at the elbow, between the inner and outer arms::
 
     outer_angle = math.acos(
-        (self.INNER_ARM ** 2 + self.OUTER_ARM ** 2 - hypotenuse ** 2) / (2 * self.INNER_ARM * self.OUTER_ARM)
+        (self.inner_arm ** 2 + self.outer_arm ** 2 - hypotenuse ** 2) / (2 * self.inner_arm * self.outer_arm)
     )
 
 The angle of the outer arm relative to the inner arm is 180 degrees (or π radians) minus the ``outer_angle``::
