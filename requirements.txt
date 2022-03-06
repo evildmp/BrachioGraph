@@ -4,3 +4,4 @@ Pillow==8.0.1
 readchar==2.0.1
 tqdm==4.54.0
 pytest==7.0.1
+tk==0.1.0
