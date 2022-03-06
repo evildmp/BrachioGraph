@@ -415,6 +415,7 @@ class BrachioGraph:
 
 
     def grid_lines(self, bounds=None, lines=4, wait=0, interpolate=10, repeat=1, reverse=False, both=False):
+        """Draws a grid within the box area marked out by the ``bounds``."""
 
         self.vertical_lines(
             bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both
@@ -425,6 +426,7 @@ class BrachioGraph:
 
 
     def box(self, bounds=None, wait=0, interpolate=10, repeat=1, reverse=False):
+        """Draw a box marked out by the ``bounds``."""
 
         wait = wait or self.wait
         bounds = bounds or self.bounds
@@ -456,7 +458,7 @@ class BrachioGraph:
     # ----------------- pen-moving methods -----------------
 
     def xy(self, x=0, y=0, wait=0, interpolate=10, draw=False):
-        # Moves the pen to the xy position; optionally draws
+        """Moves the pen to the xy position; optionally draws while doing it."""
 
         wait = wait or self.wait
 
@@ -520,7 +522,8 @@ class BrachioGraph:
 
 
     def set_angles(self, angle_1=None, angle_2=None):
-        # moves the servo motor
+        """Moves the servo motors to the specified angles. Relies upon getting accurate pulse-width
+        values."""
 
         pw_1 = pw_2 = None
 
@@ -571,6 +574,8 @@ class BrachioGraph:
     #  ----------------- hardware-related methods -----------------
 
     def set_pulse_widths(self, pw_1=None, pw_2=None):
+        """Applies the supplied pulse-width values to the servos, or pretends to, if we're in virtual
+        mode."""
 
         if self.virtual:
 
@@ -595,6 +600,9 @@ class BrachioGraph:
 
 
     def get_pulse_widths(self):
+        """Returns the actual pulse-widths values; if in virtual mode, returns the nominal values - i.e. the
+        values that they might be.
+        """
 
         if self.virtual:
 
@@ -610,7 +618,13 @@ class BrachioGraph:
 
 
     def park(self):
-        """Park the plotter with the inner arm at -90˚ and the outer arm at 90˚ to it."""
+        """Park the plotter with the inner arm at -90˚ and the outer arm at 90˚ to it.
+
+        This corresponds to an x/y position:
+
+        * x: ``-inner_arm``
+        * y: ``outer_arm``
+        """
 
         if self.virtual:
             print("Parking")
