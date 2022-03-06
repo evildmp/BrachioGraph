@@ -5,13 +5,19 @@ import readchar
 import math
 import numpy
 import json
+from turtle_draw import BrachioGraphTurtle
+
 
 try:
-    import pigpio
-    force_virtual = False
-except ModuleNotFoundError:
-    print("pigpio not installed, running in test mode")
+    pigpio.exceptions = False
+    rpi = pigpio.pi()
+    rpi.set_PWM_frequency(18, 50)
+    pigpio.exceptions = True
+
+except:
+    print("pigpio daemon is not available; running in virtual mode")
     force_virtual = True
+
 
 import tqdm
 
@@ -64,13 +70,15 @@ class BrachioGraph:
         wait=None,                      # default wait time between operations
 
         virtual = False,                # run in virtual mode
+        turtle = False
     ):
 
-        # set the pantograph geometry
-        self.INNER_ARM = inner_arm
-        self.OUTER_ARM = outer_arm
+        # set the geometry
+        self.inner_arm = inner_arm
+        self.outer_arm = outer_arm
 
         self.virtual = virtual or force_virtual
+        self.turtle = turtle
 
         # the box bounds describe a rectangle that we can safely draw in
         self.bounds = bounds
@@ -95,8 +103,8 @@ class BrachioGraph:
         self.reset_report()
 
         # Set the x and y position state, so it knows its current x/y position.
-        self.current_x = -self.INNER_ARM
-        self.current_y = self.OUTER_ARM
+        self.current_x = -self.inner_arm
+        self.current_y = self.outer_arm
 
         if servo_1_angle_pws_bidi:
             servo_1_angle_pws = []
@@ -144,7 +152,7 @@ class BrachioGraph:
             self.angles_to_pw_2 = self.naive_angles_to_pulse_widths_2
 
 
-        # create the pen object, and make sure the pen is up
+        # create the pen object
         self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down, virtual=self.virtual)
 
         if self.virtual:
@@ -171,24 +179,27 @@ class BrachioGraph:
 
         self.set_angles(-90, 90)
 
+        if self.turtle:
+            self.reset_turtle()
+
         self.status()
 
     # methods in this class:
     # drawing
     # line-processing
     # test patterns
-    # pen-moving methods
+    # pen-moving
     # angles-to-pulse-widths
     # hardware-related
-    # trigonometric methods
+    # trigonometric
     # calibration
-    # manual driving methods
-    # reporting methods
+    # manual driving
+    # reporting
 
     # ----------------- drawing methods -----------------
 
-
     def plot_file(self, filename="", wait=0, interpolate=10, bounds=None):
+        """Passes the lines in the supplied JSON file to ``plot_lines()``"""
 
         wait = wait or self.wait
         bounds = bounds or self.bounds
@@ -203,6 +214,7 @@ class BrachioGraph:
 
 
     def plot_lines(self, lines=[], wait=0, interpolate=10, rotate=False, flip=False, bounds=None):
+        """Passes each segment of each line in lines to ``draw_line()``"""
 
         wait = wait or self.wait
         bounds = bounds or self.bounds
@@ -221,35 +233,26 @@ class BrachioGraph:
 
             for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
                 x, y = point
-                self.draw(x, y, wait=wait, interpolate=interpolate)
+                self.xy(x, y, wait=wait, interpolate=interpolate, draw=True)
 
         self.park()
 
 
     def draw_line(self, start=(0, 0), end=(0, 0), wait=0, interpolate=10, both=False):
+        """Draws a straight line between two points"""
 
         wait = wait or self.wait
 
         start_x, start_y = start
         end_x, end_y = end
 
-        self.pen.up()
         self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
 
-        self.pen.down()
-        self.draw(x=end_x, y=end_y, wait=wait, interpolate=interpolate)
+        self.xy(x=end_x, y=end_y, wait=wait, interpolate=interpolate, draw=True)
 
         if both:
-            self.draw(x=start_x, y=start_y, wait=wait, interpolate=interpolate)
+            self.xy(x=start_x, y=start_y, wait=wait, interpolate=interpolate, draw=True)
 
-        self.pen.up()
-
-
-    def draw(self, x=0, y=0, wait=0, interpolate=10):
-
-        wait = wait or self.wait
-
-        self.xy(x=x, y=y, wait=wait, interpolate=interpolate, draw=True)
 
     # ----------------- line-processing methods -----------------
 
@@ -435,17 +438,17 @@ class BrachioGraph:
 
             if not reverse:
 
-                self.draw(bounds[2], bounds[1], wait, interpolate)
-                self.draw(bounds[2], bounds[3], wait, interpolate)
-                self.draw(bounds[0], bounds[3], wait, interpolate)
-                self.draw(bounds[0], bounds[1], wait, interpolate)
+                self.xy(bounds[2], bounds[1], wait, interpolate, draw=True)
+                self.xy(bounds[2], bounds[3], wait, interpolate, draw=True)
+                self.xy(bounds[0], bounds[3], wait, interpolate, draw=True)
+                self.xy(bounds[0], bounds[1], wait, interpolate, draw=True)
 
             else:
 
-                self.draw(bounds[0], bounds[3], wait, interpolate)
-                self.draw(bounds[2], bounds[3], wait, interpolate)
-                self.draw(bounds[2], bounds[1], wait, interpolate)
-                self.draw(bounds[0], bounds[1], wait, interpolate)
+                self.xy(bounds[0], bounds[3], wait, interpolate, draw=True)
+                self.xy(bounds[2], bounds[3], wait, interpolate, draw=True)
+                self.xy(bounds[2], bounds[1], wait, interpolate, draw=True)
+                self.xy(bounds[0], bounds[1], wait, interpolate, draw=True)
 
         self.park()
 
@@ -459,8 +462,18 @@ class BrachioGraph:
 
         if draw:
             self.pen.down()
+            if self.turtle:
+                self.turtle.down()
         else:
             self.pen.up()
+            if self.turtle:
+                self.turtle.up()
+
+        if self.turtle:
+            self.turtle.color('blue')
+            self.turtle.width(1)
+            self.turtle.setx(x * self.turtle.multiplier)
+            self.turtle.sety(y * self.turtle.multiplier)
 
         (angle_1, angle_2) = self.xy_to_angles(x, y)
         (pulse_width_1, pulse_width_2) = self.angles_to_pw_1(angle_1), self.angles_to_pw_2(angle_2)
@@ -554,16 +567,6 @@ class BrachioGraph:
     def naive_angles_to_pulse_widths_2(self, angle):
         return (angle - self.servo_2_parked_angle) * self.servo_2_degree_ms + self.servo_2_parked_pw
 
-    # def angles_to_pulse_widths(self, angle_1, angle_2):
-    #     # Given a pair of angles, returns the appropriate pulse widths.
-    #
-    #     # at present we assume only one method of calculating, using the angles_to_pw_1 and angles_to_pw_2
-    #     # functions created using numpy
-    #
-    #     pulse_width_1, pulse_width_2 = self.angles_to_pw_1(angle_1), self.angles_to_pw_2(angle_2)
-    #
-    #     return (pulse_width_1, pulse_width_2)
-
 
     #  ----------------- hardware-related methods -----------------
 
@@ -607,27 +610,25 @@ class BrachioGraph:
 
 
     def park(self):
-
-        # parks the plotter
+        """Park the plotter with the inner arm at -90˚ and the outer arm at 90˚ to it."""
 
         if self.virtual:
             print("Parking")
 
         self.pen.up()
-        self.xy(-self.INNER_ARM, self.OUTER_ARM)
+        self.xy(-self.inner_arm, self.outer_arm)
         sleep(1)
-        # self.quiet()
 
 
     def quiet(self, servos=[14, 15, 18]):
-
-        # stop sending pulses to the servos
+        """Stop sending pulses to the servos, so that they are no longer energised (and so that they
+        stop buzzing).
+        """
 
         if self.virtual:
             print("Going quiet")
 
         else:
-
             for servo in servos:
                 self.rpi.set_servo_pulsewidth(servo, 0)
 
@@ -641,21 +642,20 @@ class BrachioGraph:
     # the x/y position represented by any pair of angles
 
     def xy_to_angles(self, x=0, y=0):
-
-        # convert x/y co-ordinates into motor angles
+        """Return the servo angles required to reach any x/y position."""
 
         hypotenuse = math.sqrt(x**2+y**2)
 
-        if hypotenuse > self.INNER_ARM + self.OUTER_ARM:
-            raise Exception(f"Cannot reach {hypotenuse}; total arm length is {self.INNER_ARM + self.OUTER_ARM}")
+        if hypotenuse > self.inner_arm + self.outer_arm:
+            raise Exception(f"Cannot reach {hypotenuse}; total arm length is {self.inner_arm + self.outer_arm}")
 
         hypotenuse_angle = math.asin(x/hypotenuse)
 
         inner_angle = math.acos(
-            (hypotenuse**2+self.INNER_ARM**2-self.OUTER_ARM**2)/(2*hypotenuse*self.INNER_ARM)
+            (hypotenuse**2+self.inner_arm**2-self.outer_arm**2)/(2*hypotenuse*self.inner_arm)
         )
         outer_angle = math.acos(
-            (self.INNER_ARM**2+self.OUTER_ARM**2-hypotenuse**2)/(2*self.INNER_ARM*self.OUTER_ARM)
+            (self.inner_arm**2+self.outer_arm**2-hypotenuse**2)/(2*self.inner_arm*self.outer_arm)
         )
 
         shoulder_motor_angle = hypotenuse_angle - inner_angle
@@ -665,19 +665,18 @@ class BrachioGraph:
 
 
     def angles_to_xy(self, shoulder_motor_angle, elbow_motor_angle):
-
-        # convert motor angles into x/y co-ordinates
+        """Return the x/y co-ordinates represented by a pair of servo angles."""
 
         elbow_motor_angle = math.radians(elbow_motor_angle)
         shoulder_motor_angle = math.radians(shoulder_motor_angle)
 
         hypotenuse = math.sqrt(
-            (self.INNER_ARM ** 2 + self.OUTER_ARM ** 2 - 2 * self.INNER_ARM * self.OUTER_ARM * math.cos(
+            (self.inner_arm ** 2 + self.outer_arm ** 2 - 2 * self.inner_arm * self.outer_arm * math.cos(
                 math.pi - elbow_motor_angle)
             )
         )
         base_angle = math.acos(
-            (hypotenuse ** 2 + self.INNER_ARM ** 2 - self.OUTER_ARM ** 2) / (2 * hypotenuse * self.INNER_ARM)
+            (hypotenuse ** 2 + self.inner_arm ** 2 - self.outer_arm ** 2) / (2 * hypotenuse * self.inner_arm)
         )
         inner_angle = base_angle + shoulder_motor_angle
 
@@ -980,6 +979,24 @@ class BrachioGraph:
     @property
     def br(self):
         return (self.bounds[2], self.bounds[1])
+
+
+    def reset_turtle(self):
+        self.turtle = BrachioGraphTurtle(
+            inner_arm=self.inner_arm,          # the length of the inner arm (blue)
+            shoulder_centre_angle=-90,  # the starting angle of the inner arm, relative to straight ahead
+            shoulder_sweep=180,     # the arc covered by the shoulder motor
+
+            outer_arm=self.outer_arm,          # the length of the outer arm (red)
+            elbow_centre_angle=90,  # the centre of the outer arm relative to the inner arm
+            elbow_sweep=180,        # the arc covered by the elbow motor
+
+            window_size=800,        # width and height of the turtle canvas
+            speed=0,                 # how fast to draw
+        )
+
+        self.turtle.draw_grid()
+
 
 
 class Pen:

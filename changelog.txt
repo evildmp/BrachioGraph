@@ -28,3 +28,12 @@ Changelog
 
 * Renamed arm_1_centre, arm_2_centre to servo_1_parked_angle, servo_2_parked_angle
 * Renamed servo_1_centre, servo_2_centre to servo_1_parked_pw, servo_2_parked_pw
+
+2022 03 06
+----------
+
+* Added turtle graphics to BrachioGraph with turtle attribute
+* Improved virtual mode; now runs when pigpio is unavailable
+* Removed unnecessary draw() method
+* Renamed INNER_ARM, OUTER_ARM to inner_arm, outer_arm
+* Renamed virtual_mode to virtual
