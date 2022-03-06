@@ -9,35 +9,11 @@
 ``brachiograph.py``
 ==========================
 
-The ``BrachioGraph`` class
----------------------------
+..  module:: brachiograph
 
 
-::
-
-    class BrachioGraph:
-
-        def __init__(
-            self,
-            inner_arm=8,                # the lengths of the arms
-            outer_arm=8,
-            servo_1_parked_pw=1500,     # shoulder motor centre pulse-width
-            servo_2_parked_pw=1500,     # elbow motor centre pulse-width
-            servo_1_angle_pws_bidi={},  # pulse-widths for various angles
-            servo_1_angle_pws_bidi={},
-            servo_1_degree_ms=-10,      # microseconds pulse-width per degree
-            servo_2_degree_ms=10,       # reversed for the mounting of the elbow servo
-            servo_1_parked_angle=-90,
-            servo_2_parked_angle=90,
-            hysteresis_correction_1=0,  # hardware error compensation
-            hysteresis_correction_2=0,
-            bounds=[-8, 4, 6, 13],      # the maximum rectangular drawing area
-            wait=None,
-            virtual = False,
-            pw_up=1500,                 # pulse-widths for pen up/down
-            pw_down=1100,
-        ):
-
+..  autoclass:: BrachioGraph
+    :members:
 
 ..  list-table:: ``BrachioGraph`` attributes
     :header-rows: 1
@@ -93,67 +69,6 @@ The ``BrachioGraph`` class
     * - ``pw_up``, ``pw_down``
       - 1500, 1100
       - pulse width values at which the pen is in the up/down positions
-
-
-
-Management methods
-~~~~~~~~~~~~~~~~~~
-
-``park()``
-^^^^^^^^^^^^
-
-Sends the arms to the parking position, with the inner arm at -90˚ and the outer arm at 90˚ to it.
-This corresponds to an x/y position:
-
-* x: ``-inner_arm``
-* y: ``outer_arm``
-
-
-Image drawing methods
-~~~~~~~~~~~~~~~~~~~~~~~
-
-``plot_file(image)``
-^^^^^^^^^^^^^^^^^^^^
-
-* ``image``: path to image file
-
-
-Drawing utility methods
-~~~~~~~~~~~~~~~~~~~~~~~
-
-``box()``
-^^^^^^^^^^^^
-
-Draw a box marked out by the ``bounds``.
-
-
-``grid_lines()``
-^^^^^^^^^^^^^^^^^
-
-Draws a grid within the box area marked out by the ``bounds``.
-
-
-Reporting methods
-~~~~~~~~~~~~~~~~~
-
-``report()``
-^^^^^^^^^^^^
-
-The BrachioGraph instance has four attributes, ``angles_used_1``, ``angles_used_2``, ``pulse_widths_used_1``,
-``pulse_widths_used_2``. They are all Python sets. Each time the ``set_angles`` method is called, it records the angle
-and pulse-width recorded for each of the two arm servos.
-
-This creates a running record of all the positions the arms have been in.
-
-After the arm has finished drawing, you can find the minimums, maximums and mid-points::
-
-    >>> bg.report()
-                   min   max   mid    min   max   mid
-          angles  -124     7   -59     43   154    99
-    pulse-widths   771  2048  1410   1047  2063  1555
-
-In this case, it's good to know that the mid-points in the range both servos have covered while plotting all over the
-paper are not too far from 1500ms - which means that their range is reasonably well centred.
 
 
 The ``Pen`` class
