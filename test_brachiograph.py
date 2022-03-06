@@ -13,7 +13,7 @@ bg = BrachioGraph(
 # ----------------- set-up tests -----------------
 
 def test_initial_pulse_widths():
-    assert bg.get_pulse_widths() == (1800, 1500)
+    assert bg.get_pulse_widths() == (1500, 1500)
     assert (bg.angle_1, bg.angle_2) == (-90, 90)
 
 # ----------------- drawing methods -----------------
