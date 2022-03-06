@@ -5,6 +5,7 @@ import readchar
 import math
 import numpy
 import json
+import pigpio
 from turtle_draw import BrachioGraphTurtle
 
 
@@ -13,6 +14,7 @@ try:
     rpi = pigpio.pi()
     rpi.set_PWM_frequency(18, 50)
     pigpio.exceptions = True
+    force_virtual = False
 
 except:
     print("pigpio daemon is not available; running in virtual mode")
