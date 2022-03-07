@@ -112,9 +112,9 @@ class BrachioGraph:
             servo_1_angle_pws = []
             differences = []
             for angle, pws in servo_1_angle_pws_bidi.items():
-                pw = (pws['ascending'] + pws['descending']) / 2
+                pw = (pws['acw'] + pws['cw']) / 2
                 servo_1_angle_pws.append([angle, pw])
-                differences.append((pws['ascending'] - pws['descending']) / 2)
+                differences.append((pws['acw'] - pws['cw']) / 2)
             self.hysteresis_correction_1 = numpy.mean(differences)
 
         if servo_1_angle_pws:
@@ -134,9 +134,9 @@ class BrachioGraph:
             servo_2_angle_pws = []
             differences = []
             for angle, pws in servo_2_angle_pws_bidi.items():
-                pw = (pws['ascending'] + pws['descending']) / 2
+                pw = (pws['acw'] + pws['cw']) / 2
                 servo_2_angle_pws.append([angle, pw])
-                differences.append((pws['ascending'] - pws['descending']) / 2)
+                differences.append((pws['acw'] - pws['cw']) / 2)
             self.hysteresis_correction_2 = numpy.mean(differences)
             print(servo_2_angle_pws)
 
