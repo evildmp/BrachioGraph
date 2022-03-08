@@ -528,7 +528,12 @@ class BrachioGraph:
 
     def set_angles(self, angle_1=None, angle_2=None):
         """Moves the servo motors to the specified angles. Relies upon getting accurate pulse-width
-        values."""
+        values.
+
+        Calls set_pulse_widths().
+
+        Sets current_x, current_y.
+        """
 
         pw_1 = pw_2 = None
 
@@ -565,6 +570,7 @@ class BrachioGraph:
             self.pulse_widths_used_2.add(int(pw_2))
 
         self.set_pulse_widths(pw_1, pw_2)
+        self.current_x, self.current_y = self.angles_to_xy(self.angle_1, self.angle_2)
 
 
     #  ----------------- angles-to-pulse-widths methods -----------------
@@ -635,6 +641,8 @@ class BrachioGraph:
             print("Parking")
 
         self.pen.up()
+
+
         self.xy(-self.inner_arm, self.outer_arm)
         sleep(1)
 
