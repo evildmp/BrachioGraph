@@ -105,8 +105,8 @@ class BrachioGraph:
         self.reset_report()
 
         # Set the x and y position state, so it knows its current x/y position.
-        self.current_x = -self.inner_arm
-        self.current_y = self.outer_arm
+        self.x = -self.inner_arm
+        self.y = self.outer_arm
 
         if servo_1_angle_pws_bidi:
             servo_1_angle_pws = []
@@ -230,7 +230,7 @@ class BrachioGraph:
             x, y = line[0]
 
             # only if we are not within 1mm of the start of the line, lift pen and go there
-            if (round(self.current_x, 1), round(self.current_y, 1)) != (round(x, 1), round(y, 1)):
+            if (round(self.x, 1), round(self.y, 1)) != (round(x, 1), round(y, 1)):
                 self.xy(x, y, wait=wait, interpolate=interpolate)
 
             for point in tqdm.tqdm(line[1:], desc="Segments", leave=False):
@@ -453,6 +453,10 @@ class BrachioGraph:
         self.park()
 
 
+    def test_arcs(self):
+        def park()
+        x, y = self
+
     # ----------------- pen-moving methods -----------------
 
     def xy(self, x=0, y=0, wait=0, interpolate=10, draw=False):
@@ -482,8 +486,8 @@ class BrachioGraph:
         if (pulse_width_1, pulse_width_2) == self.get_pulse_widths():
 
             # ensure the pantograph knows its x/y positions
-            self.current_x = x
-            self.current_y = y
+            self.x = x
+            self.y = y
 
             return
 
@@ -491,7 +495,7 @@ class BrachioGraph:
         # a sudden movement later
 
         # calculate how many steps we need for this move, and the x/y length of each
-        (x_length, y_length) = (x - self.current_x, y - self.current_y)
+        (x_length, y_length) = (x - self.x, y - self.y)
 
         length = math.sqrt(x_length ** 2 + y_length **2)
 
@@ -506,10 +510,10 @@ class BrachioGraph:
 
         for step in tqdm.tqdm(range(no_of_steps), desc='Interpolation', leave=False, disable=disable_tqdm):
 
-            self.current_x = self.current_x + length_of_step_x
-            self.current_y = self.current_y + length_of_step_y
+            self.x = self.x + length_of_step_x
+            self.y = self.y + length_of_step_y
 
-            angle_1, angle_2 = self.xy_to_angles(self.current_x, self.current_y)
+            angle_1, angle_2 = self.xy_to_angles(self.x, self.y)
 
             self.set_angles(angle_1, angle_2)
 
@@ -563,7 +567,7 @@ class BrachioGraph:
             self.pulse_widths_used_2.add(int(pw_2))
 
         self.set_pulse_widths(pw_1, pw_2)
-        self.current_x, self.current_y = self.angles_to_xy(self.angle_1, self.angle_2)
+        self.x, self.y = self.angles_to_xy(self.angle_1, self.angle_2)
 
 
     #  ----------------- angles-to-pulse-widths methods -----------------
@@ -875,25 +879,25 @@ class BrachioGraph:
             if key == "0":
                 return
             elif key=="a":
-                self.current_x = self.current_x - 1
+                self.x = self.x - 1
             elif key=="s":
-                self.current_x = self.current_x + 1
+                self.x = self.x + 1
             elif key=="A":
-                self.current_x = self.current_x - .1
+                self.x = self.x - .1
             elif key=="S":
-                self.current_x = self.current_x + .1
+                self.x = self.x + .1
             elif key=="k":
-                self.current_y = self.current_y - 1
+                self.y = self.y - 1
             elif key=="l":
-                self.current_y = self.current_y + 1
+                self.y = self.y + 1
             elif key=="K":
-                self.current_y = self.current_y - .1
+                self.y = self.y - .1
             elif key=="L":
-                self.current_y = self.current_y + .1
+                self.y = self.y + .1
 
-            print(self.current_x, self.current_y)
+            print(self.x, self.y)
 
-            self.xy(self.current_x, self.current_y)
+            self.xy(self.x, self.y)
 
 
     # ----------------- reporting methods -----------------

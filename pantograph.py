@@ -68,7 +68,7 @@ class PantoGraph:
         self.rpi.set_servo_pulsewidth(15, 1350)
 
         self.set_angles(0, 0)
-        self.current_x, self.current_y = self.angles_to_xy(0, 0)
+        self.x, self.y = self.angles_to_xy(0, 0)
 
         self.quiet()
 
@@ -183,7 +183,7 @@ Controls:
 
     def status(self):
 
-        x, y = self.current_x, self.current_y
+        x, y = self.x, self.y
 
         print("Driver/follower arm length: {:03.1f}/{:03.1f}".format(self.DRIVER, self.FOLLOWER))
         print("Furthest reach: {:03.1f}".format(self.furthest_reach))
@@ -430,8 +430,8 @@ Controls:
         if (pulse_width_1, pulse_width_2) == self.get_pulse_widths():
 
             # ensure the pantograph knows its x/y positions
-            self.current_x = x
-            self.current_y = y
+            self.x = x
+            self.y = y
 
             return
 
@@ -439,7 +439,7 @@ Controls:
         # a sudden movement later
 
         # calculate how many steps we need for this move, and the x/y length of each
-        (x_length, y_length) = (x - self.current_x, y - self.current_y)
+        (x_length, y_length) = (x - self.x, y - self.y)
 
         length = hypotenuse(x_length, y_length)
 
@@ -455,10 +455,10 @@ Controls:
 
         for step in tqdm(range(no_of_steps), desc='Interpolation', leave=False, disable=disable_tqdm):
 
-            self.current_x = self.current_x + length_of_step_x
-            self.current_y = self.current_y + length_of_step_y
+            self.x = self.x + length_of_step_x
+            self.y = self.y + length_of_step_y
 
-            angle_1, angle_2 = self.xy_to_angles(self.current_x, self.current_y)
+            angle_1, angle_2 = self.xy_to_angles(self.x, self.y)
 
             self.set_angles(angle_1, angle_2)
 
@@ -476,7 +476,7 @@ Controls:
 
         self.set_angles(0, 0)
 
-        self.current_x, self.current_y = self.angles_to_xy(0, 0)
+        self.x, self.y = self.angles_to_xy(0, 0)
 
 
     def set_angles(self, angle_1=0, angle_2=0):
