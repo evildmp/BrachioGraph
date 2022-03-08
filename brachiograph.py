@@ -365,8 +365,12 @@ class BrachioGraph:
 
     def test_pattern(self, bounds=None, lines=4, wait=0, interpolate=10, repeat=1, reverse=False, both=False):
 
-        self.vertical_lines(bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both)
-        self.horizontal_lines(bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both)
+        self.vertical_lines(
+            bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both
+        )
+        self.horizontal_lines(
+            bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both
+        )
 
 
     def vertical_lines(self, bounds=None, lines=4, wait=0, interpolate=10, repeat=1, reverse=False, both=False):
@@ -417,17 +421,6 @@ class BrachioGraph:
                 y = y + step
 
         self.park()
-
-
-    def grid_lines(self, bounds=None, lines=4, wait=0, interpolate=10, repeat=1, reverse=False, both=False):
-        """Draws a grid within the box area marked out by the ``bounds``."""
-
-        self.vertical_lines(
-            bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both
-            )
-        self.horizontal_lines(
-            bounds=bounds, lines=lines, wait=wait, interpolate=interpolate, repeat=repeat, reverse=reverse, both=both
-            )
 
 
     def box(self, bounds=None, wait=0, interpolate=10, repeat=1, reverse=False):
