@@ -455,7 +455,8 @@ class BrachioGraph:
 
     def test_arcs(self):
         def park()
-        x, y = self
+        x, y = self.x, self.y
+
 
     # ----------------- pen-moving methods -----------------
 
