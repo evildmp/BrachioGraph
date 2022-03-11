@@ -80,7 +80,10 @@ class BrachioGraph:
         self.outer_arm = outer_arm
 
         self.virtual = virtual or force_virtual
+
         self.turtle = turtle
+        if self.turtle:
+            self.reset_turtle()
 
         # the box bounds describe a rectangle that we can safely draw in
         self.bounds = bounds
@@ -182,7 +185,7 @@ class BrachioGraph:
         self.set_angles(-90, 90)
 
         if self.turtle:
-            self.reset_turtle()
+            self.turtle.showturtle()
 
         self.status()
 
@@ -453,47 +456,22 @@ class BrachioGraph:
         self.park()
 
 
-    def test_arcs(self):
-        def park()
-        x, y = self.x, self.y
-
-
     # ----------------- pen-moving methods -----------------
 
-    def xy(self, x=0, y=0, wait=0, interpolate=10, draw=False):
+    def xy(self, x=None, y=None, wait=0, interpolate=10, draw=False):
         """Moves the pen to the xy position; optionally draws while doing it."""
 
         wait = wait or self.wait
 
         if draw:
             self.pen.down()
-            if self.turtle:
-                self.turtle.down()
         else:
             self.pen.up()
-            if self.turtle:
-                self.turtle.up()
 
-        if self.turtle:
-            self.turtle.color('blue')
-            self.turtle.width(1)
-            self.turtle.setx(x * self.turtle.multiplier)
-            self.turtle.sety(y * self.turtle.multiplier)
+        x = x or self.x
+        y = y or self.y
 
         (angle_1, angle_2) = self.xy_to_angles(x, y)
-        (pulse_width_1, pulse_width_2) = self.angles_to_pw_1(angle_1), self.angles_to_pw_2(angle_2)
-
-        # if they are the same, we don't need to move anything
-        if (pulse_width_1, pulse_width_2) == self.get_pulse_widths():
-
-            # ensure the pantograph knows its x/y positions
-            self.x = x
-            self.y = y
-
-            return
-
-        # we assume the pantograph knows its x/y positions - if not, there could be
-        # a sudden movement later
 
         # calculate how many steps we need for this move, and the x/y length of each
         (x_length, y_length) = (x - self.x, y - self.y)
@@ -524,8 +502,49 @@ class BrachioGraph:
         sleep(length * wait/10)
 
 
+    def move_angles(self, angle_1=None, angle_2=None, wait=0, interpolate=10, draw=False):
+        """Moves the servo motors to the specified angles step-by-step, calling set_angles() for each step."""
+
+        wait = wait or self.wait
+
+        if draw:
+            self.pen.down()
+        else:
+            self.pen.up()
+
+        diff_1 = diff_2 = 0
+
+        if angle_1 is not None:
+            diff_1 = angle_1 - self.angle_1
+        if angle_2 is not None:
+            diff_2 = angle_2 - self.angle_2
+
+        length = math.sqrt(diff_1 ** 2 + diff_2 **2)
+
+        no_of_steps = int(length * interpolate) or 1
+
+        if no_of_steps < 100:
+            disable_tqdm = True
+        else:
+            disable_tqdm = False
+
+        (length_of_step_1, length_of_step_2) = (diff_1/no_of_steps, diff_2/no_of_steps)
+
+        for step in tqdm.tqdm(range(no_of_steps), desc='Interpolation', leave=False, disable=disable_tqdm):
+
+            self.angle_1 = self.angle_1 + length_of_step_1
+            self.angle_2 = self.angle_2 + length_of_step_2
+
+            self.set_angles(self.angle_1, self.angle_2)
+
+            if step + 1 < no_of_steps:
+                sleep(length * wait/no_of_steps)
+
+        sleep(length * wait/10)
+
+
     def set_angles(self, angle_1=None, angle_2=None):
-        """Moves the servo motors to the specified angles. Relies upon getting accurate pulse-width
+        """Moves the servo motors to the specified angles immediately. Relies upon getting accurate pulse-width
         values.
 
         Calls set_pulse_widths().
@@ -566,6 +585,13 @@ class BrachioGraph:
             self.angle_2 = angle_2
             self.angles_used_2.add(int(angle_2))
             self.pulse_widths_used_2.add(int(pw_2))
+
+        if self.turtle:
+
+            x, y = self.angles_to_xy(self.angle_1, self.angle_2)
+
+            self.turtle.setx(x * self.turtle.multiplier)
+            self.turtle.sety(y * self.turtle.multiplier)
 
         self.set_pulse_widths(pw_1, pw_2)
         self.x, self.y = self.angles_to_xy(self.angle_1, self.angle_2)
@@ -918,8 +944,7 @@ class BrachioGraph:
         h1, h2 = self.hysteresis_correction_1, self.hysteresis_correction_2
         print(f"{'hysteresis correction |':>23}", f"{h1:>7.1f}", "|", f"{h2:>7.1f}")
         print("------------------------------------------")
-
-
+        print(f"{'x/y location |':>23}", f"{self.x:>7.1f}", "|", f"{self.y:>7.1f}")
         print()
         print("------------------------------------------")
         print("pen:", self.pen.position)
@@ -1009,19 +1034,18 @@ class BrachioGraph:
     def reset_turtle(self):
         self.turtle = BrachioGraphTurtle(
             inner_arm=self.inner_arm,          # the length of the inner arm (blue)
-            shoulder_centre_angle=-90,  # the starting angle of the inner arm, relative to straight ahead
-            shoulder_sweep=180,     # the arc covered by the shoulder motor
+            shoulder_centre_angle=-90,         # the starting angle of the inner arm, relative to straight ahead
+            shoulder_sweep=180,                # the arc covered by the shoulder motor
 
             outer_arm=self.outer_arm,          # the length of the outer arm (red)
-            elbow_centre_angle=90,  # the centre of the outer arm relative to the inner arm
-            elbow_sweep=180,        # the arc covered by the elbow motor
+            elbow_centre_angle=90,             # the centre of the outer arm relative to the inner arm
+            elbow_sweep=180,                   # the arc covered by the elbow motor
 
-            window_size=800,        # width and height of the turtle canvas
-            speed=0,                 # how fast to draw
+            window_size=800,                   # width and height of the turtle canvas
+            speed=0,                           # how fast to draw
         )
 
         self.turtle.draw_grid()
-
 
 
 class Pen:
@@ -1060,6 +1084,11 @@ class Pen:
             self.rpi.set_servo_pulsewidth(self.pin, self.pw_down)
             sleep(self.transition_time)
 
+        if self.bg.turtle:
+            self.bg.turtle.down()
+            self.bg.turtle.color('blue')
+            self.bg.turtle.width(1)
+
         self.position = "down"
 
 
@@ -1071,6 +1100,9 @@ class Pen:
         else:
             self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
             sleep(self.transition_time)
+
+        if self.bg.turtle:
+            self.bg.turtle.up()
 
         self.position = "up"
 
