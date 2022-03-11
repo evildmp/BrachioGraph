@@ -456,6 +456,22 @@ class BrachioGraph:
         self.park()
 
 
+    def test_arcs(self):
+        self.park()
+        elbow_angle = 120
+        self.move_angles(angle_2=elbow_angle)
+
+        for angle_1 in range(-135, 15, 15):
+            self.move_angles(angle_1=angle_1, draw=True)
+
+            for angle_2 in range(elbow_angle, elbow_angle+16):
+                self.move_angles(angle_2=angle_2, draw=True)
+            for angle_2 in range(elbow_angle+16, elbow_angle-16, -1):
+                self.move_angles(angle_2=angle_2, draw=True)
+            for angle_2 in range(elbow_angle-16, elbow_angle+1):
+                self.move_angles(angle_2=angle_2, draw=True)
+
+
     # ----------------- pen-moving methods -----------------
 
     def xy(self, x=None, y=None, wait=0, interpolate=10, draw=False):

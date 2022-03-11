@@ -37,3 +37,10 @@ Changelog
 * Removed unnecessary draw() method
 * Renamed INNER_ARM, OUTER_ARM to inner_arm, outer_arm
 * Renamed virtual_mode to virtual
+
+2022 03 11
+----------
+
+* BrachioGraph can now draw using the turtle at the same time, or instead of, the robot
+* A move_angles() method allows setting the angles and moving there in steps rather than all at once
+* Added a rudimentary test_arcs() method
