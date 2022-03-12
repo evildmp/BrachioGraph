@@ -8,6 +8,6 @@ sphinx-design==0.0.13
 
 numpy==1.21.0
 pigpio==1.78
-Pillow==8.0.1
+Pillow==9.0.1
 readchar==2.0.1
 tqdm==4.54.0
