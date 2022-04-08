@@ -15,6 +15,17 @@
 ..  autoclass:: BrachioGraph
     :members:
 
+
+..  autoclass:: BaseGraph
+    :members:
+
+..  module:: pantograph
+
+..  autoclass:: PantoGraph
+    :members:
+
+
+
 ..  list-table:: ``BrachioGraph`` attributes
     :header-rows: 1
     :widths: 28, 20, 52

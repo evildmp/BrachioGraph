@@ -8,6 +8,7 @@ bg = BrachioGraph(
     outer_arm=8,
     bounds=(-6, 4, 6, 12),
     virtual=True,
+    turtle=True,
 )
 
 # ----------------- set-up tests -----------------

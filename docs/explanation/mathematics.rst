@@ -7,6 +7,23 @@ motors and vice-versa. Using the example illustrated below, the arms are both 9c
 Translating co-ordinates to angles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+::
+
+    hypotenuse = math.sqrt(x**2+y**2)
+    if hypotenuse > self.inner_arm + self.outer_arm:
+        raise Exception(f"Cannot reach {hypotenuse}; total arm length is {self.inner_arm + self.outer_arm}")
+    hypotenuse_angle = math.asin(x/hypotenuse)
+    inner_angle = math.acos(
+        (hypotenuse**2+self.inner_arm**2-self.outer_arm**2)/(2*hypotenuse*self.inner_arm)
+    )
+    outer_angle = math.acos(
+        (self.inner_arm**2+self.outer_arm**2-hypotenuse**2)/(2*self.inner_arm*self.outer_arm)
+    )
+    shoulder_motor_angle = hypotenuse_angle - inner_angle
+    elbow_motor_angle = math.pi - outer_angle
+    return (math.degrees(shoulder_motor_angle), math.degrees(elbow_motor_angle))
+
+
 .. image:: /images/geometry.png
    :alt: 'BrachioGraph geometry'
    :class: 'main-visual'
