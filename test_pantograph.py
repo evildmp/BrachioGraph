@@ -9,6 +9,7 @@ pg = PantoGraph(
 
 # ----------------- set-up tests -----------------
 
+
 def test_initial_pulse_widths():
     # assert pg.get_pulse_widths() == (1500, 1500)
     assert (pg.angle_1, pg.angle_2) == (0, 0)
@@ -46,7 +47,6 @@ class TestTrigonometry:
         assert self.pg.angles_to_xy(90, 90) == approx((8, 8))
         assert self.pg.angles_to_xy(-90, -90) == approx((-8, 8))
 
-
     def test_angles_to_xy_and_back_again(self):
         angles = (-30, 30)
         xy = self.pg.angles_to_xy(angles[0], angles[1])
@@ -72,14 +72,10 @@ class TestTrigonometry:
             xy = self.pg.angles_to_xy(a1, 0)
             assert self.pg.xy_to_angles(xy[0], xy[1]) == approx((a1, 0))
 
-
-
     def test_xy_to_angles_and_back_again(self):
         xy = (5, 2)
         angles = self.pg.xy_to_angles(xy[0], xy[1])
         assert self.pg.angles_to_xy(angles[0], angles[1]) == approx(xy)
-
-
 
     def test_move_motors(self):
         self.pg.move_angles(-95, 30)

@@ -12,7 +12,7 @@ from turtle_draw import PantoGraphTurtle
 
 
 def hypotenuse(side1, side2):
-    return sqrt(side1 ** 2 + side2 ** 2)
+    return sqrt(side1**2 + side2**2)
 
 
 class PantoGraph(BaseGraph):
@@ -20,62 +20,43 @@ class PantoGraph(BaseGraph):
 
     def __init__(
         self,
-
         #  ----------------- geometry of the plotter -----------------
-
-        driver=8,                  # the lengths of the arms
-        follower=8,                # the lengths of the arms
-
+        driver=8,  # the lengths of the arms
+        follower=8,  # the lengths of the arms
         # The angles are relative to each motor, so we need to know where each motor actually is.
-        motor_1_pos = -1.5,        # position of motor 1 on the x axis
-        motor_2_pos = 1.5,         # position of motor 2 on the x axis
-
+        motor_1_pos=-1.5,  # position of motor 1 on the x axis
+        motor_2_pos=1.5,  # position of motor 2 on the x axis
         bounds=(-3, 3, 3, 6),  # the maximum rectangular drawing area
-
-        angle_multiplier=1, # set to -1 if necessary to reverse directions
+        angle_multiplier=1,  # set to -1 if necessary to reverse directions
         correction_1=0,
         correction_2=0,
-
-        centre_1=1500, multiplier_1=425/45,
-        centre_2=1500, multiplier_2=415/45,
-
+        centre_1=1500,
+        multiplier_1=425 / 45,
+        centre_2=1500,
+        multiplier_2=415 / 45,
         #  ----------------- naive calculation values -----------------
-
-        servo_1_parked_pw=1500,         # pulse-widths when parked
+        servo_1_parked_pw=1500,  # pulse-widths when parked
         servo_2_parked_pw=1500,
-
-        servo_1_degree_ms=-10,          # milliseconds pulse-width per degree
-        servo_2_degree_ms=10,           # reversed for the mounting of the shoulder servo
-
-        servo_1_parked_angle=-45,       # the arm angle in the parked position
+        servo_1_degree_ms=-10,  # milliseconds pulse-width per degree
+        servo_2_degree_ms=10,  # reversed for the mounting of the shoulder servo
+        servo_1_parked_angle=-45,  # the arm angle in the parked position
         servo_2_parked_angle=45,
-
         #  ----------------- hysteresis -----------------
-
-        hysteresis_correction_1=0,      # hardware error compensation
+        hysteresis_correction_1=0,  # hardware error compensation
         hysteresis_correction_2=0,
-
         #  ----------------- servo angles and pulse-widths in lists -----------------
-
-        servo_1_angle_pws=[],           # pulse-widths for various angles
+        servo_1_angle_pws=[],  # pulse-widths for various angles
         servo_2_angle_pws=[],
-
         #  ----------------- servo angles and pulse-widths in lists (bi-directional) ------
-
-        servo_1_angle_pws_bidi = [],    # bi-directional pulse-widths for various angles
-        servo_2_angle_pws_bidi = [],
-
+        servo_1_angle_pws_bidi=[],  # bi-directional pulse-widths for various angles
+        servo_2_angle_pws_bidi=[],
         #  ----------------- the pen -----------------
-
-        pw_up=1500,                     # pulse-widths for pen up/down
+        pw_up=1500,  # pulse-widths for pen up/down
         pw_down=1100,
-
         #  ----------------- misc -----------------
-
-        wait=None,                      # default wait time between operations
-
-        virtual = False,                # run in virtual mode
-        turtle = False
+        wait=None,  # default wait time between operations
+        virtual=False,  # run in virtual mode
+        turtle=False,
     ):
 
         # set the pantograph geometry
@@ -109,13 +90,12 @@ class PantoGraph(BaseGraph):
             pw_down=pw_down,
             wait=wait,
             virtual=virtual,
-            turtle=turtle
+            turtle=turtle,
         )
 
         self.set_angles(0, 0)
         self.x, self.y = self.angles_to_xy(0, 0)
         self.quiet()
-
 
     def park(self):
         """Park the plotter with the arms at -60˚ and 60˚."""
@@ -128,13 +108,11 @@ class PantoGraph(BaseGraph):
         self.move_angles(-60, 60)
         sleep(1)
 
-
     # ----------------- trigonometric methods -----------------
 
     @property
     def furthest_reach(self):
-        return self.driver + sqrt(self.follower ** 2 - (self.motor_2_pos-self.motor_1_pos)/2)
-
+        return self.driver + sqrt(self.follower**2 - (self.motor_2_pos - self.motor_1_pos) / 2)
 
     def xy_to_angles(self, x=0, y=None):
         """Takes a pair of x/y co-ordinates, and returns the angle required of each arm."""
@@ -151,19 +129,22 @@ class PantoGraph(BaseGraph):
         d2 = hypotenuse(x_relative_to_motor_2, y)
 
         # calculate the angle between the d line and driver arm
-        inner_angle_1 = acos((self.driver **2 + d1 ** 2 - self.follower ** 2) / (2 * self.driver * d1))
-        inner_angle_2 = acos((self.driver **2 + d2 ** 2 - self.follower ** 2) / (2 * self.driver * d2))
+        inner_angle_1 = acos(
+            (self.driver**2 + d1**2 - self.follower**2) / (2 * self.driver * d1)
+        )
+        inner_angle_2 = acos(
+            (self.driver**2 + d2**2 - self.follower**2) / (2 * self.driver * d2)
+        )
 
         # calculate the angle between the d line and the vertical
-        outer_angle_1 = - asin(x_relative_to_motor_1/d1)
-        outer_angle_2 = - asin(x_relative_to_motor_2/d1)
+        outer_angle_1 = -asin(x_relative_to_motor_1 / d1)
+        outer_angle_2 = -asin(x_relative_to_motor_2 / d1)
 
         # calculate the sum of the angles in degrees
         angle1 = degrees(outer_angle_1 - inner_angle_1)
         angle2 = degrees(inner_angle_2 + outer_angle_2)
 
         return (angle1 * self.angle_multiplier, angle2 * self.angle_multiplier)
-
 
     def angles_to_xy(self, angle1, angle2):
         """Given the angle of each arm, return the x/y co-ordinates."""
@@ -208,19 +189,17 @@ class PantoGraph(BaseGraph):
 
         return x, y
 
-
     def setup_turtle(self):
         self.turtle = PantoGraphTurtle(
             driver=self.driver,
             follower=self.follower,
-            motor_1_pos = self.motor_1_pos,
-            motor_2_pos = self.motor_2_pos,
+            motor_1_pos=self.motor_1_pos,
+            motor_2_pos=self.motor_2_pos,
             window_size=800,
             speed=5,
         )
 
         self.turtle.draw_grid()
-
 
     # ----------------- reporting methods -----------------
 

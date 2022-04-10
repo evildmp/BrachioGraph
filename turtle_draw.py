@@ -16,25 +16,25 @@ class AbstractTurtle:
         self.color(color)
         self.width(width)
 
-        for i in range(int(-self.reach), int(self.reach +1)):
+        for i in range(int(-self.reach), int(self.reach + 1)):
             if not (i % draw_every):
 
                 draw_i = i * self.multiplier
                 self.up()
-                self.goto(draw_i, - self.draw_reach)
+                self.goto(draw_i, -self.draw_reach)
                 self.down()
                 self.goto(draw_i, self.draw_reach)
                 self.up()
-                self.goto(- self.draw_reach, draw_i)
+                self.goto(-self.draw_reach, draw_i)
                 self.down()
                 self.goto(self.draw_reach, draw_i)
 
                 if include_numbers:
 
                     self.up()
-                    self.goto(i * self.multiplier, - 1 * self.multiplier)
+                    self.goto(i * self.multiplier, -1 * self.multiplier)
                     self.write(" " + str(i), move=False, font=("Helvetica", 16, "bold"))
-                    self.goto(- self.reach * self.multiplier, i * self.multiplier)
+                    self.goto(-self.reach * self.multiplier, i * self.multiplier)
                     self.write(i, move=False, font=("Helvetica", 16, "bold"))
 
 
@@ -43,19 +43,18 @@ class PantoGraphTurtle(Turtle, AbstractTurtle):
     ``turtle=True`` to create a turtle version of it, that copies everything the PantoGraph does.
     """
 
-    def __init__(self,
+    def __init__(
+        self,
         driver=8,
         follower=8,
-        motor_1_pos = -1.5,
-        motor_2_pos = 1.5,
-        window_size=800,            # width and height of the turtle canvas
-        speed=0,                    # how fast to draw
-
-        motor_1_centre_angle=0,     # the starting angle of the first arm, relative to straight ahead
-        motor_2_centre_angle=90,    # the centre of the second arm relative to the inner arm
-
-        motor_1_sweep=180,          # the arc covered by the first motor
-        motor_2_sweep=180,          # the arc covered by the second motor
+        motor_1_pos=-1.5,
+        motor_2_pos=1.5,
+        window_size=800,  # width and height of the turtle canvas
+        speed=0,  # how fast to draw
+        motor_1_centre_angle=0,  # the starting angle of the first arm, relative to straight ahead
+        motor_2_centre_angle=90,  # the centre of the second arm relative to the inner arm
+        motor_1_sweep=180,  # the arc covered by the first motor
+        motor_2_sweep=180,  # the arc covered by the second motor
     ):
 
         # set the pantograph geometry
@@ -77,7 +76,9 @@ class PantoGraphTurtle(Turtle, AbstractTurtle):
         grid_size = self.window_size / 1.05  # the grid is a little smaller than the window
 
         # scale the plotter dimensions to fill the screen
-        self.reach = self.driver + self.follower  # the maximum possible distance the arms could reach
+        self.reach = (
+            self.driver + self.follower
+        )  # the maximum possible distance the arms could reach
         self.multiplier = grid_size / 2 / self.reach
         self.draw_reach = self.reach * self.multiplier * 1.05  # maximum possible drawing reacg
 
@@ -85,7 +86,9 @@ class PantoGraphTurtle(Turtle, AbstractTurtle):
 
         self.screen = Screen()
         self.screen.mode("logo")
-        self.screen.title(f"driver length {self.driver}cm • centre {self.motor_1_centre_angle}˚ • sweep {self.motor_1_sweep}˚  •  follower length {self.follower}cm • centre {self.motor_2_centre_angle}˚ • sweep {self.motor_2_sweep}˚")
+        self.screen.title(
+            f"driver length {self.driver}cm • centre {self.motor_1_centre_angle}˚ • sweep {self.motor_1_sweep}˚  •  follower length {self.follower}cm • centre {self.motor_2_centre_angle}˚ • sweep {self.motor_2_sweep}˚"
+        )
         self.screen.setup(width=window_size, height=window_size)
 
         super().__init__()
@@ -99,18 +102,17 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
     ``turtle=True`` to create a turtle version of it, that copies everything the BrachioGraph does.
     """
 
-    def __init__(self,
+    def __init__(
+        self,
         inner_arm=8,
         outer_arm=8,
         window_size=800,
         speed=0,
-
-        shoulder_centre_angle=0,    # the starting angle of the inner arm, relative to straight ahead
-        elbow_centre_angle=90,      # the centre of the outer arm relative to the inner arm
-
-        shoulder_sweep=180,         # the arc covered by the shoulder motor
-        elbow_sweep=180,            # the arc covered by the elbow motor
-        ):
+        shoulder_centre_angle=0,  # the starting angle of the inner arm, relative to straight ahead
+        elbow_centre_angle=90,  # the centre of the outer arm relative to the inner arm
+        shoulder_sweep=180,  # the arc covered by the shoulder motor
+        elbow_sweep=180,  # the arc covered by the elbow motor
+    ):
 
         self.inner_arm = inner_arm
         self.outer_arm = outer_arm
@@ -128,7 +130,9 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
         grid_size = self.window_size / 1.05  # the grid is a little smaller than the window
 
         # scale the plotter dimensions to fill the screen
-        self.reach = self.inner_arm + self.outer_arm  # the maximum possible distance the arms could reach
+        self.reach = (
+            self.inner_arm + self.outer_arm
+        )  # the maximum possible distance the arms could reach
         self.multiplier = grid_size / 2 / self.reach
         self.draw_reach = self.reach * self.multiplier * 1.05  # maximum possible drawing reacg
 
@@ -136,7 +140,9 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
 
         self.screen = Screen()
         self.screen.mode("logo")
-        self.screen.title(f"inner length {self.inner_arm}cm • centre {self.shoulder_centre_angle}˚ • sweep {self.shoulder_sweep}˚  •  outer length {self.outer_arm}cm • centre {self.elbow_centre_angle}˚ • sweep {self.elbow_sweep}˚")
+        self.screen.title(
+            f"inner length {self.inner_arm}cm • centre {self.shoulder_centre_angle}˚ • sweep {self.shoulder_sweep}˚  •  outer length {self.outer_arm}cm • centre {self.elbow_centre_angle}˚ • sweep {self.elbow_sweep}˚"
+        )
         self.screen.setup(width=window_size, height=window_size)
 
         super().__init__()
@@ -144,11 +150,9 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
         self.speed(0)
         self.screen.tracer(speed, 0)
 
-
     def simple_title(self, title=""):
         title = title or "BrachioGraph, multiple values"
         self.screen.title(title)
-
 
     # ----------------- arc drawing methods -----------------
 
@@ -161,7 +165,7 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
         self.rt(-90)
 
         # cover the undrawn part of the arc first
-        self.circle(self.outer_arm * self.multiplier, (360 - self.elbow_sweep)/2)
+        self.circle(self.outer_arm * self.multiplier, (360 - self.elbow_sweep) / 2)
 
         # and then the part we want to draw
         self.color(color)
@@ -173,21 +177,34 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
 
         # how far do we reach from the origin with this elbow angle?
         reach = math.sqrt(
-            self.inner_arm ** 2 + self.outer_arm ** 2 - 2 * self.inner_arm * self.outer_arm * math.cos(math.radians(
-                # inner angle of the two arms
-                180 - elbow_centre_angle)
+            self.inner_arm**2
+            + self.outer_arm**2
+            - 2
+            * self.inner_arm
+            * self.outer_arm
+            * math.cos(
+                math.radians(
+                    # inner angle of the two arms
+                    180
+                    - elbow_centre_angle
+                )
             )
         )
         # angle between the inner arm and the line of maximum reach when the inner arm is fully right
         # avoid a division by zero error
         if reach == 0:
             a = 0
-        elif (self.inner_arm ** 2 + reach ** 2 - self.outer_arm ** 2) / (2 * self.inner_arm * reach) > 1:
+        elif (self.inner_arm**2 + reach**2 - self.outer_arm**2) / (
+            2 * self.inner_arm * reach
+        ) > 1:
             a = 0
         else:
-            a = math.acos((self.inner_arm ** 2 + reach ** 2 - self.outer_arm ** 2) / (2 * self.inner_arm * reach))
+            a = math.acos(
+                (self.inner_arm**2 + reach**2 - self.outer_arm**2)
+                / (2 * self.inner_arm * reach)
+            )
         # the angle of the the line of maximum relative to 0
-        heading = self.shoulder_centre_angle + self.shoulder_sweep/2 + math.degrees(a)
+        heading = self.shoulder_centre_angle + self.shoulder_sweep / 2 + math.degrees(a)
 
         if reverse:
             sweep = self.shoulder_sweep * -1
@@ -196,7 +213,6 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
             sweep = self.shoulder_sweep
 
         self.draw_arc_around_origin(heading, reach, sweep, width, color)
-
 
     def draw_arc_around_origin(self, heading, reach, sweep, width, color):
 
@@ -210,7 +226,6 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
         self.color(color)
         self.circle(reach * self.multiplier, sweep)
 
-
     # ----------------- outline drawing -----------------
 
     def draw_outline(self, width=4, color=None, lightness=1):
@@ -222,7 +237,7 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
         # sweep outer arm with inner arm fully left
         self.up()
         self.home()
-        self.rt(self.shoulder_centre_angle - self.shoulder_sweep/2)
+        self.rt(self.shoulder_centre_angle - self.shoulder_sweep / 2)
         self.fd(self.inner_arm * self.multiplier)
         self.rt(self.elbow_centre_angle)
         self.draw_pen_arc(width, color=color or "red")
@@ -234,17 +249,20 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
         # sweeo outer arm with inner arm fully right
         self.up()
         self.home()
-        self.rt(self.shoulder_centre_angle + self.shoulder_sweep/2)
+        self.rt(self.shoulder_centre_angle + self.shoulder_sweep / 2)
         self.fd(self.inner_arm * self.multiplier)
         self.rt(self.elbow_centre_angle)
         self.draw_pen_arc(width, color=color or "orange")
 
         self.screen.update()
 
-
     def draw_arcs(self, every=2, color="orange"):
 
-        for angle in range (int(self.shoulder_centre_angle + self.shoulder_sweep/2), int(self.shoulder_centre_angle - self.shoulder_sweep/2 - 1), - every):
+        for angle in range(
+            int(self.shoulder_centre_angle + self.shoulder_sweep / 2),
+            int(self.shoulder_centre_angle - self.shoulder_sweep / 2 - 1),
+            -every,
+        ):
 
             self.up()
             self.home()
@@ -256,10 +274,13 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
 
             self.draw_pen_arc(color=color)
 
-
     def draw_arms(self, every=60):
 
-        for angle in range (int(self.shoulder_centre_angle + self.shoulder_sweep/2), int(self.shoulder_centre_angle - self.shoulder_sweep/2 -1), -every):
+        for angle in range(
+            int(self.shoulder_centre_angle + self.shoulder_sweep / 2),
+            int(self.shoulder_centre_angle - self.shoulder_sweep / 2 - 1),
+            -every,
+        ):
             self.up()
             self.home()
             self.width(6)
