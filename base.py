@@ -70,7 +70,6 @@ class BaseGraph:
                 differences.append((pws["acw"] - pws["cw"]) / 2)
             self.hysteresis_correction_1 = numpy.mean(differences)
 
-        servo_1_angle_pws = kwargs["servo_1_angle_pws"]
         if servo_1_angle_pws:
             servo_1_array = numpy.array(servo_1_angle_pws)
             self.angles_to_pw_1 = numpy.poly1d(
