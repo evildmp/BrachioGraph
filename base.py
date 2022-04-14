@@ -24,42 +24,53 @@ except AttributeError:
 class BaseGraph:
     """A base class for the BrachioGraph and PantoGraph classes."""
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        virtual: bool = False,  # a virtual plotter runs in software only
+        turtle: bool = False,  # create a turtle graphics plotter
+        #  ----------------- geometry of the plotter -----------------
+        bounds: tuple = [-8, 4, 6, 13],  # the maximum rectangular drawing area
+        #  ----------------- naive calculation values -----------------
+        servo_1_parked_pw: int = 1500,  # pulse-widths when parked
+        servo_2_parked_pw: int = 1500,
+        servo_1_degree_ms: int = -10,  # milliseconds pulse-width per degree
+        servo_2_degree_ms: int = 10,
+        servo_1_parked_angle: int = 0,  # the arm angle in the parked position
+        servo_2_parked_angle: int = 0,
+        #  ----------------- hysteresis -----------------
+        hysteresis_correction_1: int = 0,  # hardware error compensation
+        hysteresis_correction_2: int = 0,
+        #  ----------------- servo angles and pulse-widths in lists -----------------
+        servo_1_angle_pws: tuple = [],  # pulse-widths for various angles
+        servo_2_angle_pws: tuple = [],
+        #  ----------------- servo angles and pulse-widths in lists (bi-directional) ------
+        servo_1_angle_pws_bidi: tuple = [],  # bi-directional pulse-widths for various angles
+        servo_2_angle_pws_bidi: tuple = [],
+        #  ----------------- the pen -----------------
+        pw_up: int = 1500,  # pulse-widths for pen up/down
+        pw_down: int = 1100,
+        #  ----------------- physical control -----------------
+        wait: float = None,  # default wait time between operations
+    ):
 
-        self.virtual = kwargs["virtual"] or force_virtual
+        self.virtual = virtual or force_virtual
 
-        self.turtle = kwargs["turtle"]
-        if self.turtle:
+        if turtle:
             self.setup_turtle()
             self.turtle.showturtle()
+        else:
+            self.turtle = False
 
-        # the box bounds describe a rectangle that we can safely draw in
-        self.bounds = kwargs["bounds"]
+        self.bounds = bounds
 
         # if pulse-widths to angles are supplied for each servo, we will feed them to
         # numpy.polyfit(), to produce a function for each one. Otherwise, we will use a simple
         # approximation based on a centre of travel of 1500µS and 10µS per degree
 
-        self.servo_1_parked_pw = kwargs["servo_1_parked_pw"]
-        self.servo_1_degree_ms = kwargs["servo_1_degree_ms"]
-        self.servo_1_parked_angle = kwargs["servo_1_parked_angle"]
-        self.hysteresis_correction_1 = kwargs["hysteresis_correction_1"]
-
-        self.servo_2_parked_pw = kwargs["servo_2_parked_pw"]
-        self.servo_2_degree_ms = kwargs["servo_2_degree_ms"]
-        self.servo_2_parked_angle = kwargs["servo_2_parked_angle"]
-        self.hysteresis_correction_2 = kwargs["hysteresis_correction_2"]
-
-        # set some initial values required for moving methods
-
-        servo_1_angle_pws_bidi = kwargs["servo_1_angle_pws_bidi"]
-        servo_1_angle_pws = kwargs["servo_1_angle_pws"]
-        servo_2_angle_pws_bidi = kwargs["servo_2_angle_pws_bidi"]
-        servo_2_angle_pws = kwargs["servo_2_angle_pws"]
-
-        self.previous_pw_1 = self.previous_pw_2 = 0
-        self.active_hysteresis_correction_1 = self.active_hysteresis_correction_2 = 0
-        self.reset_report()
+        self.servo_1_parked_pw = servo_1_parked_pw
+        self.servo_1_degree_ms = servo_1_degree_ms
+        self.servo_1_parked_angle = servo_1_parked_angle
+        self.hysteresis_correction_1 = hysteresis_correction_1
 
         if servo_1_angle_pws_bidi:
             servo_1_angle_pws = []
@@ -79,6 +90,11 @@ class BaseGraph:
         else:
             self.angles_to_pw_1 = self.naive_angles_to_pulse_widths_1
 
+        self.servo_2_parked_pw = servo_2_parked_pw
+        self.servo_2_degree_ms = servo_2_degree_ms
+        self.servo_2_parked_angle = servo_2_parked_angle
+        self.hysteresis_correction_2 = hysteresis_correction_2
+
         if servo_2_angle_pws_bidi:
             servo_2_angle_pws = []
             differences = []
@@ -97,9 +113,15 @@ class BaseGraph:
         else:
             self.angles_to_pw_2 = self.naive_angles_to_pulse_widths_2
 
+        # set some initial values required for moving methods
+
+        self.previous_pw_1 = self.previous_pw_2 = 0
+        self.active_hysteresis_correction_1 = self.active_hysteresis_correction_2 = 0
+        self.reset_report()
+
         # create the pen object
         self.pen = Pen(
-            bg=self, pw_up=kwargs["pw_up"], pw_down=kwargs["pw_down"], virtual=self.virtual
+            bg=self, pw_up=pw_up, pw_down=pw_down, virtual=self.virtual
         )
 
         if self.virtual:
@@ -110,7 +132,7 @@ class BaseGraph:
             self.virtual_pw_2 = self.angles_to_pw_2(90)
 
             # by default in virtual mode, we use a wait factor of 0 for speed
-            self.wait = kwargs["wait"] or 0
+            self.wait = wait or 0
 
         else:
 
@@ -123,7 +145,7 @@ class BaseGraph:
             self.rpi.set_PWM_frequency(15, 50)
 
             # by default we use a wait factor of 0.1 for accuracy
-            self.wait = kwargs["wait"] or 0.1
+            self.wait = wait or 0.1
 
         self.set_angles(self.servo_1_parked_angle, self.servo_2_parked_angle)
 
@@ -340,6 +362,12 @@ class BaseGraph:
 
         self.set_pulse_widths(pw_1, pw_2)
         self.x, self.y = self.angles_to_xy(self.angle_1, self.angle_2)
+
+    # ----------------- trigonometric methods -----------------
+
+    def angles_to_xy(self, angle_1, angle_2):
+        #  a dummy method; needs to be overridden
+        return (0, 0)
 
     # ----------------- drawing methods -----------------
 

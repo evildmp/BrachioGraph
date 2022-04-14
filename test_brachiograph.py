@@ -44,20 +44,9 @@ bg2 = BrachioGraph(
 
 
 def test_defaults_of_default_bg():
-    assert bg.angles_to_pw_1 == bg.naive_angles_to_pulse_widths_1
-    assert bg.get_pulse_widths() == (1500, 1500)
     assert (bg.angle_1, bg.angle_2) == (-90, 90)
 
-
 def test_defaults_of_bg_with_bidi_pws():
-    assert bg2.angles_to_pw_1 != bg2.naive_angles_to_pulse_widths_1
-
-    assert bg2.angles_to_pw_1(-90) == approx(1894, abs=1e-0)
-    assert bg2.angles_to_pw_2(90) == approx(1422, abs=1e-0)
-
-    assert bg2.hysteresis_correction_1 == approx(5.416666)
-    assert bg2.hysteresis_correction_2 == approx(-8.3)
-
     assert bg2.get_pulse_widths() == (
         approx(1894 + bg2.hysteresis_correction_1, abs=1e-0),
         approx(1422 + bg2.hysteresis_correction_2, abs=1e-0)
@@ -96,11 +85,6 @@ def test_box():
 
 def test_centre():
     bg.park()
-
-
-def test_can_land_at_0_degrees():
-    bg.set_angles(0, 0)
-    assert (bg.angle_1, bg.angle_2) == (0, 0)
 
 
 # ----------------- reporting methods -----------------

@@ -11,33 +11,33 @@ from base import BaseGraph
 class BrachioGraph(BaseGraph):
     def __init__(
         self,
-        bounds=[-8, 4, 6, 13],  # the maximum rectangular drawing area
+        virtual: bool = False,  # a virtual plotter runs in software only
+        turtle: bool = False,  # create a turtle graphics plotter
         #  ----------------- geometry of the plotter -----------------
-        inner_arm=8,  # the lengths of the arms
-        outer_arm=8,
+        bounds: tuple = [-8, 4, 6, 13],  # the maximum rectangular drawing area
+        inner_arm: float = 8,  # the lengths of the arms
+        outer_arm: float = 8,
         #  ----------------- naive calculation values -----------------
-        servo_1_parked_pw=1500,  # pulse-widths when parked
-        servo_2_parked_pw=1500,
-        servo_1_degree_ms=-10,  # milliseconds pulse-width per degree
-        servo_2_degree_ms=10,  # reversed for the mounting of the shoulder servo
-        servo_1_parked_angle=-90,  # the arm angle in the parked position
-        servo_2_parked_angle=90,
+        servo_1_parked_pw: int = 1500,  # pulse-widths when parked
+        servo_2_parked_pw: int = 1500,
+        servo_1_degree_ms: int = -10,  # milliseconds pulse-width per degree
+        servo_2_degree_ms: int = 10,  # reversed for the mounting of the shoulder servo
+        servo_1_parked_angle: int = -90,  # the arm angle in the parked position
+        servo_2_parked_angle: int = 90,
         #  ----------------- hysteresis -----------------
-        hysteresis_correction_1=0,  # hardware error compensation
-        hysteresis_correction_2=0,
+        hysteresis_correction_1: int = 0,  # hardware error compensation
+        hysteresis_correction_2: int = 0,
         #  ----------------- servo angles and pulse-widths in lists -----------------
-        servo_1_angle_pws=[],  # pulse-widths for various angles
-        servo_2_angle_pws=[],
+        servo_1_angle_pws: tuple = [],  # pulse-widths for various angles
+        servo_2_angle_pws: tuple = [],
         #  ----------------- servo angles and pulse-widths in lists (bi-directional) ------
-        servo_1_angle_pws_bidi=[],  # bi-directional pulse-widths for various angles
-        servo_2_angle_pws_bidi=[],
+        servo_1_angle_pws_bidi: tuple = [],  # bi-directional pulse-widths for various angles
+        servo_2_angle_pws_bidi: tuple = [],
         #  ----------------- the pen -----------------
-        pw_up=1500,  # pulse-widths for pen up/down
-        pw_down=1100,
-        #  ----------------- misc -----------------
-        wait=None,  # default wait time between operations
-        virtual=False,  # run in virtual mode
-        turtle=False,
+        pw_up: int = 1500,  # pulse-widths for pen up/down
+        pw_down: int = 1100,
+        #  ----------------- physical control -----------------
+        wait: float = None,  # default wait time between operations
     ):
 
         # set the geometry
