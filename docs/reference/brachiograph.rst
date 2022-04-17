@@ -1,100 +1,255 @@
-.. raw:: html
-
-    <style>
-        table.docutils { width: 100%; table-layout: fixed;}
-        table.docutils th, table.docutils td { white-space: normal }
-    </style>
-
-
-``brachiograph.py``
 ==========================
+Plotter modules
+==========================
+
+..  module:: base
+
+
+``AbstractWriter``
+===================
+
+A base class for the BrachioGraph and PantoGraph subclasses.
+
+This class provides all the interfaces you'll need to use with the plotter in normal use, with the
+exception of ``__init__()``.
+
+All the classes, including this base class, can be instantiated *without any arguments* and will
+work for testing.
+
+For testing with turtle graphics, you will need to use one one of the sublasses.
+
+..  automethod:: AbstractWriter.__init__
+
+    :param bool virtual:
+        A virtual plotter will run in software only, and doesn't expect any attached hardware. This
+        allows work and development on a machine other than a Raspberry Pi, and to run automated
+        tests.
+    :param bool turtle:
+        Produces a graphical representation of the plotter and its behaviour using Python turtle
+        graphics, as well as or instead of a physical plotter.
+    :param float or None turtle_coarseness:
+        For use with ``turtle``; a factor, in degrees, to represent the resolution of the servos by
+        rounding values. Defaults to 1˚ if not specified.
+    :param list or tuple bounds:
+        Four numbers, indicating the area that the plotter should treat as its
+        available area for drawing in. The numbers represent, in order the left, top, right and
+        bottom boundaries. Defaults to usable values in the default subclass definitions.
+    :param int servo_1_parked_pw: The pulse-width of servo 1 when parked.
+    :param int servo_2_parked_pw: The pulse-width of servo 2 when parked.
+    :param float servo_1_degree_ms: Milliseconds pulse-width difference per degree of movement.
+    :param float servo_2_degree_ms: Milliseconds pulse-width difference per degree of movement.
+    :param float servo_1_parked_angle: The arm angle in the parked position.
+    :param float servo_2_parked_angle: The arm angle in the parked position.
+    :param float hysteresis_correction_1:
+        Servo 1 :ref:`hysteresis <about-hysteresis>` error compensation.
+    :param float hysteresis_correction_2:
+        Servo 2 hysteresis error compensation.
+    :param tuple servo_1_angle_pws: Pulse-widths for various angles of servo 1.
+    :param tuple servo_2_angle_pws: Pulse-widths for various angles of servo 2.
+    :param tuple servo_1_angle_pws_bidi: Pulse-widths for various angles of servo 1, collected in
+        both clockwise and anti-clockwise directions. This is introduced in the :ref:`tutorial
+        <tutorial-sophisticated-calibration>`.
+    :param tuple servo_2_angle_pws_bidi: Pulse-widths for various angles of servo 2, collected in
+        both clockwise and anti-clockwise directions.
+    :param int pw_up: The pulse-width for the pen's up position.
+    :param int pw_down: The pulse-width for the pen's down position.
+    :param float or None wait: A time in seconds that the plotter will rest after making a
+        movement. If not specified, defaults to 0.1, or 0 for a virtual-only plotter.
+    :param float or None resolution:
+        A distance in centimetres. When drawing between two points, any line longer than
+        ``resolution`` will be broken down into a series of points no more than ``resolution``
+        apart. This allows the plotter to approximate straight lines by drawing a series of shorter
+        curved lines (all the lines the plotter naturally draws are curved). If not specified,
+        defaults to 1.
+
+
+In all the methods below, arguments that are also atrributes of the plotter class need only be used
+to override those values (which is generally not required).
+
+
+Plotting
+-------------------------------
+
+..  automethod:: AbstractWriter.plot_file
+
+..  automethod:: AbstractWriter.plot_lines
+
+
+Drawing according to x/y values
+-------------------------------
+
+..  automethod:: AbstractWriter.box
+
+..  automethod:: AbstractWriter.test_pattern
+
+..  automethod:: AbstractWriter.vertical_lines
+
+..  automethod:: AbstractWriter.horizontal_lines
+
+..  automethod:: AbstractWriter.draw_line
+
+..  automethod:: AbstractWriter.xy
+
+
+Drawing according to servo angle values
+---------------------------------------
+
+..  automethod:: AbstractWriter.move_angles
+
+
+Pen-moving methods
+-------------------
+
+..  automethod:: AbstractWriter.set_angles
+
+..  automethod:: AbstractWriter.park
+
+
+Angles to pulse widths
+----------------------
+
+A plotter needs to move its arms to the correct angles, by providing the appropriate
+pulse-width to each servo.
+
+..  method:: AbstractWriter.angles_to_pw_1
+..  method:: AbstractWriter.angles_to_pw_2
+
+These methods - one for each servo - take the angle as an argument and return a pulse-width.
+
+The methods themselves stand in for functions that do the actual calculation; which function is
+assigned to the ``angles_to_pw_1``/``angles_to_pw_2`` attributes depends upon how much
+information is provided about the servos when the plotter is initialised.
+
+
+Naive calculation
+~~~~~~~~~~~~~~~~~
+
+The default is to use  "naive" functions (``naive_angles_to_pulse_widths_1`` and
+``naive_angles_to_pulse_widths_2``), that assume linearity (1˚ of movement corresponds to a 10µs
+change in pulse-width), will be used.
+
+..  automethod:: AbstractWriter.naive_angles_to_pulse_widths_1
+
+..  automethod:: AbstractWriter.naive_angles_to_pulse_widths_2
+
+
+Sophisticated calculation
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In practice :ref:`the response of servos is not linear <explanation-non-linearity>`. If a series of
+pulse-width/angle values are supplied, then numpy ``(numpy.poly1d(numpy.polyfit))`` will provide a
+polynomial funtion that matches the curve corresponding to those values.
+
+
+Line processing
+---------------
+
+..  automethod:: AbstractWriter.analyse_lines
+
+..  automethod:: AbstractWriter.rotate_and_scale_lines
+
+
+Physical control
+----------------
+
+..  automethod:: AbstractWriter.set_pulse_widths
+
+..  automethod:: AbstractWriter.get_pulse_widths
+
+..  automethod:: AbstractWriter.quiet
+
+
+Manual driving
+---------------
+
+..  automethod:: AbstractWriter.drive
+
+    The controls are:
+
+    ..  list-table::
+        :stub-columns: 1
+
+        * -
+          - Exit
+          - -10 µs
+          - -1 µs
+          - \+ 10 µs
+          - \+ 1 µs
+        * -
+          - ``0``
+          -
+          -
+          -
+          -
+        * - Servo 1
+          -
+          - ``a``
+          - ``A``
+          - ``s``
+          - ``S``
+        * - Servo 2
+          -
+          - ``k``
+          - ``K``
+          - ``l``
+          - ``L``
+
+..  automethod:: AbstractWriter.drive_xy
+
+    The controls are:
+
+    ..  list-table::
+        :stub-columns: 1
+
+        * -
+          - Exit
+          - -1 cm
+          - -1 mm
+          - \+ 1 cm
+          - \+ 1 mm
+        * -
+          - ``0``
+          -
+          -
+          -
+          -
+        * - Servo 1
+          -
+          - ``a``
+          - ``A``
+          - ``s``
+          - ``S``
+        * - Servo 2
+          -
+          - ``k``
+          - ``K``
+          - ``l``
+          - ``L``
+
+
+Reporting
+----------------
+
+..  automethod:: AbstractWriter.status
+
+
+Trigonometry
+------------
+
+..  automethod:: AbstractWriter.xy_to_angles
+
+..  automethod:: AbstractWriter.angles_to_xy
+
+
+
+``BrachioGraph``
+================
 
 ..  module:: brachiograph
 
+..  automethod:: BrachioGraph.__init__
 
-..  autoclass:: BrachioGraph
-    :members:
+    Parameters are as for the ``AbstractWriter`` parent class, except for:
 
-
-..  autoclass:: BaseGraph
-    :members:
-
-..  module:: pantograph
-
-..  autoclass:: PantoGraph
-    :members:
-
-
-
-..  list-table:: ``BrachioGraph`` attributes
-    :header-rows: 1
-    :widths: 28, 20, 52
-
-    * - attribute
-      - default
-      - description
-
-    * - ``inner_arm``, ``outer_arm``
-      - 8
-      - length of each arm in centimetres
-
-    * - ``servo_1_parked_pw``, ``servo_2_parked_pw``
-      - 1500
-      - motor centre pulse-widths; ignored if the ``servo_<x>_angle_pws`` arguments (below) are provided
-
-    * - ``servo_1_angle_pws_bidi``, ``servo_2_angle_pws_bidi``
-      - ``{}``
-      - a list of empirically-derived pulse-width/angle pairs; if provided, will be used to provide a function for
-        calculating pulse-widths; see :ref:`tutorial-sophisticated-calibration`
-
-    * - ``servo_1_degree_ms``, ``servo_2_degree_ms``
-      - -10, 10
-      - microseconds pulse-width change per degree of motor movement; see :ref:`pulse-width-degrees`
-
-    * - ``servo_1_parked_angle``
-      - 90
-      - angle in degrees of the shoulder motor's centre of movement (i.e. at ``servo_1_parked_pw``) relative to the
-        drawing grid
-
-    * - ``servo_2_parked_angle``
-      - 90
-      - angle in degrees of the elbow motor's centre of movement (i.e. at ``servo_2_parked_pw``) relative to the inner
-        arm
-
-    * - ``hysteresis_correction_1``, ``hysteresis_correction_2``
-      - 0
-      - empirically-derived hardware error compensation values, in µs; see :ref:`hysteresiscompensation`
-
-    * - ``bounds``
-      - ``[-8, 4, 6, 13]``
-      - the box within which the BrachioGraph will draw; see :ref:`understand_plotter_geometry`
-
-    * - ``virtual``
-      - ``False``
-      - :ref:`runs the BrachioGraph without attached hardware <virtual-mode>`
-
-    * - ``wait``
-      - ``None``
-      - a factor that influences the time before the next movement is commanded
-
-    * - ``pw_up``, ``pw_down``
-      - 1500, 1100
-      - pulse width values at which the pen is in the up/down positions
-
-
-The ``Pen`` class
----------------------------
-
-A ``BrachioGraph`` instance has an instance of a ``Pen`` class, as ``BrachioGraph.pen``.
-
-::
-
-    class BrachioGraph:
-
-        def __init__(
-            self,
-            bg,                         # the BrachioGraph instance to which the Pen is attached
-            pw_up=1500, pw_down=1100,   # pen up and pen down pulse-widths
-            pin=18,                     # the GPIO pin
-            transition_time=0.25        # how long to wait for up/down movements
-            ):
+    :param float inner_arm: The length of the inner arm, in cm.
+    :param float outer_arm: The length of the outer arm, in cm.

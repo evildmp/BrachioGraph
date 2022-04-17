@@ -1,6 +1,20 @@
 import pytest
 
-from turtle_draw import BrachioGraphTurtle
+from turtle_draw import BaseTurtle, BrachioGraphTurtle
+from brachiograph import BrachioGraph
+from base import AbstractWriter
+
+
+def test_baseturtle():
+    bt = BaseTurtle()
+    bt.draw_grid()
+
+def test_abstractwriter_with_turtle():
+    aw = AbstractWriter(virtual=True, turtle=True)
+    aw.box()
+
+
+
 
 bgt = BrachioGraphTurtle(
     inner_arm=9,
@@ -10,6 +24,9 @@ bgt = BrachioGraphTurtle(
     elbow_centre_angle=95,
     elbow_sweep=120,
 )
+
+bg = BrachioGraph(virtual=True, turtle=True)
+
 
 
 def test_grid():

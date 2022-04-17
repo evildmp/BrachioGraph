@@ -84,7 +84,12 @@ todo_include_todos = False
 todo_link_only = True
 todo_emit_warnings = True
 
-html_theme = "furo"  # on_rtd: whether we are on readthedocs.org
+html_theme = "furo"
+html_static_path = ['_static']
+html_css_files = [
+    'brachiograph.css',
+]
+
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -175,3 +180,5 @@ intersphinx_mapping = {
         "https://docs.djangoproject.com/en/2.2/_objects/",
     ),
 }
+
+add_module_names = False

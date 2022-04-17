@@ -44,3 +44,12 @@ Changelog
 * BrachioGraph can now draw using the turtle at the same time, or instead of, the robot
 * A move_angles() method allows setting the angles and moving there in steps rather than all at once
 * Added a rudimentary test_arcs() method
+
+In progress
+-----------
+
+* Refactored the plotter classes, to use a base class
+* Refactored the turtle classes, to use a base class
+* Improved the documentation, now using Sphinx autodoc
+* Added more tests
+

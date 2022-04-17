@@ -1,18 +1,58 @@
 # run with python3 turtle_draw.py
 
-from turtle import *
+from turtle import Turtle, Screen
 import math
 
 
-class AbstractTurtle:
+class BaseTurtle(Turtle):
+    def __init__(
+        self,
+        window_size: int = 800,  # width and height of the turtle canvas
+        speed: int = 0,  # how fast to draw
+        machine=None,  # the PantoGraph object to which the turtle belongs
+        coarseness: int = 0,  # a factor, in degrees, to represent the resolution of the servos
+    ):
+
+        super().__init__()
+
+        self.machine = machine
+
+        if self.machine:
+            self.angle_1 = self.machine.angle_1
+            self.angle_2 = self.machine.angle_2
+
+        self.coarseness = coarseness
+
+        # some basic dimensions of the drawing area
+
+        self.window_size = window_size
+        grid_size = (
+            self.window_size / 1.05
+        )  # the grid is a little smaller than the window
+
+        self.multiplier = grid_size / 2 / self.reach
+        self.draw_reach = (
+            self.reach * self.multiplier * 1.05
+        )  # maximum possible drawing reach
+
+        # set up the screen for the turtle
+
+        self.screen = Screen()
+        self.screen.mode("logo")
+
+        self.speed(0)
+        self.screen.tracer(speed, 0)
+        self.screen.setup(width=window_size, height=window_size)
+
     # ----------------- grid drawing methods -----------------
 
     def draw_grid(self):
-        self.draw_grid_lines(draw_every=1, color="gray", width=1, include_numbers=False)
-        self.draw_grid_lines(draw_every=5, color="black", width=2, include_numbers=True)
+        self.draw_grid_lines(draw_every=1, color="#bbb", width=1, include_numbers=False)
+        self.draw_grid_lines(draw_every=5, color="black", width=1, include_numbers=True)
 
-    def draw_grid_lines(self, draw_every=1, color="gray", width=1, include_numbers=False):
-
+    def draw_grid_lines(
+        self, draw_every=1, color="gray", width=1, include_numbers=False
+    ):
         self.color(color)
         self.width(width)
 
@@ -37,118 +77,115 @@ class AbstractTurtle:
                     self.goto(-self.reach * self.multiplier, i * self.multiplier)
                     self.write(i, move=False, font=("Helvetica", 16, "bold"))
 
+    def set_angles(self, angle_1, angle_2):
 
-class PantoGraphTurtle(Turtle, AbstractTurtle):
+        if self.coarseness:
+
+            coarsened_angle_1 = self.coarsen_angle(angle_1)
+            coarsened_angle_2 = self.coarsen_angle(angle_2)
+
+            diff_1 = coarsened_angle_1 - self.angle_1
+            diff_2 = coarsened_angle_2 - self.angle_2
+            length = math.sqrt(diff_1**2 + diff_2**2)
+            no_of_steps = int(length * 10)
+
+            if no_of_steps:
+
+                (length_of_step_1, length_of_step_2) = (
+                    diff_1 / no_of_steps,
+                    diff_2 / no_of_steps,
+                )
+
+                for step in range(no_of_steps):
+                    self.angle_1 = self.angle_1 + length_of_step_1
+                    self.angle_2 = self.angle_2 + length_of_step_2
+
+                    x, y = self.machine.angles_to_xy(self.angle_1, self.angle_2)
+                    self.setpos(x * self.multiplier, y * self.multiplier)
+        else:
+
+            x, y = self.machine.angles_to_xy(angle_1, angle_2)
+            self.setpos(x * self.multiplier, y * self.multiplier)
+
+    def coarsen_angle(self, angle):
+        return round(angle / self.coarseness) * self.coarseness
+
+
+class PantoGraphTurtle(BaseTurtle):
     """A turtle-graphics implementation of a PantoGraph. Instantiate your ``PantoGraph`` with
     ``turtle=True`` to create a turtle version of it, that copies everything the PantoGraph does.
     """
 
     def __init__(
         self,
-        driver=8,
-        follower=8,
-        motor_1_pos=-1.5,
-        motor_2_pos=1.5,
-        window_size=800,  # width and height of the turtle canvas
-        speed=0,  # how fast to draw
-        motor_1_centre_angle=0,  # the starting angle of the first arm, relative to straight ahead
-        motor_2_centre_angle=90,  # the centre of the second arm relative to the inner arm
-        motor_1_sweep=180,  # the arc covered by the first motor
-        motor_2_sweep=180,  # the arc covered by the second motor
+        driver: int = 8,
+        follower: int = 8,
+        motor_1_pos: float = -1.5,
+        motor_2_pos: float = 1.5,
+        window_size: int = 800,  # width and height of the turtle canvas
+        speed: int = 0,  # how fast to draw
+        motor_1_centre_angle: float = 0,  # starting angle of first arm, relative to straight ahead
+        motor_2_centre_angle: float = 0,  # starting angle of 2nd arm, relative to straight ahead
+        motor_1_sweep: int = 180,  # the arc covered by the first motor
+        motor_2_sweep: int = 180,  # the arc covered by the second motor
+        machine=None,  # the PantoGraph object to which the turtle belongs
+        coarseness: int = 0,  # a factor, in degrees, to represent the resolution of the servos
     ):
 
         # set the pantograph geometry
         self.driver = driver
         self.follower = follower
-
         self.motor_1_pos = motor_1_pos
         self.motor_2_pos = motor_2_pos
-
         self.motor_1_centre_angle = motor_1_centre_angle
         self.motor_2_centre_angle = motor_2_centre_angle
-
         self.motor_1_sweep = motor_1_sweep
         self.motor_2_sweep = motor_2_sweep
+        self.reach = self.driver + self.follower
 
-        # some basic dimensions of the drawing area
+        super().__init__(
+            window_size=window_size, speed=speed, machine=machine, coarseness=coarseness
+        )
 
-        self.window_size = window_size
-        grid_size = self.window_size / 1.05  # the grid is a little smaller than the window
-
-        # scale the plotter dimensions to fill the screen
-        self.reach = (
-            self.driver + self.follower
-        )  # the maximum possible distance the arms could reach
-        self.multiplier = grid_size / 2 / self.reach
-        self.draw_reach = self.reach * self.multiplier * 1.05  # maximum possible drawing reacg
-
-        # set up the screen for the turtle
-
-        self.screen = Screen()
-        self.screen.mode("logo")
         self.screen.title(
             f"driver length {self.driver}cm • centre {self.motor_1_centre_angle}˚ • sweep {self.motor_1_sweep}˚  •  follower length {self.follower}cm • centre {self.motor_2_centre_angle}˚ • sweep {self.motor_2_sweep}˚"
         )
-        self.screen.setup(width=window_size, height=window_size)
-
-        super().__init__()
-
-        self.speed(0)
-        self.screen.tracer(speed, 0)
 
 
-class BrachioGraphTurtle(Turtle, AbstractTurtle):
+class BrachioGraphTurtle(BaseTurtle):
     """A turtle-graphics implementation of a BrachioGraph. Instantiate your ``BrachioGraph`` with
     ``turtle=True`` to create a turtle version of it, that copies everything the BrachioGraph does.
     """
 
     def __init__(
         self,
-        inner_arm=8,
-        outer_arm=8,
-        window_size=800,
-        speed=0,
+        inner_arm: int = 8,
+        outer_arm: int = 8,
+        window_size: int = 800,  # width and height of the turtle canvas
+        speed: int = 0,  # how fast to draw
         shoulder_centre_angle=0,  # the starting angle of the inner arm, relative to straight ahead
         elbow_centre_angle=90,  # the centre of the outer arm relative to the inner arm
         shoulder_sweep=180,  # the arc covered by the shoulder motor
         elbow_sweep=180,  # the arc covered by the elbow motor
+        machine=None,  # the BrachioGraph object to which the turtle belongs
+        coarseness: int = 0,  # a factor, in degrees, to represent the resolution of the servos
     ):
 
         self.inner_arm = inner_arm
         self.outer_arm = outer_arm
-
         self.shoulder_centre_angle = shoulder_centre_angle
         self.shoulder_sweep = shoulder_sweep
-
         self.elbow_centre_angle = elbow_centre_angle
         self.elbow_sweep = elbow_sweep
+        self.reach = self.inner_arm + self.outer_arm
 
-        self.window_size = window_size
+        super().__init__(
+            window_size=window_size, speed=speed, machine=machine, coarseness=coarseness
+        )
 
-        # some basic dimensions of the drawing area
-
-        grid_size = self.window_size / 1.05  # the grid is a little smaller than the window
-
-        # scale the plotter dimensions to fill the screen
-        self.reach = (
-            self.inner_arm + self.outer_arm
-        )  # the maximum possible distance the arms could reach
-        self.multiplier = grid_size / 2 / self.reach
-        self.draw_reach = self.reach * self.multiplier * 1.05  # maximum possible drawing reacg
-
-        # set up the screen for the turtle
-
-        self.screen = Screen()
-        self.screen.mode("logo")
         self.screen.title(
             f"inner length {self.inner_arm}cm • centre {self.shoulder_centre_angle}˚ • sweep {self.shoulder_sweep}˚  •  outer length {self.outer_arm}cm • centre {self.elbow_centre_angle}˚ • sweep {self.elbow_sweep}˚"
         )
-        self.screen.setup(width=window_size, height=window_size)
-
-        super().__init__()
-
-        self.speed(0)
-        self.screen.tracer(speed, 0)
 
     def simple_title(self, title=""):
         title = title or "BrachioGraph, multiple values"
@@ -244,9 +281,11 @@ class BrachioGraphTurtle(Turtle, AbstractTurtle):
 
         # sweep inner arm with outer arm fully right
         outer_arm_angle = self.elbow_centre_angle + self.elbow_sweep / 2
-        self.draw_arms_arc(outer_arm_angle, width, color=color or "purple4", reverse=True)
+        self.draw_arms_arc(
+            outer_arm_angle, width, color=color or "purple4", reverse=True
+        )
 
-        # sweeo outer arm with inner arm fully right
+        # sweep outer arm with inner arm fully right
         self.up()
         self.home()
         self.rt(self.shoulder_centre_angle + self.shoulder_sweep / 2)

@@ -1,9 +1,9 @@
-from base import BaseGraph
+from base import AbstractWriter
 from pytest import approx
 
-bg = BaseGraph(virtual=True)
+bg = AbstractWriter(virtual=True)
 
-bg2 = BaseGraph(
+bg2 = AbstractWriter(
     virtual = True,
     servo_1_angle_pws_bidi = {
         -135: {'cw': 2374, 'acw': 2386},
@@ -59,3 +59,6 @@ def test_defaults_of_bg_with_bidi_pws():
 def test_can_land_at_0_degrees():
     bg.set_angles(0, 0)
     assert (bg.angle_1, bg.angle_2) == (0, 0)
+
+def test_status_report():
+    bg.status()

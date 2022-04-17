@@ -7,7 +7,7 @@ from math import *
 import numpy
 import json
 import pigpio
-from base import BaseGraph, Pen
+from base import AbstractWriter, Pen
 from turtle_draw import PantoGraphTurtle
 
 
@@ -15,7 +15,7 @@ def hypotenuse(side1, side2):
     return sqrt(side1**2 + side2**2)
 
 
-class PantoGraph(BaseGraph):
+class PantoGraph(AbstractWriter):
     """A drawing robot with a pantograph design."""
 
     def __init__(
@@ -54,7 +54,8 @@ class PantoGraph(BaseGraph):
         pw_up=1500,  # pulse-widths for pen up/down
         pw_down=1100,
         #  ----------------- misc -----------------
-        wait=None,  # default wait time between operations
+        wait: float = None,  # default wait time between operations
+        resolution: float = None,  # default resolution of the plotter in cm
         virtual=False,  # run in virtual mode
         turtle=False,
     ):
@@ -89,6 +90,7 @@ class PantoGraph(BaseGraph):
             pw_up=pw_up,
             pw_down=pw_down,
             wait=wait,
+            resolution=resolution,
             virtual=virtual,
             turtle=turtle,
         )
@@ -96,17 +98,6 @@ class PantoGraph(BaseGraph):
         self.set_angles(0, 0)
         self.x, self.y = self.angles_to_xy(0, 0)
         self.quiet()
-
-    def park(self):
-        """Park the plotter with the arms at -60˚ and 60˚."""
-
-        if self.virtual:
-            print("Parking")
-
-        self.pen.up()
-
-        self.move_angles(-60, 60)
-        sleep(1)
 
     # ----------------- trigonometric methods -----------------
 
@@ -197,6 +188,8 @@ class PantoGraph(BaseGraph):
             motor_2_pos=self.motor_2_pos,
             window_size=800,
             speed=5,
+            machine=self,
+            coarseness = self.turtle_coarseness,
         )
 
         self.turtle.draw_grid()

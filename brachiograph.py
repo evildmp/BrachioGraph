@@ -5,14 +5,17 @@ import readchar
 import math
 import numpy
 from turtle_draw import BrachioGraphTurtle
-from base import BaseGraph
+from base import AbstractWriter
 
 
-class BrachioGraph(BaseGraph):
+class BrachioGraph(AbstractWriter):
+    """ A shoulder-and-elbow drawing robot class.
+    """
     def __init__(
         self,
         virtual: bool = False,  # a virtual plotter runs in software only
         turtle: bool = False,  # create a turtle graphics plotter
+        turtle_coarseness=None,  # a factor in degrees representing servo resolution
         #  ----------------- geometry of the plotter -----------------
         bounds: tuple = [-8, 4, 6, 13],  # the maximum rectangular drawing area
         inner_arm: float = 8,  # the lengths of the arms
@@ -38,6 +41,7 @@ class BrachioGraph(BaseGraph):
         pw_down: int = 1100,
         #  ----------------- physical control -----------------
         wait: float = None,  # default wait time between operations
+        resolution: float = None,  # default resolution of the plotter in cm
     ):
 
         # set the geometry
@@ -65,9 +69,28 @@ class BrachioGraph(BaseGraph):
             pw_up=pw_up,
             pw_down=pw_down,
             wait=wait,
+            resolution=resolution,
             virtual=virtual,
             turtle=turtle,
+            turtle_coarseness=turtle_coarseness,
         )
+
+    def setup_turtle(self, coarseness):
+        self.turtle = BrachioGraphTurtle(
+            inner_arm=self.inner_arm,  # the length of the inner arm (blue)
+            outer_arm=self.outer_arm,  # the length of the outer arm (red)
+            shoulder_centre_angle=-90,  # the starting angle of the inner arm, relative to straight ahead
+            shoulder_sweep=180,  # the arc covered by the shoulder motor
+            elbow_centre_angle=90,  # the centre of the outer arm relative to the inner arm
+            elbow_sweep=180,  # the arc covered by the elbow motor
+            window_size=850,  # width and height of the turtle canvas
+            speed=10,  # how fast to draw
+            machine=self,
+            coarseness=coarseness,
+        )
+
+        self.turtle.draw_grid()
+        self.t = self.turtle
 
     def test_arcs(self):
         self.park()
@@ -83,23 +106,6 @@ class BrachioGraph(BaseGraph):
                 self.move_angles(angle_2=angle_2, draw=True)
             for angle_2 in range(elbow_angle - 16, elbow_angle + 1):
                 self.move_angles(angle_2=angle_2, draw=True)
-
-    def park(self):
-        """Park the plotter with the inner arm at -90˚ and the outer arm at 90˚ to it.
-
-        This corresponds to an x/y position:
-
-        * x: ``-inner_arm``
-        * y: ``outer_arm``
-        """
-
-        if self.virtual:
-            print("Parking")
-
-        self.pen.up()
-
-        self.xy(-self.inner_arm, self.outer_arm)
-        sleep(1)
 
     # ----------------- trigonometric methods -----------------
 
@@ -139,7 +145,10 @@ class BrachioGraph(BaseGraph):
             (
                 self.inner_arm**2
                 + self.outer_arm**2
-                - 2 * self.inner_arm * self.outer_arm * math.cos(math.pi - elbow_motor_angle)
+                - 2
+                * self.inner_arm
+                * self.outer_arm
+                * math.cos(math.pi - elbow_motor_angle)
             )
         )
         base_angle = math.acos(
@@ -152,199 +161,6 @@ class BrachioGraph(BaseGraph):
         y = math.cos(inner_angle) * hypotenuse
 
         return (x, y)
-
-    # ----------------- calibration -----------------
-
-    def auto_calibrate(self):
-        self.park()
-
-        for elbow in range(90, 136):
-            self.set_angles(None, elbow)
-            sleep(0.01)
-
-        for shoulder in range(-90, -140, -1):
-            self.set_angles(shoulder, None)
-            sleep(0.01)
-
-    def calibrate(self, servo=1):
-
-        pin = {1: 14, 2: 15}[servo]
-
-        servo_centre = {1: self.servo_1_parked_pw, 2: self.servo_2_parked_pw}.get(servo)
-        servo_angle_pws = []
-        texts = {
-            "arm-name": {1: "inner", 2: "outer"},
-            "nominal-centre": {1: 0, 2: 90},
-            "mount-arm": {1: "(straight ahead)", 2: "(i.e. to the right) to the inner arm)"},
-            "safe-guess": {1: -60, 2: 90},
-        }
-
-        pw = servo_centre
-
-        print(f"Calibrating servo {servo}, for the {texts['arm-name'][servo]} arm.")
-        print(f"See https://brachiograph.art/how-to/calibrate.html")
-        print()
-        self.rpi.set_servo_pulsewidth(pin, pw)
-        print(f"The servo is now at {pw}µS, in the centre of its range of movement.")
-        print("Attach the protractor to the base, with its centre at the axis of the servo.")
-
-        print(
-            f"Mount the arm at a position as close as possible to {texts['nominal-centre'][servo]}˚ {texts['mount-arm'][servo]}."
-        )
-
-        print("Now drive the arm to a known angle, as marked on the protractor.")
-        print(
-            "When the arm reaches the angle, press 1 and record the angle. Do this for as many angles as possible."
-        )
-        print()
-        print("When you have done all the angles, press 2.")
-        print("Press 0 to exit at any time.")
-
-        while True:
-            key = readchar.readchar()
-
-            if key == "0":
-                return
-            elif key == "1":
-                angle = float(input("Enter the angle: "))
-                servo_angle_pws.append([angle, pw])
-            elif key == "2":
-                break
-            elif key == "a":
-                pw = pw - 10
-            elif key == "s":
-                pw = pw + 10
-            elif key == "A":
-                pw = pw - 1
-            elif key == "S":
-                pw = pw + 1
-            else:
-                continue
-
-            print(pw)
-
-            self.rpi.set_servo_pulsewidth(pin, pw)
-
-        print(f"------------------------")
-        print(f"Recorded angles servo {servo}")
-        print(f"------------------------")
-        print(f"  angle  |  pulse-width ")
-        print(f"---------+--------------")
-
-        servo_angle_pws.sort()
-        for [angle, pw] in servo_angle_pws:
-            print(f" {angle:>6.1f}  |  {pw:>4.0f}")
-
-        servo_array = numpy.array(servo_angle_pws)
-
-        pw = int(numpy.poly1d(numpy.polyfit(servo_array[:, 0], servo_array[:, 1], 3))(0))
-
-        self.rpi.set_servo_pulsewidth(pin, pw)
-        print()
-        print(
-            f"The servo is now at {int(pw)}µS, which should correspond to {texts['nominal-centre'][servo]}˚."
-        )
-        print(
-            "If necessary, remount the arm at the centre of its optimal sweep for your drawing area."
-        )
-        print()
-        print(
-            f"Alternatively as a rule of thumb, if the arms are of equal length, use the position closest to {texts['safe-guess'][servo]}˚."
-        )
-
-        print(
-            "Carefully count how many spline positions you had to move the arm by to get it there."
-        )
-        print(
-            "Multiply that by the number of degrees for each spline to get the angle by which you moved it."
-        )
-        offset = float(
-            input("Enter the angle by which you moved the arm (anti-clockwise is negative): ")
-        )
-
-        print(f"---------------------------")
-        print(f"Calculated angles {texts['arm-name'][servo]} arm")
-        print(f"---------------------------")
-        print(f"   angle  |  pulse-width   ")
-        print(f"----------+----------------")
-
-        servo_angle_including_offset_pws = []
-
-        for [angle, pw] in servo_angle_pws:
-            angle_including_offset = round(angle + offset, 1)
-            servo_angle_including_offset_pws.append([angle_including_offset, pw])
-            print(f"  {angle:>6.1f}  |  {pw:>4.0f}")
-
-        print()
-        print("Use this list of angles and pulse-widths in your BrachioGraph definition:")
-        print()
-        print(f"servo_{servo}_angle_pws={servo_angle_including_offset_pws}")
-
-    # ----------------- manual driving methods -----------------
-
-    def drive(self):
-
-        # adjust the pulse-widths using the keyboard
-
-        pw_1, pw_2 = self.get_pulse_widths()
-
-        self.set_pulse_widths(pw_1, pw_2)
-
-        while True:
-            key = readchar.readchar()
-
-            if key == "0":
-                return
-            elif key == "a":
-                pw_1 = pw_1 - 10
-            elif key == "s":
-                pw_1 = pw_1 + 10
-            elif key == "A":
-                pw_1 = pw_1 - 2
-            elif key == "S":
-                pw_1 = pw_1 + 2
-            elif key == "k":
-                pw_2 = pw_2 - 10
-            elif key == "l":
-                pw_2 = pw_2 + 10
-            elif key == "K":
-                pw_2 = pw_2 - 2
-            elif key == "L":
-                pw_2 = pw_2 + 2
-
-            print(pw_1, pw_2)
-
-            self.set_pulse_widths(pw_1, pw_2)
-
-    def drive_xy(self):
-
-        # move the pen up/down and left/right using the keyboard
-
-        while True:
-            key = readchar.readchar()
-
-            if key == "0":
-                return
-            elif key == "a":
-                self.x = self.x - 1
-            elif key == "s":
-                self.x = self.x + 1
-            elif key == "A":
-                self.x = self.x - 0.1
-            elif key == "S":
-                self.x = self.x + 0.1
-            elif key == "k":
-                self.y = self.y - 1
-            elif key == "l":
-                self.y = self.y + 1
-            elif key == "K":
-                self.y = self.y - 0.1
-            elif key == "L":
-                self.y = self.y + 0.1
-
-            print(self.x, self.y)
-
-            self.xy(self.x, self.y)
 
     # ----------------- reporting methods -----------------
 
@@ -390,7 +206,9 @@ class BrachioGraph(BaseGraph):
 
         if angle_1 and angle_2:
 
-            print(f"      angle               {angle_1:>4.0f}  |             {angle_2:>4.0f}")
+            print(
+                f"      angle               {angle_1:>4.0f}  |             {angle_2:>4.0f}"
+            )
 
         print(f"               -----------------|-----------------")
         print(f"               min   max   mid  |  min   max   mid")
@@ -427,18 +245,6 @@ class BrachioGraph(BaseGraph):
 
         else:
 
-            print("No data recorded yet. Try calling the BrachioGraph.box() method first.")
-
-    def setup_turtle(self):
-        self.turtle = BrachioGraphTurtle(
-            inner_arm=self.inner_arm,  # the length of the inner arm (blue)
-            outer_arm=self.outer_arm,  # the length of the outer arm (red)
-            shoulder_centre_angle=-90,  # the starting angle of the inner arm, relative to straight ahead
-            shoulder_sweep=180,  # the arc covered by the shoulder motor
-            elbow_centre_angle=90,  # the centre of the outer arm relative to the inner arm
-            elbow_sweep=180,  # the arc covered by the elbow motor
-            window_size=800,  # width and height of the turtle canvas
-            speed=0,  # how fast to draw
-        )
-
-        self.turtle.draw_grid()
+            print(
+                "No data recorded yet. Try calling the BrachioGraph.box() method first."
+            )
