@@ -427,7 +427,7 @@ class Plotter:
 
         length = math.sqrt(diff_1**2 + diff_2**2)
 
-        no_of_steps = int(length * resolution) or 1
+        no_of_steps = int(length / resolution) or 1
 
         if no_of_steps < 100:
             disable_tqdm = True
