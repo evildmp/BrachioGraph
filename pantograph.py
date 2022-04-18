@@ -7,15 +7,15 @@ from math import *
 import numpy
 import json
 import pigpio
-from base import AbstractWriter, Pen
-from turtle_draw import PantoGraphTurtle
+from plotter import Plotter, Pen
+from turtle_plotter import PantoGraphTurtle
 
 
 def hypotenuse(side1, side2):
     return sqrt(side1**2 + side2**2)
 
 
-class PantoGraph(AbstractWriter):
+class PantoGraph(Plotter):
     """A drawing robot with a pantograph design."""
 
     def __init__(
@@ -103,7 +103,9 @@ class PantoGraph(AbstractWriter):
 
     @property
     def furthest_reach(self):
-        return self.driver + sqrt(self.follower**2 - (self.motor_2_pos - self.motor_1_pos) / 2)
+        return self.driver + sqrt(
+            self.follower**2 - (self.motor_2_pos - self.motor_1_pos) / 2
+        )
 
     def xy_to_angles(self, x=0, y=None):
         """Takes a pair of x/y co-ordinates, and returns the angle required of each arm."""
@@ -164,7 +166,9 @@ class PantoGraph(AbstractWriter):
         if elbow_dx:
             angle_of_base_of_top_triangle = atan(elbow_dy / elbow_dx)
         elif elbow_dy:
-            angle_of_base_of_top_triangle = asin(elbow_dy / hypotenuse(elbow_dx, elbow_dy))
+            angle_of_base_of_top_triangle = asin(
+                elbow_dy / hypotenuse(elbow_dx, elbow_dy)
+            )
         else:
             angle_of_base_of_top_triangle = 0
 
@@ -172,8 +176,12 @@ class PantoGraph(AbstractWriter):
         corner_of_top_triangle = acos((base_of_top_triangle / 2) / self.follower)
 
         # calculate the x and y distances to the left elbow
-        x_to_elbow = cos(corner_of_top_triangle + angle_of_base_of_top_triangle) * self.follower
-        y_to_elbow = sin(corner_of_top_triangle + angle_of_base_of_top_triangle) * self.follower
+        x_to_elbow = (
+            cos(corner_of_top_triangle + angle_of_base_of_top_triangle) * self.follower
+        )
+        y_to_elbow = (
+            sin(corner_of_top_triangle + angle_of_base_of_top_triangle) * self.follower
+        )
 
         x = elbow_1_x + x_to_elbow + self.motor_1_pos
         y = elbow_1_y + y_to_elbow
@@ -189,7 +197,7 @@ class PantoGraph(AbstractWriter):
             window_size=800,
             speed=5,
             machine=self,
-            coarseness = self.turtle_coarseness,
+            coarseness=self.turtle_coarseness,
         )
 
         self.turtle.draw_grid()

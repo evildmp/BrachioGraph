@@ -1,7 +1,8 @@
-``turtle_draw.py``
+==========================
+Turtle plotter
 ==========================
 
-..  module:: turtle_draw
+..  module:: turtle_plotter
 
 ..  autoclass:: PantoGraphTurtle
     :members:

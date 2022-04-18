@@ -2,10 +2,10 @@
 Plotter modules
 ==========================
 
-..  module:: base
+..  module:: plotter
 
 
-``AbstractWriter``
+``Plotter``
 ===================
 
 A base class for the BrachioGraph and PantoGraph subclasses.
@@ -18,7 +18,7 @@ work for testing.
 
 For testing with turtle graphics, you will need to use one one of the sublasses.
 
-..  automethod:: AbstractWriter.__init__
+..  automethod:: Plotter.__init__
 
     :param bool virtual:
         A virtual plotter will run in software only, and doesn't expect any attached hardware. This
@@ -70,39 +70,39 @@ to override those values (which is generally not required).
 Plotting
 -------------------------------
 
-..  automethod:: AbstractWriter.plot_file
+..  automethod:: Plotter.plot_file
 
-..  automethod:: AbstractWriter.plot_lines
+..  automethod:: Plotter.plot_lines
 
 
 Drawing according to x/y values
 -------------------------------
 
-..  automethod:: AbstractWriter.box
+..  automethod:: Plotter.box
 
-..  automethod:: AbstractWriter.test_pattern
+..  automethod:: Plotter.test_pattern
 
-..  automethod:: AbstractWriter.vertical_lines
+..  automethod:: Plotter.vertical_lines
 
-..  automethod:: AbstractWriter.horizontal_lines
+..  automethod:: Plotter.horizontal_lines
 
-..  automethod:: AbstractWriter.draw_line
+..  automethod:: Plotter.draw_line
 
-..  automethod:: AbstractWriter.xy
+..  automethod:: Plotter.xy
 
 
 Drawing according to servo angle values
 ---------------------------------------
 
-..  automethod:: AbstractWriter.move_angles
+..  automethod:: Plotter.move_angles
 
 
 Pen-moving methods
 -------------------
 
-..  automethod:: AbstractWriter.set_angles
+..  automethod:: Plotter.set_angles
 
-..  automethod:: AbstractWriter.park
+..  automethod:: Plotter.park
 
 
 Angles to pulse widths
@@ -111,8 +111,8 @@ Angles to pulse widths
 A plotter needs to move its arms to the correct angles, by providing the appropriate
 pulse-width to each servo.
 
-..  method:: AbstractWriter.angles_to_pw_1
-..  method:: AbstractWriter.angles_to_pw_2
+..  method:: Plotter.angles_to_pw_1
+..  method:: Plotter.angles_to_pw_2
 
 These methods - one for each servo - take the angle as an argument and return a pulse-width.
 
@@ -128,9 +128,9 @@ The default is to use  "naive" functions (``naive_angles_to_pulse_widths_1`` and
 ``naive_angles_to_pulse_widths_2``), that assume linearity (1˚ of movement corresponds to a 10µs
 change in pulse-width), will be used.
 
-..  automethod:: AbstractWriter.naive_angles_to_pulse_widths_1
+..  automethod:: Plotter.naive_angles_to_pulse_widths_1
 
-..  automethod:: AbstractWriter.naive_angles_to_pulse_widths_2
+..  automethod:: Plotter.naive_angles_to_pulse_widths_2
 
 
 Sophisticated calculation
@@ -144,25 +144,25 @@ polynomial funtion that matches the curve corresponding to those values.
 Line processing
 ---------------
 
-..  automethod:: AbstractWriter.analyse_lines
+..  automethod:: Plotter.analyse_lines
 
-..  automethod:: AbstractWriter.rotate_and_scale_lines
+..  automethod:: Plotter.rotate_and_scale_lines
 
 
 Physical control
 ----------------
 
-..  automethod:: AbstractWriter.set_pulse_widths
+..  automethod:: Plotter.set_pulse_widths
 
-..  automethod:: AbstractWriter.get_pulse_widths
+..  automethod:: Plotter.get_pulse_widths
 
-..  automethod:: AbstractWriter.quiet
+..  automethod:: Plotter.quiet
 
 
 Manual driving
 ---------------
 
-..  automethod:: AbstractWriter.drive
+..  automethod:: Plotter.drive
 
     The controls are:
 
@@ -194,7 +194,7 @@ Manual driving
           - ``l``
           - ``L``
 
-..  automethod:: AbstractWriter.drive_xy
+..  automethod:: Plotter.drive_xy
 
     The controls are:
 
@@ -230,15 +230,15 @@ Manual driving
 Reporting
 ----------------
 
-..  automethod:: AbstractWriter.status
+..  automethod:: Plotter.status
 
 
 Trigonometry
 ------------
 
-..  automethod:: AbstractWriter.xy_to_angles
+..  automethod:: Plotter.xy_to_angles
 
-..  automethod:: AbstractWriter.angles_to_xy
+..  automethod:: Plotter.angles_to_xy
 
 
 
@@ -249,7 +249,7 @@ Trigonometry
 
 ..  automethod:: BrachioGraph.__init__
 
-    Parameters are as for the ``AbstractWriter`` parent class, except for:
+    Parameters are as for the ``Plotter`` parent class, except for:
 
     :param float inner_arm: The length of the inner arm, in cm.
     :param float outer_arm: The length of the outer arm, in cm.

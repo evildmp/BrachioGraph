@@ -51,5 +51,6 @@ In progress
 * Refactored the plotter classes, to use a base class
 * Refactored the turtle classes, to use a base class
 * Improved the documentation, now using Sphinx autodoc
-* Added more tests
+* Added more tests, placed them in their own directory
+* Renamed modules and base classes to make it easier to understand what they are
 

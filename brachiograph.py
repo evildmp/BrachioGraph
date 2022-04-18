@@ -4,13 +4,13 @@ from time import sleep
 import readchar
 import math
 import numpy
-from turtle_draw import BrachioGraphTurtle
-from base import AbstractWriter
+from turtle_plotter import BrachioGraphTurtle
+from plotter import Plotter
 
 
-class BrachioGraph(AbstractWriter):
-    """ A shoulder-and-elbow drawing robot class.
-    """
+class BrachioGraph(Plotter):
+    """A shoulder-and-elbow drawing robot class."""
+
     def __init__(
         self,
         virtual: bool = False,  # a virtual plotter runs in software only

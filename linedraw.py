@@ -54,14 +54,21 @@ def makesvg(lines):
     print("Generating svg file...")
     width = math.ceil(max([max([p[0] * 0.5 for p in l]) for l in lines]))
     height = math.ceil(max([max([p[1] * 0.5 for p in l]) for l in lines]))
-    out = '<svg xmlns="http://www.w3.org/2000/svg" height="%spx" width="%spx" version="1.1">' % (
-        height,
-        width,
+    out = (
+        '<svg xmlns="http://www.w3.org/2000/svg" height="%spx" width="%spx" version="1.1">'
+        % (
+            height,
+            width,
+        )
     )
 
     for l in lines:
         l = ",".join([str(p[0] * 0.5) + "," + str(p[1] * 0.5) for p in l])
-        out += '<polyline points="' + l + '" stroke="black" stroke-width="1" fill="none" />\n'
+        out += (
+            '<polyline points="'
+            + l
+            + '" stroke="black" stroke-width="1" fill="none" />\n'
+        )
     out += "</svg>"
     return out
 
@@ -134,7 +141,10 @@ def vectorise(
         contours = sortlines(
             getcontours(
                 image.resize(
-                    (int(resolution / draw_contours), int(resolution / draw_contours * h / w))
+                    (
+                        int(resolution / draw_contours),
+                        int(resolution / draw_contours * h / w),
+                    )
                 ),
                 draw_contours,
             )
@@ -147,7 +157,9 @@ def vectorise(
         hatches = sortlines(
             hatch(
                 # image,
-                image.resize((int(resolution / draw_hatch), int(resolution / draw_hatch * h / w))),
+                image.resize(
+                    (int(resolution / draw_hatch), int(resolution / draw_hatch * h / w))
+                ),
                 draw_hatch,
             )
         )
@@ -198,7 +210,9 @@ def getcontours(image, draw_contours=2):
     contours = [c for c in contours if len(c) > 1]
 
     for i in range(0, len(contours)):
-        contours[i] = [(v[0] * draw_contours, v[1] * draw_contours) for v in contours[i]]
+        contours[i] = [
+            (v[0] * draw_contours, v[1] * draw_contours) for v in contours[i]
+        ]
 
     return contours
 
@@ -226,11 +240,15 @@ def hatch(image, draw_hatch=16):
 
             # above 64, draw horizontal lines
             elif pixels[x0, y0] > 64:
-                lg1.append([(x, y + draw_hatch / 4), (x + draw_hatch, y + draw_hatch / 4)])
+                lg1.append(
+                    [(x, y + draw_hatch / 4), (x + draw_hatch, y + draw_hatch / 4)]
+                )
 
             # above 16, draw diagonal lines also
             elif pixels[x0, y0] > 16:
-                lg1.append([(x, y + draw_hatch / 4), (x + draw_hatch, y + draw_hatch / 4)])
+                lg1.append(
+                    [(x, y + draw_hatch / 4), (x + draw_hatch, y + draw_hatch / 4)]
+                )
                 lg2.append([(x + draw_hatch, y), (x, y + draw_hatch)])
 
             # below 16, draw diagonal lines and a second horizontal line
@@ -244,7 +262,9 @@ def hatch(image, draw_hatch=16):
                         (x + draw_hatch, y + draw_hatch / 2 + draw_hatch / 4),
                     ]
                 )  # horizontal lines with additional offset
-                lg2.append([(x + draw_hatch, y), (x, y + draw_hatch)])  # diagonal lines, left
+                lg2.append(
+                    [(x + draw_hatch, y), (x, y + draw_hatch)]
+                )  # diagonal lines, left
 
     t1 = time.time()
 
@@ -429,7 +449,8 @@ def midpt(*args):
 def distsum(*args):
     return sum(
         [
-            ((args[i][0] - args[i - 1][0]) ** 2 + (args[i][1] - args[i - 1][1]) ** 2) ** 0.5
+            ((args[i][0] - args[i - 1][0]) ** 2 + (args[i][1] - args[i - 1][1]) ** 2)
+            ** 0.5
             for i in range(1, len(args))
         ]
     )

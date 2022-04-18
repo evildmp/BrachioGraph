@@ -1,13 +1,12 @@
-# run with python3 turtle_draw.py
-
-from turtle import Turtle, Screen
 import math
+from turtle import Turtle, Screen
 
 
 class BaseTurtle(Turtle):
     def __init__(
         self,
         window_size: int = 800,  # width and height of the turtle canvas
+        reach: float = 16,
         speed: int = 0,  # how fast to draw
         machine=None,  # the PantoGraph object to which the turtle belongs
         coarseness: int = 0,  # a factor, in degrees, to represent the resolution of the servos
@@ -15,17 +14,17 @@ class BaseTurtle(Turtle):
 
         super().__init__()
 
+        self.window_size = window_size
+        self.reach = reach
         self.machine = machine
+        self.coarseness = coarseness
 
         if self.machine:
             self.angle_1 = self.machine.angle_1
             self.angle_2 = self.machine.angle_2
 
-        self.coarseness = coarseness
-
         # some basic dimensions of the drawing area
 
-        self.window_size = window_size
         grid_size = (
             self.window_size / 1.05
         )  # the grid is a little smaller than the window
@@ -111,47 +110,6 @@ class BaseTurtle(Turtle):
         return round(angle / self.coarseness) * self.coarseness
 
 
-class PantoGraphTurtle(BaseTurtle):
-    """A turtle-graphics implementation of a PantoGraph. Instantiate your ``PantoGraph`` with
-    ``turtle=True`` to create a turtle version of it, that copies everything the PantoGraph does.
-    """
-
-    def __init__(
-        self,
-        driver: int = 8,
-        follower: int = 8,
-        motor_1_pos: float = -1.5,
-        motor_2_pos: float = 1.5,
-        window_size: int = 800,  # width and height of the turtle canvas
-        speed: int = 0,  # how fast to draw
-        motor_1_centre_angle: float = 0,  # starting angle of first arm, relative to straight ahead
-        motor_2_centre_angle: float = 0,  # starting angle of 2nd arm, relative to straight ahead
-        motor_1_sweep: int = 180,  # the arc covered by the first motor
-        motor_2_sweep: int = 180,  # the arc covered by the second motor
-        machine=None,  # the PantoGraph object to which the turtle belongs
-        coarseness: int = 0,  # a factor, in degrees, to represent the resolution of the servos
-    ):
-
-        # set the pantograph geometry
-        self.driver = driver
-        self.follower = follower
-        self.motor_1_pos = motor_1_pos
-        self.motor_2_pos = motor_2_pos
-        self.motor_1_centre_angle = motor_1_centre_angle
-        self.motor_2_centre_angle = motor_2_centre_angle
-        self.motor_1_sweep = motor_1_sweep
-        self.motor_2_sweep = motor_2_sweep
-        self.reach = self.driver + self.follower
-
-        super().__init__(
-            window_size=window_size, speed=speed, machine=machine, coarseness=coarseness
-        )
-
-        self.screen.title(
-            f"driver length {self.driver}cm • centre {self.motor_1_centre_angle}˚ • sweep {self.motor_1_sweep}˚  •  follower length {self.follower}cm • centre {self.motor_2_centre_angle}˚ • sweep {self.motor_2_sweep}˚"
-        )
-
-
 class BrachioGraphTurtle(BaseTurtle):
     """A turtle-graphics implementation of a BrachioGraph. Instantiate your ``BrachioGraph`` with
     ``turtle=True`` to create a turtle version of it, that copies everything the BrachioGraph does.
@@ -159,8 +117,8 @@ class BrachioGraphTurtle(BaseTurtle):
 
     def __init__(
         self,
-        inner_arm: int = 8,
-        outer_arm: int = 8,
+        inner_arm: float = 8,
+        outer_arm: float = 8,
         window_size: int = 800,  # width and height of the turtle canvas
         speed: int = 0,  # how fast to draw
         shoulder_centre_angle=0,  # the starting angle of the inner arm, relative to straight ahead
@@ -177,10 +135,13 @@ class BrachioGraphTurtle(BaseTurtle):
         self.shoulder_sweep = shoulder_sweep
         self.elbow_centre_angle = elbow_centre_angle
         self.elbow_sweep = elbow_sweep
-        self.reach = self.inner_arm + self.outer_arm
 
         super().__init__(
-            window_size=window_size, speed=speed, machine=machine, coarseness=coarseness
+            reach=self.inner_arm + self.outer_arm,
+            window_size=window_size,
+            speed=speed,
+            machine=machine,
+            coarseness=coarseness,
         )
 
         self.screen.title(
@@ -335,3 +296,47 @@ class BrachioGraphTurtle(BaseTurtle):
             self.fd(self.outer_arm * self.multiplier)
 
         self.screen.update()
+
+
+class PantoGraphTurtle(BaseTurtle):
+    """A turtle-graphics implementation of a PantoGraph. Instantiate your ``PantoGraph`` with
+    ``turtle=True`` to create a turtle version of it, that copies everything the PantoGraph does.
+    """
+
+    def __init__(
+        self,
+        driver: int = 8,
+        follower: int = 8,
+        motor_1_pos: float = -1.5,
+        motor_2_pos: float = 1.5,
+        window_size: int = 800,  # width and height of the turtle canvas
+        speed: int = 0,  # how fast to draw
+        motor_1_centre_angle: float = 0,  # starting angle of first arm, relative to straight ahead
+        motor_2_centre_angle: float = 0,  # starting angle of 2nd arm, relative to straight ahead
+        motor_1_sweep: int = 180,  # the arc covered by the first motor
+        motor_2_sweep: int = 180,  # the arc covered by the second motor
+        machine=None,  # the PantoGraph object to which the turtle belongs
+        coarseness: int = 0,  # a factor, in degrees, to represent the resolution of the servos
+    ):
+
+        # set the pantograph geometry
+        self.driver = driver
+        self.follower = follower
+        self.motor_1_pos = motor_1_pos
+        self.motor_2_pos = motor_2_pos
+        self.motor_1_centre_angle = motor_1_centre_angle
+        self.motor_2_centre_angle = motor_2_centre_angle
+        self.motor_1_sweep = motor_1_sweep
+        self.motor_2_sweep = motor_2_sweep
+
+        super().__init__(
+            reach=self.driver + self.follower,
+            window_size=window_size,
+            speed=speed,
+            machine=machine,
+            coarseness=coarseness,
+        )
+
+        self.screen.title(
+            f"driver length {self.driver}cm • centre {self.motor_1_centre_angle}˚ • sweep {self.motor_1_sweep}˚  •  follower length {self.follower}cm • centre {self.motor_2_centre_angle}˚ • sweep {self.motor_2_sweep}˚"
+        )

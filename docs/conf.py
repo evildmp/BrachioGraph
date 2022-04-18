@@ -85,9 +85,9 @@ todo_link_only = True
 todo_emit_warnings = True
 
 html_theme = "furo"
-html_static_path = ['_static']
+html_static_path = ["_static"]
 html_css_files = [
-    'brachiograph.css',
+    "brachiograph.css",
 ]
 
 
@@ -128,7 +128,13 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "BrachioGraph.tex", "BrachioGraph Documentation", "Daniele Procida", "manual"),
+    (
+        master_doc,
+        "BrachioGraph.tex",
+        "BrachioGraph Documentation",
+        "Daniele Procida",
+        "manual",
+    ),
 ]
 
 

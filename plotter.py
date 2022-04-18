@@ -7,7 +7,7 @@ import readchar
 import tqdm
 import pigpio
 import numpy
-from turtle_draw import BaseTurtle
+from turtle_plotter import BaseTurtle
 
 
 try:
@@ -22,8 +22,7 @@ except AttributeError:
     force_virtual = True
 
 
-class AbstractWriter:
-
+class Plotter:
     def __init__(
         self,
         virtual: bool = False,  # a virtual plotter runs in software only
@@ -119,7 +118,6 @@ class AbstractWriter:
             self.angles_to_pw_2 = self.naive_angles_to_pulse_widths_2
 
         # set some initial values required for moving methods
-
         self.previous_pw_1 = self.previous_pw_2 = 0
         self.active_hysteresis_correction_1 = self.active_hysteresis_correction_2 = 0
         self.reset_report()
@@ -584,6 +582,7 @@ class AbstractWriter:
 
         ``lines`` is a tuple itself containing a number of tuples, each of which contains a number
         of 2-tuples::
+
             [
                 [
                     [3, 4],                               # |
@@ -726,8 +725,7 @@ class AbstractWriter:
     # ----------------- manual driving methods -----------------
 
     def drive(self):
-        """Control the pulse-widths using the keyboard.
-        """
+        """Control the pulse-widths using the keyboard."""
 
         pw_1, pw_2 = self.get_pulse_widths()
 
@@ -760,8 +758,7 @@ class AbstractWriter:
             self.set_pulse_widths(pw_1, pw_2)
 
     def drive_xy(self):
-        """Control the x/y position using the keyboard.
-        """
+        """Control the x/y position using the keyboard."""
 
         while True:
             key = readchar.readchar()
@@ -923,65 +920,3 @@ class Pen:
 
         else:
             self.rpi.set_servo_pulsewidth(self.pin, pulse_width)
-
-    def calibrate(self):
-
-        print(f"Calibrating the pen-lifting servo.")
-        print(f"See https://brachiograph.art/how-to/calibrate.html")
-
-        pw_1, pw_2 = self.bg.get_pulse_widths()
-        pw_3 = self.pw_up
-
-        while True:
-            self.bg.set_pulse_widths(pw_1, pw_2)
-            self.pw(pw_3)
-
-            key = readchar.readchar()
-
-            if key == "0":
-                break
-            elif key == "a":
-                pw_1 = pw_1 - 10
-                continue
-            elif key == "s":
-                pw_1 = pw_1 + 10
-                continue
-            elif key == "k":
-                pw_2 = pw_2 - 10
-                continue
-            elif key == "l":
-                pw_2 = pw_2 + 10
-                continue
-
-            elif key == "t":
-                if pw_3 == self.pw_up:
-                    pw_3 = self.pw_down
-                else:
-                    pw_3 = self.pw_up
-                continue
-
-            elif key == "z":
-                pw_3 = pw_3 - 10
-                print(pw_3)
-                continue
-            elif key == "x":
-                pw_3 = pw_3 + 10
-                print(pw_3)
-                continue
-
-            elif key == "u":
-                self.pw_up = pw_3
-            elif key == "d":
-                self.pw_down = pw_3
-            else:
-                continue
-
-            mid = (self.pw_up + self.pw_down) / 2
-            print(
-                f"Pen-up pulse-width: {self.pw_up}µS, pen-down pulse-width: {self.pw_down}µS, mid-point: {mid}"
-            )
-
-        print()
-        print("Use these values in your BrachioGraph definition:")
-        print()
-        print(f"pen_up={self.pw_up}, pen_down={self.pw_down}")

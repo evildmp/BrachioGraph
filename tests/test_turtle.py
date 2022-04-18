@@ -1,19 +1,18 @@
 import pytest
 
-from turtle_draw import BaseTurtle, BrachioGraphTurtle
+from turtle_plotter import BaseTurtle, BrachioGraphTurtle
 from brachiograph import BrachioGraph
-from base import AbstractWriter
+from plotter import Plotter
 
 
 def test_baseturtle():
     bt = BaseTurtle()
     bt.draw_grid()
 
+
 def test_abstractwriter_with_turtle():
-    aw = AbstractWriter(virtual=True, turtle=True)
+    aw = Plotter(virtual=True, turtle=True)
     aw.box()
-
-
 
 
 bgt = BrachioGraphTurtle(
@@ -26,7 +25,6 @@ bgt = BrachioGraphTurtle(
 )
 
 bg = BrachioGraph(virtual=True, turtle=True)
-
 
 
 def test_grid():

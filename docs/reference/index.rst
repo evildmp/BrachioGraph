@@ -1,5 +1,6 @@
 .. _reference:
 
+=========================================================
 Reference
 =========================================================
 
@@ -8,5 +9,5 @@ Reference
 
     linedraw
     brachiograph
-    turtle_draw
+    turtle_plotter
     community-resources
