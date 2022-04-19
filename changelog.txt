@@ -45,12 +45,13 @@ Changelog
 * A move_angles() method allows setting the angles and moving there in steps rather than all at once
 * Added a rudimentary test_arcs() method
 
-In progress
+2022 04 20
 -----------
 
 * Refactored the plotter classes, to use a base class
 * Refactored the turtle classes, to use a base class
+* Added a coarseness factor to the turtle to emulate real world servos
 * Improved the documentation, now using Sphinx autodoc
 * Added more tests, placed them in their own directory
 * Renamed modules and base classes to make it easier to understand what they are
-
+* Added a how it works article
