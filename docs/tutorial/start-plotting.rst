@@ -6,8 +6,8 @@ Start plotting
 Move the arms
 -------------
 
-The ``BrachioGraph.set_pulse_widths()`` method is a manual way of setting the pulse-widths that
-determine the position of a servo. Try this::
+The :meth:`~plotter.Plotter.set_pulse_widths` method is a manual way of setting the
+pulse-widths that determine the position of a servo. Try this::
 
   bg.set_pulse_widths(1500, 1500)
 

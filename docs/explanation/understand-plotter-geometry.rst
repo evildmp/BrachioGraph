@@ -8,7 +8,7 @@ Understanding the plotter's geometry
 It's not at all easy to understand intuitively how different arm lengths and servo sweep angles will affect the
 drawable area, and discovering this through trial and error while building a plotter is a painful process.
 
-The ``turtle_draw.py`` module uses Python's :mod:`built-in turtle graphics module <python:turtle>` to provide a handy
+The ``turtle_plotter.py`` module uses Python's :mod:`built-in turtle graphics module <python:turtle>` to provide a handy
 way to visualise the drawing area, and helps reveal some useful information about the way the plotter's geometry makes
 a difference to what it can draw.
 

@@ -6,9 +6,9 @@ Further discussion to help you understand the hardware and software used in the 
 .. toctree::
     :maxdepth: 1
 
+    How a BrachioGraph works <how-it-works>
     Hardware <hardware>
     Mathematics <mathematics>
     Alternative designs and materials <alternatives>
     Understanding the plotter geometry <understand-plotter-geometry>
     Compensating for hardware limitations <hardware-limitations>
-
