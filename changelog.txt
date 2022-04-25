@@ -55,3 +55,9 @@ Changelog
 * Added more tests, placed them in their own directory
 * Renamed modules and base classes to make it easier to understand what they are
 * Added a how it works article
+
+
+2022 04 25
+----------
+
+* Cleaned up status() methods
