@@ -10,18 +10,6 @@ import numpy
 from turtle_plotter import BaseTurtle
 
 
-try:
-    pigpio.exceptions = False
-    rpi = pigpio.pi()
-    rpi.set_PWM_frequency(18, 50)
-    pigpio.exceptions = True
-    force_virtual = False
-
-except AttributeError:
-    print("pigpio daemon is not available; running in virtual mode")
-    force_virtual = True
-
-
 class Plotter:
     def __init__(
         self,
@@ -54,8 +42,7 @@ class Plotter:
         resolution: float = None,  # default resolution of the plotter in cm
     ):
 
-        self.virtual = virtual or force_virtual
-
+        self.virtual = virtual
         self.angle_1 = servo_1_parked_angle
         self.angle_2 = servo_2_parked_angle
 
@@ -122,10 +109,40 @@ class Plotter:
         self.active_hysteresis_correction_1 = self.active_hysteresis_correction_2 = 0
         self.reset_report()
 
+        if self.virtual:
+            self.wait = wait or 0
+            self.virtualise()
+
+        else:
+            try:
+                pigpio.exceptions = False
+                # instantiate this Raspberry Pi as a pigpio.pi() instance
+                self.rpi = pigpio.pi()
+                # the pulse frequency should be no higher than 100Hz - higher values could
+                # (supposedly) # damage the servos
+                self.rpi.set_PWM_frequency(14, 50)
+                self.rpi.set_PWM_frequency(15, 50)
+                pigpio.exceptions = True
+                self.virtual = False
+                # by default we use a wait factor of 0.1 for accuracy
+                self.wait = wait if wait is not None else 0.1
+
+            except AttributeError:
+                print("pigpio daemon is not available; running in virtual mode")
+                self.virtualise()
+                self.virtual = True
+
+
         # create the pen object
         self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down, virtual=self.virtual)
 
-        if self.virtual:
+        self.resolution = resolution or 1
+
+        self.set_angles(self.servo_1_parked_angle, self.servo_2_parked_angle)
+
+        self.status()
+
+    def virtualise(self):
 
             print("Initialising virtual BrachioGraph")
 
@@ -133,26 +150,8 @@ class Plotter:
             self.virtual_pw_2 = self.angles_to_pw_2(90)
 
             # by default in virtual mode, we use a wait factor of 0 for speed
-            self.wait = wait or 0
+            self.virtual = True
 
-        else:
-
-            # instantiate this Raspberry Pi as a pigpio.pi() instance
-            self.rpi = pigpio.pi()
-
-            # the pulse frequency should be no higher than 100Hz - higher values could (supposedly)
-            # damage the servos
-            self.rpi.set_PWM_frequency(14, 50)
-            self.rpi.set_PWM_frequency(15, 50)
-
-            # by default we use a wait factor of 0.1 for accuracy
-            self.wait = wait if wait is not None else 0.1
-
-        self.resolution = resolution or 1
-
-        self.set_angles(self.servo_1_parked_angle, self.servo_2_parked_angle)
-
-        self.status()
 
     def setup_turtle(self, coarseness):
         """Initialises a Python turtle based on this plotter."""
@@ -287,16 +286,16 @@ class Plotter:
             return "Plotting a test pattern is only possible when the bounds attribute is set."
 
         if not reverse:
-            top_y = self.bounds[1]
-            bottom_y = self.bounds[3]
+            top_y = self.top
+            bottom_y = self.bottom
         else:
-            bottom_y = self.bounds[1]
-            top_y = self.bounds[3]
+            bottom_y = self.top
+            top_y = self.bottom
 
         for n in range(repeat):
-            step = (self.bounds[2] - self.bounds[0]) / lines
-            x = self.bounds[0]
-            while x <= self.bounds[2]:
+            step = (self.right - self.left) / lines
+            x = self.left
+            while x <= self.right:
                 self.draw_line(
                     (x, top_y), (x, bottom_y), resolution=resolution, both=both
                 )
@@ -321,16 +320,16 @@ class Plotter:
             return "Plotting a test pattern is only possible when the bounds attribute is set."
 
         if not reverse:
-            min_x = self.bounds[0]
-            max_x = self.bounds[2]
+            min_x = self.left
+            max_x = self.right
         else:
-            max_x = self.bounds[0]
-            min_x = self.bounds[2]
+            max_x = self.left
+            min_x = self.right
 
         for n in range(repeat):
-            step = (self.bounds[3] - self.bounds[1]) / lines
-            y = self.bounds[1]
-            while y <= self.bounds[3]:
+            step = (self.bottom - self.top) / lines
+            y = self.top
+            while y <= self.bottom:
                 self.draw_line((min_x, y), (max_x, y), resolution=resolution, both=both)
                 y = y + step
 
@@ -810,27 +809,25 @@ class Plotter:
         print("------------------------------------------")
         print("pen:", self.pen.position)
 
-        bl = self.bounds[0], self.bounds[1]
-        tr = self.bounds[2], self.bounds[3]
         print("------------------------------------------")
-        print("bottom left:", bl, "top right:", tr)
+        print("left:", self.left, "right:", self.right, "top:", self.top, "bottom:", self.bottom)
         print("------------------------------------------")
 
     @property
-    def bl(self):
-        return (self.bounds[0], self.bounds[1])
+    def left(self):
+        return self.bounds[0]
 
     @property
-    def tl(self):
-        return (self.bounds[0], self.bounds[3])
+    def bottom(self):
+        return self.bounds[1]
 
     @property
-    def tr(self):
-        return (self.bounds[2], self.bounds[3])
+    def right(self):
+        return self.bounds[2]
 
     @property
-    def br(self):
-        return (self.bounds[2], self.bounds[1])
+    def top(self):
+        return self.bounds[3]
 
     def reset_report(self):
 
