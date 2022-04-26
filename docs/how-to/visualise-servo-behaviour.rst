@@ -12,7 +12,12 @@ A Jupyter Notebook is included, to  help visualise the relationship between puls
    :alt: 'Pulse-widths to angles'
    :class: 'main-visual'
 
-To run the Notebook::
+To run the Notebook, you'll first need to install Jupyter Lab (it's not included in the
+provided ``requirements.txt`) with::
+
+    pip install jupyterlab
+
+Then launch it with::
 
     jupyter lab pulse_widths.ipynb
 

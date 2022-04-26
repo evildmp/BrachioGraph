@@ -15,7 +15,7 @@ Optimising the plotter's geometry means designing it so that:
 * the movement of the motors to cover that shape is around their *centre positions* (and not at the extremes of their
   sweep), and uses *not too much or too little of their sweep*.
 
-The ``turtle_draw.py`` module will help you do this.
+The ``turtle_plotter.py`` module will help you do this.
 
 
 Decide on the length of the arms
@@ -39,10 +39,10 @@ Unless you're a very accurate worker, the actual length of each arm is likely to
 values (in cm) - we will use them in the next step.
 
 
-Model your BrachioGraph using ``turtle_draw.py``
+Model your BrachioGraph using ``turtle_plotter.py``
 ------------------------------------------------
 
-The ``turtle_draw.py`` contains a ``BrachioGraphTurtle`` class. The file ``bgt.py`` contains a module with an example
+The ``turtle_plotter.py`` contains a ``BrachioGraphTurtle`` class. The file ``bgt.py`` contains a module with an example
 instance of a ``BrachioGraphTurtle``, that you can use in different ways (you may prefer to copy this file and leave
 the original untouched).
 
@@ -51,7 +51,7 @@ You can use the class and the example instance:
 * as a script, by running ``python bgt.py``, which will execute all the commands in the file
 * interactively in a Python shell, executing commands one by one, e.g.::
 
-      >>> from turtle_draw import BrachioGraphTurtle
+      >>> from turtle_plotter import BrachioGraphTurtle
       >>> bgt = BrachioGraphTurtle(inner_arm=9, shoulder_centre_angle=-45, shoulder_sweep=120, outer_arm=7.5,  elbow_centre_angle=95, elbow_sweep=120)
       >>> bgt.draw_grid()
 
@@ -114,7 +114,7 @@ propose to build.
 120˚ sweep values for the inner and outer arms are a safe starting-point, along with values of -60˚ and 90˚ for
 the inner and outer centre positions respectively (if the arms are of equal length)::
 
-    >>> from turtle_draw import BrachioGraphTurtle
+    >>> from turtle_plotter import BrachioGraphTurtle
     >>> bgt = BrachioGraphTurtle(inner_arm=8, shoulder_centre_angle=-60, shoulder_sweep=120, outer_arm=8,  elbow_centre_angle=90, elbow_sweep=120)
 
 Draw the grid and an outline::
