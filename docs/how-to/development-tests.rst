@@ -3,7 +3,7 @@ How to run automated tests
 
 The BrachioGraph library includes a (minimal, at this point) test suite.
 
-The tests use `pytest <https://docs.pytest.org>`.
+The tests use `pytest <https://docs.pytest.org>`_.
 
 To run the tests, ``pytest`` needs to be installed (``pip install pytest``).
 
