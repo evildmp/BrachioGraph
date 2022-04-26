@@ -61,3 +61,5 @@ Changelog
 ----------
 
 * Cleaned up status() methods
+* Moved pigpio checks into Plotter class
+* Added more documentation
