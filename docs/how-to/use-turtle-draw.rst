@@ -40,7 +40,7 @@ values (in cm) - we will use them in the next step.
 
 
 Model your BrachioGraph using ``turtle_plotter.py``
-------------------------------------------------
+----------------------------------------------------
 
 The ``turtle_plotter.py`` contains a ``BrachioGraphTurtle`` class. The file ``bgt.py`` contains a module with an example
 instance of a ``BrachioGraphTurtle``, that you can use in different ways (you may prefer to copy this file and leave

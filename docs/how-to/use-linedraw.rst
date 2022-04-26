@@ -22,7 +22,7 @@ Installation
 ------------
 
 To use ``linedraw``, you'll first need to install ``opencv-python-headless`` (it's not included in
-the provided ``requirements.txt`) with::
+the provided ``requirements.txt``) with::
 
     pip install opencv-python-headless
 
