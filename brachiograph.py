@@ -164,32 +164,6 @@ class BrachioGraph(Plotter):
 
     # ----------------- reporting methods -----------------
 
-    def status(self):
-        print("------------------------------------------")
-        print("                      | Servo 1 | Servo 2 ")
-        print("                      | Shoulder| Elbow   ")
-        print("----------------------|---------|---------")
-
-        pw_1, pw_2 = self.get_pulse_widths()
-        print(f"{'pulse-width |':>23}", f"{pw_1:>7.0f}", "|", f"{pw_2:>7.0f}")
-
-        angle_1, angle_2 = self.angle_1, self.angle_2
-        print(f"{'angle |':>23}", f"{angle_1:>7.0f}", "|", f"{angle_2:>7.0f}")
-
-        h1, h2 = self.hysteresis_correction_1, self.hysteresis_correction_2
-        print(f"{'hysteresis correction |':>23}", f"{h1:>7.1f}", "|", f"{h2:>7.1f}")
-        print("------------------------------------------")
-        print(f"{'x/y location |':>23}", f"{self.x:>7.1f}", "|", f"{self.y:>7.1f}")
-        print()
-        print("------------------------------------------")
-        print("pen:", self.pen.position)
-
-        bl = self.bounds[0], self.bounds[1]
-        tr = self.bounds[2], self.bounds[3]
-        print("------------------------------------------")
-        print("bottom left:", bl, "top right:", tr)
-        print("------------------------------------------")
-
     def report(self):
 
         print(f"               -----------------|-----------------")
