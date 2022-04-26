@@ -21,5 +21,5 @@ Development
 .. toctree::
     :maxdepth: 1
 
-    Build the ocumentation <development-documentation>
+    Build the documentation <development-documentation>
     Run automated tests <development-tests>
