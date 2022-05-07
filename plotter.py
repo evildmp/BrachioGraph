@@ -131,7 +131,7 @@ class Plotter:
                 print("pigpio daemon is not available; running in virtual mode")
                 self.virtualise()
                 self.virtual = True
-
+                self.wait = wait if wait is not None else 0
 
         # create the pen object
         self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down, virtual=self.virtual)
@@ -144,13 +144,13 @@ class Plotter:
 
     def virtualise(self):
 
-            print("Initialising virtual BrachioGraph")
+        print("Initialising virtual BrachioGraph")
 
-            self.virtual_pw_1 = self.angles_to_pw_1(-90)
-            self.virtual_pw_2 = self.angles_to_pw_2(90)
+        self.virtual_pw_1 = self.angles_to_pw_1(-90)
+        self.virtual_pw_2 = self.angles_to_pw_2(90)
 
-            # by default in virtual mode, we use a wait factor of 0 for speed
-            self.virtual = True
+        # by default in virtual mode, we use a wait factor of 0 for speed
+        self.virtual = True
 
     def setup_turtle(self, coarseness):
         """Initialises a Python turtle based on this plotter."""
@@ -328,7 +328,7 @@ class Plotter:
         for n in range(repeat):
             step = (self.bottom - self.top) / lines
             y = self.top
-            while y <= self.bottom:
+            while y >= self.bottom:
                 self.draw_line((min_x, y), (max_x, y), resolution=resolution, both=both)
                 y = y + step
 
@@ -809,7 +809,16 @@ class Plotter:
         print("pen:", self.pen.position)
 
         print("------------------------------------------")
-        print("left:", self.left, "right:", self.right, "top:", self.top, "bottom:", self.bottom)
+        print(
+            "left:",
+            self.left,
+            "right:",
+            self.right,
+            "top:",
+            self.top,
+            "bottom:",
+            self.bottom,
+        )
         print("------------------------------------------")
 
     @property
