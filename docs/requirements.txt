@@ -6,7 +6,7 @@ furo==2022.1.2
 sphinx-inline-tabs
 sphinx-design==0.0.13
 
-numpy==1.21.0
+numpy==1.22.0
 pigpio==1.78
 Pillow==8.0.1
 readchar==2.0.1
