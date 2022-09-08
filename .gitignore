@@ -18,6 +18,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.._.DS_Store
 .DS_Store
 .ipynb_checkpoints
 

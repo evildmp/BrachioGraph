@@ -1,3 +1,5 @@
+"""Turtle plotter class."""
+# TODO: rename to plotter_turtle to have a nicer file listing and consistent naming.
 import math
 from turtle import Turtle, Screen
 
@@ -20,8 +22,8 @@ class BaseTurtle(Turtle):
         self.coarseness = coarseness
 
         if self.machine:
-            self.angle_1 = self.machine.angle_1
-            self.angle_2 = self.machine.angle_2
+            self.angle_shoulder = self.machine.angle_shoulder
+            self.angle_elbow = self.machine.angle_elbow
 
         # some basic dimensions of the drawing area
 
@@ -83,8 +85,8 @@ class BaseTurtle(Turtle):
             coarsened_angle_1 = self.coarsen_angle(angle_1)
             coarsened_angle_2 = self.coarsen_angle(angle_2)
 
-            diff_1 = coarsened_angle_1 - self.angle_1
-            diff_2 = coarsened_angle_2 - self.angle_2
+            diff_1 = coarsened_angle_1 - self.angle_shoulder
+            diff_2 = coarsened_angle_2 - self.angle_elbow
             length = math.sqrt(diff_1**2 + diff_2**2)
             no_of_steps = int(length * 10)
 
@@ -96,10 +98,10 @@ class BaseTurtle(Turtle):
                 )
 
                 for step in range(no_of_steps):
-                    self.angle_1 = self.angle_1 + length_of_step_1
-                    self.angle_2 = self.angle_2 + length_of_step_2
+                    self.angle_shoulder = self.angle_shoulder + length_of_step_1
+                    self.angle_elbow = self.angle_elbow + length_of_step_2
 
-                    x, y = self.machine.angles_to_xy(self.angle_1, self.angle_2)
+                    x, y = self.machine.angles_to_xy(self.angle_shoulder, self.angle_elbow)
                     self.setpos(x * self.multiplier, y * self.multiplier)
         else:
 
