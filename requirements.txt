@@ -5,3 +5,12 @@ readchar==2.0.1
 tqdm==4.54.0
 pytest==7.0.1
 tk==0.1.0
+# SPDX-FileCopyrightText: 2022 Alec Delaney, for Adafruit Industries
+#
+# SPDX-License-Identifier: Unlicense
+
+Adafruit-Blinka
+adafruit-circuitpython-register
+adafruit-circuitpython-busdevice
+adafruit-circuitpython-motor
+adafruit-circuitpython-pca9685

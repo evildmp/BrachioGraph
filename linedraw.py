@@ -6,6 +6,7 @@ import math
 import argparse
 import json
 import time
+import os
 
 from PIL import Image, ImageDraw, ImageOps
 
@@ -35,6 +36,7 @@ def image_to_json(
     repeat_contours=1,
     draw_hatch=False,
     repeat_hatch=1,
+    output_filename_append=""
 ):
 
     lines = vectorise(
@@ -44,9 +46,10 @@ def image_to_json(
         repeat_contours,
         draw_hatch,
         repeat_hatch,
+        output_filename_append
     )
 
-    filename = json_folder + image_filename + ".json"
+    filename = json_folder + os.path.basename(image_filename) + output_filename_append + ".json"
     lines_to_file(lines, filename)
 
 
@@ -110,6 +113,7 @@ def vectorise(
     repeat_contours=1,
     draw_hatch=False,
     repeat_hatch=1,
+    output_filename_append=""
 ):
 
     image = None
@@ -173,7 +177,7 @@ def vectorise(
         segments = segments + len(line) - 1
     print(len(lines), "lines,", segments, "segments.")
 
-    f = open(svg_folder + image_filename + ".svg", "w")
+    f = open(svg_folder + os.path.basename(image_filename) + output_filename_append + ".svg", "w")
     f.write(makesvg(lines))
     f.close()
 
