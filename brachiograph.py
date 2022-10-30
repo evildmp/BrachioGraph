@@ -55,7 +55,7 @@ class BrachioGraph(Plotter):
         super().__init__(
             bounds=bounds,
             servo_1_parked_pw=servo_1_parked_pw,
-            servo_2_parked_pw=servo_1_parked_pw,
+            servo_2_parked_pw=servo_2_parked_pw,
             servo_1_degree_ms=servo_1_degree_ms,
             servo_2_degree_ms=servo_2_degree_ms,
             servo_1_parked_angle=servo_1_parked_angle,
