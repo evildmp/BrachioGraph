@@ -44,7 +44,7 @@ BrachioGraph - the cheapest, simplest possible pen-plotter
 BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a library of simple Python applications.
 
 A BrachioGraph can be built for about €15 in an hour or so, using a Raspberry Pi computer, hobby servo motors and
-household items. The `BrachioGraph library <https://github.com/evildmp/brachiograph>`_ is published on GitHub abd
+household items. The `BrachioGraph library <https://github.com/evildmp/brachiograph>`_ is published on GitHub and
 includes simple Python code to drive the plotter and vectorise bit-map images.
 
 BrachioGraph plots cheerful, low-fi drawings, and can produce robotic sketches using a variety of drawing implements.
