@@ -1,13 +1,13 @@
-Sphinx==4.4.0
-sphinxcontrib-spelling==7.3.2
+Sphinx==5.3.0
+sphinxcontrib-spelling==7.6.2
 pyenchant==3.2.2
 sphinx-autobuild==2021.3.14
-furo==2022.1.2
-sphinx-inline-tabs
-sphinx-design==0.0.13
+furo==2022.9.29
+sphinx_inline_tabs==2022.1.2b11
+sphinx_design==0.3.0
 
-numpy==1.21.0
+numpy==1.23.4
 pigpio==1.78
-Pillow==8.0.1
-readchar==2.0.1
-tqdm==4.54.0
+Pillow==9.3.0
+readchar==4.0.3
+tqdm==4.64.1

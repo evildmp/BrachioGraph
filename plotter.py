@@ -136,7 +136,7 @@ class Plotter:
         # create the pen object
         self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down, virtual=self.virtual)
 
-        self.resolution = resolution or 1
+        self.resolution = resolution or 0.1
 
         self.set_angles(self.servo_1_parked_angle, self.servo_2_parked_angle)
 
