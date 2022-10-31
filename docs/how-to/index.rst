@@ -7,10 +7,9 @@ Usage
 .. toctree::
     :maxdepth: 1
 
-    Prepare a Raspberry Pi Zero for use with the plotter <prepare-pi>
-    Use the linedraw library to vectorise bitmap images <use-linedraw>
-    Emulate a plotter using Python turtle graphics <use-turtle>
-    Run a virtual BrachioGraph in software <virtual-mode>
+    Prepare a Raspberry Pi Zero for plotting (quick guide) <prepare-pi>
+    Vectorise images with the linedraw library <use-linedraw>
+    Run a virtual plotter in software <virtual-mode>
     Visualise the behaviour of servos <visualise-servo-behaviour>
     Optimise plotter geometry and drawing area <use-turtle-draw>
     Build a PantoGraph, an alternative plotter design <pantograph>

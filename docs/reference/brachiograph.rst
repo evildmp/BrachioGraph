@@ -4,6 +4,7 @@ Plotter modules
 
 ..  module:: plotter
 
+..  class:: Plotter
 
 ``Plotter``
 ===================
@@ -16,21 +17,21 @@ exception of ``__init__()``.
 All the classes, including this base class, can be instantiated *without any arguments* and will
 work for testing.
 
-For testing with turtle graphics, you will need to use one one of the sublasses.
+For testing with turtle graphics, you will need to use one of the subclasses.
 
 ..  automethod:: Plotter.__init__
 
-    :param bool virtual:
+    :param virtual:
         A virtual plotter will run in software only, and doesn't expect any attached hardware. This
         allows work and development on a machine other than a Raspberry Pi, and to run automated
         tests.
-    :param bool turtle:
+    :param turtle:
         Produces a graphical representation of the plotter and its behaviour using Python turtle
         graphics, as well as or instead of a physical plotter.
-    :param float or None turtle_coarseness:
+    :param turtle_coarseness:
         For use with ``turtle``; a factor, in degrees, to represent the resolution of the servos by
         rounding values. Defaults to 1˚ if not specified.
-    :param list or tuple bounds:
+    :param bounds:
         Four numbers, indicating the area that the plotter should treat as its
         available area for drawing in. The numbers represent, in order the left, top, right and
         bottom boundaries. Defaults to usable values in the default subclass definitions.
@@ -53,21 +54,20 @@ For testing with turtle graphics, you will need to use one one of the sublasses.
         both clockwise and anti-clockwise directions.
     :param int pw_up: The pulse-width for the pen's up position.
     :param int pw_down: The pulse-width for the pen's down position.
-    :param float or None wait: A time in seconds that the plotter will rest after making a
-        movement. If not specified, defaults to 0.1, or 0 for a virtual-only plotter.
-    :param float or None resolution:
+    :param float wait: A time in seconds that the plotter will rest after making a
+        movement. If not specified, will be initialised as 0.1, or 0 for a virtual-only plotter.
+    :param float resolution:
         A distance in centimetres. When drawing between two points, any line longer than
-        ``resolution`` will be broken down into a series of points no more than ``resolution``
+        ``resolution`` will be broken down into a series of points no more than ``resolution`` cm
         apart. This allows the plotter to approximate straight lines by drawing a series of shorter
-        curved lines (all the lines the plotter naturally draws are curved). If not specified,
-        defaults to 1.
+        curved lines (all the lines the plotter naturally draws are curved). If not specified, will 
+        be initialised as 0.1.
 
-
-In all the methods below, arguments that are also atrributes of the plotter class need only be used
+In all the methods below, arguments that are also attributes of the plotter class need only be used
 to override those values (which is generally not required).
 
 
-Plotting
+Plotting methods
 -------------------------------
 
 ..  automethod:: Plotter.plot_file
@@ -75,8 +75,8 @@ Plotting
 ..  automethod:: Plotter.plot_lines
 
 
-Drawing according to x/y values
--------------------------------
+Drawing methods using x/y values
+--------------------------------
 
 ..  automethod:: Plotter.box
 
@@ -91,8 +91,8 @@ Drawing according to x/y values
 ..  automethod:: Plotter.xy
 
 
-Drawing according to servo angle values
----------------------------------------
+Drawing methods using servo angle values
+----------------------------------------
 
 ..  automethod:: Plotter.move_angles
 
@@ -102,7 +102,7 @@ Pen-moving methods
 
 ..  automethod:: Plotter.set_angles
 
-..  automethod:: Plotter.park
+..  method:: Plotter.park
 
 
 Angles to pulse widths
@@ -227,14 +227,14 @@ Manual driving
           - ``L``
 
 
-Reporting
-----------------
+Reporting methods
+-----------------
 
 ..  automethod:: Plotter.status
 
 
-Trigonometry
-------------
+Trigonometric methods
+----------------------
 
 ..  automethod:: Plotter.xy_to_angles
 
