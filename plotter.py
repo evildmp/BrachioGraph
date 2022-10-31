@@ -7,7 +7,7 @@ import readchar
 import tqdm
 import pigpio
 import numpy
-from turtle_plotter import BaseTurtle
+
 
 
 class Plotter:
@@ -154,6 +154,9 @@ class Plotter:
 
     def setup_turtle(self, coarseness):
         """Initialises a Python turtle based on this plotter."""
+
+        from turtle_plotter import BaseTurtle
+
         self.turtle = BaseTurtle(
             window_size=850,  # width and height of the turtle canvas
             speed=10,  # how fast to draw
