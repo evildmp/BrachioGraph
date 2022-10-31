@@ -117,4 +117,4 @@ them, represented as co-ordinates in JSON format, and is what the plotter uses t
 
 Plot the file::
 
-  bg.plot_file("demo.json")
+  bg.plot_file("images/demo.json")
