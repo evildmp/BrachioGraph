@@ -8,14 +8,13 @@ import linedraw
 
 class TestBrachioGraph:
 
-    bg=BrachioGraph(servo_1_parked_pw=1570, servo_2_parked_pw=1450)
+    bg = BrachioGraph(servo_1_parked_pw=1570, servo_2_parked_pw=1450)
 
     def test_defaults_of_default_bg(self):
         assert (self.bg.angle_1, self.bg.angle_2) == (-90, 90)
 
     def test_parked_pws_correctly_assigned(self):
         assert (self.bg.servo_1_parked_pw, self.bg.servo_2_parked_pw) == (1570, 1450)
-
 
 
 class TestBiDiBrachioGraph:
@@ -94,4 +93,3 @@ class TestErrors:
         plotter = BrachioGraph(inner_arm=8.2, outer_arm=8.85, virtual=True)
         with pytest.raises(Exception):
             plotter.xy_to_angles(-10.2, 13.85)
-

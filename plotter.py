@@ -9,7 +9,6 @@ import pigpio
 import numpy
 
 
-
 class Plotter:
     def __init__(
         self,
