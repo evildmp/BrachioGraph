@@ -1,7 +1,7 @@
-numpy==1.21.0
+numpy==1.23.4
 pigpio==1.78
-Pillow==8.0.1
-readchar==2.0.1
-tqdm==4.54.0
+Pillow==9.3.0
+readchar==4.0.3
+tqdm==4.64.1
 pytest==7.0.1
 tk==0.1.0
