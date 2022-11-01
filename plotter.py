@@ -811,7 +811,9 @@ class Plotter:
         print("pen:", self.pen.position)
 
         print("------------------------------------------")
-        print(f"left: {self.left}, right: {self.right}, top: {self.top}, bottom: {self.bottom}")
+        print(
+            f"left: {self.left}, right: {self.right}, top: {self.top}, bottom: {self.bottom}"
+        )
         print("------------------------------------------")
         print(f"resolution: {self.resolution} cm")
         print("------------------------------------------")
