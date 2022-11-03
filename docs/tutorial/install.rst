@@ -3,30 +3,51 @@
 Install the software
 =====================
 
-The next step is to install the software. Raspberry PiOS Bullseye Lite has been tested.
+The next step is to install the software.
 
 The BrachioGraph library requires a few additional components. It needs to be run in a Python 3 environment, using
-Python 3.6 or later. Raspberry PiOS Bullseye will provide Python 3.9 or later.
+Python 3.6 or later.
 
 
 Install system packages
 -----------------------
 
-You may have some of these installed already, but that shouldn't matter.
-
-::
-
-    sudo apt install -y python3-venv python3-tk pigpiod libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git
-
-The packages include:
+You may have some of these installed already, but that shouldn't matter. The packages include:
 
 * ``venv``, for managing virtual environments under Python 3
-* `PIGPIO <http://abyz.me.uk/rpi/pigpio/index.html>`_, an excellent library that provides hardware control of the
-  Pi's GPIO pins - important for accurate timing of pulses. It comes with a Python interface to the lower-level code.
+* `PIGPIO <http://abyz.me.uk/rpi/pigpio/index.html>`_, an excellent library that provides hardware control of the Pi's GPIO pins - important for accurate timing of pulses. It comes with a Python interface to the lower-level code.
 * various system libraries required by the Pillow Python imaging library
 * ``libatlas3-base`` and ``libgfortran5``, required by the Numpy Python mathematics library
 * ``python3-tk``, for the Turtle graphics integration
 * Git
+
+Select the steps for installation using Ubuntu or Raspberry PiOS appropriately below.
+
+..  tab:: Ubuntu (tested with 22.04, 22.10)
+
+    Run::
+
+        sudo apt install -y sudo apt install -y python3-venv python3-tk libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git python3.10-venv python3-dev unzip make build-essential python3-pip
+
+    The `PIGPIO <http://abyz.me.uk/rpi/pigpio/index.html>`_ is not available via ``apt`` on Ubuntu, so it needs to be installed
+    with ``make``, which we'll do in a temporary workspace:
+    
+    ::
+
+        cd /tmp
+        wget https://github.com/joan2937/pigpio/archive/master.zip 
+        unzip master.zip 
+        cd pigpio-master
+        make
+        sudo make install
+        cd
+
+..  tab:: Raspberry PiOS (tested with Bullseye Lite)
+
+    Run::
+
+        sudo apt install -y python3-venv python3-tk pigpiod libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git
+
 
 .. _set-up-venv:
 
