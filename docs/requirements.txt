@@ -3,7 +3,6 @@ sphinxcontrib-spelling==7.6.2
 pyenchant==3.2.2
 sphinx-autobuild==2021.3.14
 furo==2022.9.29
-sphinx_inline_tabs==2022.1.2b11
 sphinx_design==0.3.0
 
 numpy==1.23.4

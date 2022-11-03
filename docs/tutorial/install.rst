@@ -23,30 +23,32 @@ You may have some of these installed already, but that shouldn't matter. The pac
 
 Select the steps for installation using Ubuntu or Raspberry PiOS appropriately below.
 
-..  tab:: Ubuntu (tested with 22.04, 22.10)
+.. tab-set::
 
-    Run::
+  ..  tab-item:: Ubuntu (tested with 22.04, 22.10)
 
-        sudo apt install -y sudo apt install -y python3-venv python3-tk libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git python3.10-venv python3-dev unzip make build-essential python3-pip
+      Run::
 
-    The `PIGPIO <http://abyz.me.uk/rpi/pigpio/index.html>`_ is not available via ``apt`` on Ubuntu, so it needs to be installed
-    with ``make``, which we'll do in a temporary workspace:
-    
-    ::
+          sudo apt install -y sudo apt install -y python3-venv python3-tk libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git python3.10-venv python3-dev unzip make build-essential python3-pip
 
-        cd /tmp
-        wget https://github.com/joan2937/pigpio/archive/master.zip 
-        unzip master.zip 
-        cd pigpio-master
-        make
-        sudo make install
-        cd
+      The `PIGPIO <http://abyz.me.uk/rpi/pigpio/index.html>`_ library is not available via ``apt`` on Ubuntu, so it needs to be installed
+      with ``make``, which we'll do in a temporary workspace:
+      
+      ::
 
-..  tab:: Raspberry PiOS (tested with Bullseye Lite)
+          cd /tmp
+          wget https://github.com/joan2937/pigpio/archive/master.zip 
+          unzip master.zip 
+          cd pigpio-master
+          make
+          sudo make install
+          cd
 
-    Run::
+  ..  tab-item:: Raspberry PiOS (tested with Bullseye Lite)
 
-        sudo apt install -y python3-venv python3-tk pigpiod libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git
+      Run::
+
+          sudo apt install -y python3-venv python3-tk pigpiod libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git
 
 
 .. _set-up-venv:

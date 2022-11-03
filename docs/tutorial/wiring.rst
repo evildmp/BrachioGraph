@@ -20,26 +20,28 @@ microseconds) determines the position of the motor.
 **At least two of the servos will need to share a 5V connection**, since the Raspberry Pi
 has only two available. How you achieve this will depend on what you have available.
 
-..  tab:: Use a breadboard
+..  tab-set:: 
+  
+  ..  tab-item:: Use a breadboard
 
-    If you have a breadboard, you can wire the servos up so:
+      If you have a breadboard, you can wire the servos up so:
 
-    .. image:: /images/wiring.png
-       :alt:
+      .. image:: /images/wiring.png
+         :alt:
 
-..  tab:: Solder a wiring loom
+  ..  tab-item:: Solder a wiring loom
 
-    I prefer to solder a little wiring loom out of jumper cables, that the servo's leads connect to,
-    so that they all share a single connector for 5V, and a single connector for Ground. That way,
-    you can use just 5 pins on the Raspberry Pi, all next to each other. It looks like this:
+      I prefer to solder a little wiring loom out of jumper cables, that the servo's leads connect to,
+      so that they all share a single connector for 5V, and a single connector for Ground. That way,
+      you can use just 5 pins on the Raspberry Pi, all next to each other. It looks like this:
 
-    .. image:: /images/loom.jpg
-       :alt:
+      .. image:: /images/loom.jpg
+         :alt:
 
-    This connects to the Raspberry Pi like so:
+      This connects to the Raspberry Pi like so:
 
-    .. image:: /images/pin-connections.jpg
-       :alt:
+      .. image:: /images/pin-connections.jpg
+         :alt:
 
 
 Check the connections
