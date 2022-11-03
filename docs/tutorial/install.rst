@@ -29,7 +29,7 @@ Select the steps for installation using Ubuntu or Raspberry PiOS appropriately b
 
       Run::
 
-          sudo apt install -y sudo apt install -y python3-venv python3-tk libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git python3.10-venv python3-dev unzip make build-essential python3-pip
+          sudo apt install -y python3-venv python3-tk libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git python3.10-venv python3-dev unzip make build-essential python3-pip
 
       The `PIGPIO <http://abyz.me.uk/rpi/pigpio/index.html>`_ library is not available via ``apt`` on Ubuntu, so it needs to be installed
       with ``make``, which we'll do in a temporary workspace:
@@ -74,12 +74,13 @@ Clone the BrachioGraph repository
 
 Use Git to clone the ``BrachioGraph`` repository from https://github.com/evildmp/brachiograph::
 
-    git clone git@github.com:evildmp/BrachioGraph.git
-
-You will need to have set up a public key using ``ssh-keygen`` and `added your public key to your GitHub account
-<https://github.com/settings/ssh/new>`_ for this to work. Or, you can use HTTPS instead::
-
     git clone https://github.com/evildmp/BrachioGraph.git
+
+Or, if you have already set up a public key using ``ssh-keygen`` and `added your public key to your GitHub account
+<https://github.com/settings/ssh/new>`_ you can use SSH instead::
+
+
+    git clone git@github.com:evildmp/BrachioGraph.git
 
 
 Install Python packages
