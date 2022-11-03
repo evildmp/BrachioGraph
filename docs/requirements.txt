@@ -5,7 +5,7 @@ sphinx-autobuild==2021.3.14
 furo==2022.9.29
 sphinx_design==0.3.0
 
-numpy==1.23.4
+numpy>=1.21.6
 pigpio==1.78
 Pillow==9.3.0
 readchar==4.0.3
