@@ -129,7 +129,6 @@ class Plotter:
             except AttributeError:
                 print("pigpio daemon is not available; running in virtual mode")
                 self.virtualise()
-                self.virtual = True
                 self.wait = wait if wait is not None else 0
 
         # create the pen object
@@ -147,8 +146,6 @@ class Plotter:
 
         self.virtual_pw_1 = self.angles_to_pw_1(-90)
         self.virtual_pw_2 = self.angles_to_pw_2(90)
-
-        # by default in virtual mode, we use a wait factor of 0 for speed
         self.virtual = True
 
     def setup_turtle(self, coarseness):
@@ -427,7 +424,8 @@ class Plotter:
 
         length = math.sqrt(diff_1**2 + diff_2**2)
 
-        no_of_steps = int(length / resolution) or 1
+        no_of_steps = int(length / resolution / 10) or 1
+        print(no_of_steps) 
 
         if no_of_steps < 100:
             disable_tqdm = True
@@ -891,7 +889,6 @@ class Pen:
 
         else:
             self.rpi.set_servo_pulsewidth(self.pin, self.pw_down)
-            sleep(self.transition_time)
 
         if self.bg.turtle:
             self.bg.turtle.down()
@@ -899,6 +896,7 @@ class Pen:
             self.bg.turtle.width(1)
 
         self.position = "down"
+        sleep(self.transition_time)
 
     def up(self):
 
@@ -907,12 +905,12 @@ class Pen:
 
         else:
             self.rpi.set_servo_pulsewidth(self.pin, self.pw_up)
-            sleep(self.transition_time)
 
         if self.bg.turtle:
             self.bg.turtle.up()
 
         self.position = "up"
+        sleep(self.transition_time)
 
     # for convenience, a quick way to set pen motor pulse-widths
     def pw(self, pulse_width):
