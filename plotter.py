@@ -445,9 +445,6 @@ class Plotter:
 
             self.set_angles(self.angle_1, self.angle_2)
 
-            if step + 1 < no_of_steps:
-                sleep(length * wait / no_of_steps)
-
         sleep(length * wait / 10)
 
     # ----------------- pen-moving methods -----------------
