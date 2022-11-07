@@ -8,7 +8,7 @@ import linedraw
 
 class TestBrachioGraph:
 
-    bg = BrachioGraph(servo_1_parked_pw=1570, servo_2_parked_pw=1450)
+    bg = BrachioGraph(servo_1_parked_pw=1570, servo_2_parked_pw=1450, wait=0)
 
     def test_defaults_of_default_bg(self):
         assert (self.bg.angle_1, self.bg.angle_2) == (-90, 90)
@@ -21,6 +21,7 @@ class TestBiDiBrachioGraph:
 
     bg = BrachioGraph(
         virtual=True,
+        wait=0,
         servo_1_angle_pws_bidi={
             -135: {"cw": 2374, "acw": 2386},
             -120: {"cw": 2204, "acw": 2214},
@@ -90,6 +91,6 @@ class TestBiDiBrachioGraph:
 
 class TestErrors:
     def test_maths_errors(self):
-        plotter = BrachioGraph(inner_arm=8.2, outer_arm=8.85, virtual=True)
+        plotter = BrachioGraph(inner_arm=8.2, outer_arm=8.85, virtual=True, wait=0)
         with pytest.raises(Exception):
             plotter.xy_to_angles(-10.2, 13.85)

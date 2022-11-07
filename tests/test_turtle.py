@@ -24,7 +24,7 @@ bgt = BrachioGraphTurtle(
     elbow_sweep=120,
 )
 
-bg = BrachioGraph(virtual=True, turtle=True)
+bg = BrachioGraph(virtual=True, turtle=True, wait=0)
 
 
 def test_grid():

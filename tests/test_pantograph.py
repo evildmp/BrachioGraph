@@ -4,7 +4,7 @@ from pytest import approx
 from pantograph import PantoGraph
 
 pg = PantoGraph(
-    virtual=True,
+    virtual=True, wait=0,
 )
 
 # ----------------- set-up tests -----------------
