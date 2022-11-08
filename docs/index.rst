@@ -1,31 +1,3 @@
-.. raw:: html
-
-    <style>
-        .row {clear: both}
-        h2  {border-bottom: 1px solid gray;}
-
-        .column img {border: 1px solid gray;}
-
-        @media only screen and (min-width: 1000px),
-               only screen and (min-width: 500px) and (max-width: 768px){
-
-            .column {
-                padding-left: 5px;
-                padding-right: 5px;
-                float: left;
-            }
-
-            .column3  {
-                width: 33.3%;
-            }
-
-            .column2  {
-                width: 50%;
-            }
-        }
-    </style>
-
-
 ==========================================================
 BrachioGraph - the cheapest, simplest possible pen-plotter
 ==========================================================
@@ -43,39 +15,36 @@ BrachioGraph - the cheapest, simplest possible pen-plotter
 
 BrachioGraph - *arm-writer* - is an easy-to-build pen-plotter, driven by a library of simple Python applications.
 
+BrachioGraph plots cheerful, low-fi drawings, and can produce robotic sketches using a variety of drawing implements.
+
 A BrachioGraph can be built for about €15 in an hour or so, using a Raspberry Pi computer, hobby servo motors and
 household items. The `BrachioGraph library <https://github.com/evildmp/brachiograph>`_ is published on GitHub and
 includes simple Python code to drive the plotter and vectorise bit-map images.
 
-BrachioGraph plots cheerful, low-fi drawings, and can produce robotic sketches using a variety of drawing implements.
 
 Contents
 ------------
 
-:doc:`Tutorial <tutorial/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+..  grid:: 1 1 2 2
 
-**Start here**: build the machine, install the software, make your first drawings
+   ..  grid-item:: :doc:`Tutorial <tutorial/index>`
 
+       **Start here**: build the machine, install the software, make your first drawings
 
-:doc:`How-to guides <how-to/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   ..  grid-item:: :doc:`How-to guides <how-to/index>`
 
-Improve the calibration, process images, visualise plotter behaviour, alternative designs
+      Improve the calibration, process images, visualise plotter behaviour, build alternative designs
 
+.. grid:: 1 1 2 2
+   :reverse:
 
-:doc:`Explanation <explanation/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. grid-item:: :doc:`Reference <reference/index>`
 
-Understanding the mathematics, choosing hardware.
+      Guide to key classes and functions
 
+   .. grid-item:: :doc:`Explanation <explanation/index>`
 
-:doc:`Reference <reference/index>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Guide to key classes and functions
-
-
+      Understanding the mathematics, choosing hardware
 
 
 From bitmap to plot via vectorisation
