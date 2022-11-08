@@ -10,9 +10,9 @@ Wire up the plotter
 
 The three servos need to be connected to the Raspberry Pi. Each servo has three wires:
 
-* 5V (power)
-* Ground
-* Signal
+* 5V (power) - usually orange or red
+* Ground - usually brown
+* Signal - usually yellow
 
 5V and ground are required to power the servo; the signal wire carries a pulse, whose width (its length in
 microseconds) determines the position of the motor.
