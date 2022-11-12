@@ -46,8 +46,14 @@ class Plotter:
         self.angle_2 = servo_2_parked_angle
 
         if turtle:
-            self.setup_turtle(turtle_coarseness)
-            self.turtle.showturtle()
+            try:
+                from turtle import Turtle, Screen
+                self.setup_turtle(turtle_coarseness)
+                self.turtle.showturtle()
+
+            except ModuleNotFoundError:
+                self.turtle = False
+                print("Turtle mode unavailable")
         else:
             self.turtle = False
 

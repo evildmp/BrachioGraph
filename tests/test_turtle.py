@@ -1,5 +1,7 @@
 import pytest
 
+BaseTurtle = pytest.importorskip("BaseTurtle")
+
 from turtle_plotter import BaseTurtle, BrachioGraphTurtle
 from brachiograph import BrachioGraph
 from plotter import Plotter

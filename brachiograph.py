@@ -4,7 +4,6 @@ from time import sleep
 import readchar
 import math
 import numpy
-from turtle_plotter import BrachioGraphTurtle
 from plotter import Plotter
 
 
@@ -76,6 +75,9 @@ class BrachioGraph(Plotter):
         )
 
     def setup_turtle(self, coarseness):
+        
+        from turtle_plotter import BrachioGraphTurtle
+
         self.turtle = BrachioGraphTurtle(
             inner_arm=self.inner_arm,  # the length of the inner arm (blue)
             outer_arm=self.outer_arm,  # the length of the outer arm (red)
