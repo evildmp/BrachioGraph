@@ -88,6 +88,9 @@ html_static_path = ["_static"]
 html_css_files = [
     "brachiograph.css",
 ]
+html_theme_options = {
+    "sidebar_hide_name": True,
+}
 
 
 # Theme options are theme-specific and customize the look and feel of a theme

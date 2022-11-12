@@ -1,9 +1,11 @@
 .. _prepare-pi:
 
-How to prepare a Raspberry Pi Zero to drive the plotter
-========================================================
+How to prepare a headless Raspberry Pi Zero to drive the plotter
+=================================================================
 
-The Raspberry Pi Zero is ideal as the engine for the plotter. Here's a recipe for a quick set-up, from scratch.
+A headless Raspberry Pi Zero is ideal as the engine for the plotter. Here's a recipe for a quick set-up, from scratch.
+
+These instuctions have been tested with Raspberry Pi OS Bullseye.
 
 Download the latest Raspberry Pi OS Lite (minimal image) from the `Raspberry Pi OS downloads page
 <https://www.raspberrypi.org/downloads/raspberry-pi-os>`_.
@@ -74,10 +76,10 @@ Copy your public key to the Pi so you don't have to log in each time you SSH - o
 Set a fixed MAC address
 -----------------------
 
-By default, the Pi will generate a new MAC address and appear as a new device to the host each time
+You may find that by default, the Pi will generate a new MAC address and appear as a new device to the host each time
 it reboots, which is annoying.
 
-To fix the address, add a file ``/etc/modprobe.d/rndis.conf``. In it, add::
+To set a fixed address, add a file ``/etc/modprobe.d/rndis.conf``. In it, add::
 
     options g_ether host_addr=ae:ad:f5:9d:9f:ba dev_addr=7a:26:9f:3e:97:6c
 
@@ -142,7 +144,7 @@ Python packages
 
 In a :ref:`Python 3 virtual environment <set-up-venv>`::
 
-    pip install -r Brachiograph/requirements.txt
+    pip install -r BrachioGraph/requirements.txt
 
 
 Add a pin header

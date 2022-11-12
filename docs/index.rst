@@ -1,6 +1,9 @@
 ==========================================================
-BrachioGraph - the cheapest, simplest possible pen-plotter
+BrachioGraph
 ==========================================================
+
+..  rubric:: The world's cheapest, simplest possible pen-plotter.
+
 
 ..  raw:: html
 
@@ -67,7 +70,7 @@ From bitmap to plot via vectorisation
 The BrachioGraph community
 --------------------------
 
-BrachioGraphs benefits from contributions from the open-source community, and independently-created :ref:`community
+BrachioGraph benefits from contributions from the open-source community, and independently-created :ref:`community
 resources <community-resources>`. These include videos, `brachio.me <https://brachio.me>`_, a web version of the
 linedraw software used to vectorise images and `3D printed plotter components
 <https://www.thingiverse.com/thing:4295302>`_.
