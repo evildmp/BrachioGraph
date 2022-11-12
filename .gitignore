@@ -20,6 +20,7 @@ var/
 *.egg
 .DS_Store
 .ipynb_checkpoints
+._*
 
 # Sphinx documentation
 docs/_build/
