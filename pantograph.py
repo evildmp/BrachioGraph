@@ -8,7 +8,6 @@ import numpy
 import json
 import pigpio
 from plotter import Plotter, Pen
-from turtle_plotter import PantoGraphTurtle
 
 
 def hypotenuse(side1, side2):
@@ -189,6 +188,9 @@ class PantoGraph(Plotter):
         return x, y
 
     def setup_turtle(self):
+
+        from turtle_plotter import PantoGraphTurtle
+        
         self.turtle = PantoGraphTurtle(
             driver=self.driver,
             follower=self.follower,

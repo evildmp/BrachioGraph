@@ -6,9 +6,6 @@ class TestBasicPlotter:
 
     plotter = Plotter()
 
-    def test_virtual(self):
-        assert self.plotter.virtual == True
-
     def test_status_report(self):
         self.plotter.status()
 
