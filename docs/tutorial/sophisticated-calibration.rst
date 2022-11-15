@@ -42,7 +42,48 @@ both directions, to get an average for each angle and take account of hysteresis
 formula that gives us :ref:`a curve that corresponds to these points <explanation-non-linearity>`, and the ones in
 between them.
 
-This is where the :download:`template grid </supporting-files/template-grid.pdf>` comes in handy.
+This is where the :download:`template grid </supporting-files/template-grid.pdf>` comes in handy. If you haven't already
+done so, affix the template to the plotter base, so that the shoulder motor's spindle is at 0, 0 (see :ref:`assembly` for
+reference).
+
+To help you collect the pulse-width values you need, use the ``capture_pws()`` method::
+
+    bg.capture_pws()
+
+Use the controls indicated to move the arms:
+
+..  list-table::
+    :stub-columns: 1
+
+    * -
+      - Exit
+      - -10 µs
+      - -1 µs
+      - \+ 10 µs
+      - \+ 1 µs
+    * -
+      - ``0``
+      -
+      -
+      -
+      -
+    * - Shoulder
+      -
+      - ``a``
+      - ``A``
+      - ``s``
+      - ``S``
+    * - Elbow
+      -
+      - ``k``
+      - ``K``
+      - ``l``
+      - ``L``
+
+
+
+
+
 
 
 Create a table
@@ -127,10 +168,7 @@ Prepare another table on some paper:
       -
 
 
-Lower the pen
-~~~~~~~~~~~~~
-
-Lower the pen, because we need to account for its drag::
+It can help to lower the pen, to account for its drag::
 
   bg.pen.down()
 
