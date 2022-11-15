@@ -23,6 +23,8 @@ You'll need:
 * strong adhesive or a hot glue gun
 
 
+.. _assembly:
+
 Assembly
 -----------------
 
