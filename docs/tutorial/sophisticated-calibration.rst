@@ -56,207 +56,86 @@ Use the controls indicated to move the arms:
     :stub-columns: 1
 
     * -
-      - Exit
       - -10 µs
       - -1 µs
       - \+ 10 µs
       - \+ 1 µs
     * -
-      - ``0``
       -
       -
       -
       -
     * - Shoulder
-      -
       - ``a``
       - ``A``
       - ``s``
       - ``S``
     * - Elbow
-      -
       - ``k``
       - ``K``
       - ``l``
       - ``L``
-
-
-
-
-
-
-
-Create a table
-~~~~~~~~~~~~~~
-
-Prepare another table on some paper:
-
-..  list-table::
-    :widths: 45 5 5 5 5 5 5 5 5 5 5 5
-
-    * - **shoulder angle**
-      - -135˚
-      - **-120˚**
-      - -105˚
-      - **-90˚**
-      - -75˚
-      - **-60˚**
-      - -45˚
-      - **-30˚**
-      - -15˚
-      - **0˚**
-      - 15˚
-    * - clockwise
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-    * - anti-clockwise
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-    * - **elbow angle**
-      - 15˚
-      - **30˚**
-      - 45˚
-      - **60˚**
-      - 75˚
-      - **90˚**
-      - 105˚
-      - **120˚**
-      - 135˚
-      - **150˚**
-      - 165˚
-    * - clockwise
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-    * - anti-clockwise
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-      -
-
-
-It can help to lower the pen, to account for its drag::
-
-  bg.pen.down()
-
-
-Drive the plotter
-~~~~~~~~~~~~~~~~~
-
-Now, use the ``drive()`` method to control the pulse-widths interactively from the keyboard::
-
-    bg.drive()
-
-The controls are:
 
 ..  list-table::
     :stub-columns: 1
 
-    * -
-      - Exit
-      - -10 µs
-      - -1 µs
-      - \+ 10 µs
-      - \+ 1 µs
-    * -
+    * - Capture pulse-width value
+      - ``c``
+    * - Show captured values
+      - ``v``
+    * - Exit
       - ``0``
-      -
-      -
-      -
-      -
-    * - Shoulder
-      -
-      - ``a``
-      - ``A``
-      - ``s``
-      - ``S``
-    * - Elbow
-      -
-      - ``k``
-      - ``K``
-      - ``l``
-      - ``L``
+
 
 First, move the *outer* arm to about 150˚. This is to keep it out of the way of the edge of the grid while working on
 the inner arm.
 
-Now from somewhere left of -135˚, start moving the *inner* arm clockwise. Record the pulse-width for the angles listed
-in the table. If you overshoot an angle, go back and approach it again, always from the same side.
+Now from somewhere left of -135˚, start moving the *inner* arm clockwise. Record the pulse-width for the main
+angles shown on the template - press ``c`` when exactly over it, and enter the angle.
 
-Then, do the same for the same angles, but working anti-clockwise.
-
-You don't need to do all the angles listed in the table - just do the ones shown in bold; if you're a perfectionist,
-you can do more of them.
+Each angle needs to be captured in both directions, clockwise and anti-clockwise. Press ``v`` to see the data you
+are collecting.
 
 ..  note::
 
     It's quite hard to judge these angle accurately, because of the distance between the arm and the printed
     protractor. A good way is to sight along the printed angle, from just above the board level.
 
-Then add your own vales to a Python dictionary, which might look something like this::
+Once you have collected all the angles in both directions for the shoulder motor, do the same for the elbow motor.
 
-    servo_1_angle_pws_bidi = {
-        -135: {'cw': 2305, 'acw': 2284},
-        -120: {'cw': 2131, 'acw': 2114},
-        -90:  {'cw': 1841, 'acw': 1821},
-        -60:  {'cw': 1576, 'acw': 1569},
-        -30:  {'cw': 1315, 'acw': 1309},
-        0:    {'cw': 1061, 'acw': 1039},
-        30:   {'cw':  765, 'acw':  754},
-    },
-
-(``cw`` = clockwise, ``acw`` = anti-clockwise; ``bidi`` in the dictionary name just stands for "bidirectional".)
-
-And then place the inner arm at exactly 0˚ so that the outer arm is in the right place over the template (the elbow
-motor spindle should be at exactly 0, 8), and do the same for ``servo_2_angle_pws_bidi``. It's much easier to judge
+Move the inner arm to exactly 0˚ so that the outer arm is in the right place over the template (the elbow
+motor spindle should be at exactly 0, 8), then move the outer arm over the range of angles. It's much easier to judge
 angles accurately with the outer arm, because you can see where the pen actually touches the drawing surface.
 
-Your dictionary of values might be something like::
+Check for any missing values (use ``v``), and when done, ``0``. The output might be something like::
 
-    servo_2_angle_pws_bidi = {
-        30:  {'cw':  899, 'acw': 873},
-        60:  {'cw': 1169, 'acw': 1153},
-        75:  {'cw': 1289, 'acw': 1273},
-        90:  {'cw': 1411, 'acw': 1403},
-        105: {'cw': 1541, 'acw': 1529},
-        120: {'cw': 1675, 'acw': 1663},
-        150: {'cw': 1975, 'acw': 1963},
-    }
+    servo_1_angle_pws_bidi =
+    {30: {'cw': 769, 'acw': 759},
+     15: {'cw': 919, 'acw': 919},
+     0: {'cw': 1059, 'acw': 1069},
+     -15: {'cw': 1209, 'acw': 1219},
+     -30: {'cw': 1349, 'acw': 1339},
+     -45: {'cw': 1459, 'acw': 1459},
+     -60: {'cw': 1579, 'acw': 1589},
+     -75: {'cw': 1719, 'acw': 1709},
+     -105: {'cw': 1999, 'acw': 1979},
+     -120: {'cw': 2119, 'acw': 2129},
+     -135: {'cw': 2289, 'acw': 2289},
+     -90: {'acw': 1859, 'cw': 1859}}
+    servo_2_angle_pws_bidi =
+    {15: {'cw': 656, 'acw': 639},
+     30: {'cw': 788, 'acw': 778},
+     45: {'cw': 928, 'acw': 908},
+     60: {'cw': 1058, 'acw': 1048},
+     75: {'cw': 1218, 'acw': 1208},
+     90: {'cw': 1368, 'acw': 1358},
+     105: {'cw': 1518, 'acw': 1508},
+     120: {'cw': 1668, 'acw': 1668},
+     135: {'cw': 1818, 'acw': 1818},
+     150: {'cw': 1968, 'acw': 1968}}
 
-Finally, add the two dictionaries to the BrachioGraph definition:
+
+Now, you can copy and paste (you'll need to do a little reformatting) the two dictionaries to the BrachioGraph definition:
 
 ..  code-block::
     :emphasize-lines: 10-15
@@ -284,3 +163,4 @@ they'll simply be ignored now.
 This definition should do a pretty good job of ironing out some of the slack and imprecision inherent in the system,
 and even make up somewhat for the low quality of the motors. It can't work miracles though. The output will always be
 lo-fi and shaky. But that's how it's meant to be.
+

@@ -779,17 +779,17 @@ clockwise and anti-clockwise. Press "0" to exit.
 
             elif key == "0":
                 # exit and print results
-                print("servo_1_angle_pws_bidi")
-                pprint.pp(pws1_dict)
-                print("servo_2_angle_pws_bidi")
-                pprint.pp(pws2_dict)
+                print("servo_1_angle_pws_bidi =")
+                pprint.pp(pws1_dict, sort_dicts=True, indent=4)
+                print("servo_2_angle_pws_bidi =")
+                pprint.pp(pws1_dict, sort_dicts=True, indent=4)
                 return
 
             elif key == "v":
-                print("servo_1_angle_pws_bidi")
+                print("servo_1_angle_pws_bidi =")
                 pprint.pp(pws1_dict, sort_dicts=True, indent=4)
-                print("servo_2_angle_pws_bidi")
-                pprint.pp(pws2_dict, sort_dicts=True, indent=4)
+                print("servo_2_angle_pws_bidi =")
+                pprint.pp(pws1_dict, sort_dicts=True, indent=4)
 
             elif key == "c":
                 # capture a value
