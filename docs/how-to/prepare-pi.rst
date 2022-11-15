@@ -3,7 +3,11 @@
 How to prepare a headless Raspberry Pi Zero to drive the plotter
 =================================================================
 
-A headless Raspberry Pi Zero is ideal as the engine for the plotter. Here's a recipe for a quick set-up, from scratch.
+A headless Raspberry Pi Zero is ideal as the engine for the plotter. It can
+can be used in OTG (on-the-go) mode, in which it receives both power and a
+network connection to a host machine over a single USB connection. 
+
+Here's a recipe for a quick set-up, from scratch.
 
 These instuctions have been tested with Raspberry Pi OS Bullseye.
 
