@@ -2,6 +2,7 @@
 
 from time import sleep
 import json
+import pprint
 import math
 import readchar
 import tqdm
@@ -48,6 +49,7 @@ class Plotter:
         if turtle:
             try:
                 from turtle import Turtle, Screen
+
                 self.setup_turtle(turtle_coarseness)
                 self.turtle.showturtle()
 
@@ -69,6 +71,7 @@ class Plotter:
         self.hysteresis_correction_1 = hysteresis_correction_1
 
         if servo_1_angle_pws_bidi:
+            # use the bi-directional values to obtain mean values, and a hysteresis correction value
             servo_1_angle_pws = []
             differences = []
             for angle, pws in servo_1_angle_pws_bidi.items():
@@ -92,6 +95,7 @@ class Plotter:
         self.hysteresis_correction_2 = hysteresis_correction_2
 
         if servo_2_angle_pws_bidi:
+            # use the bi-directional values to obtain mean values, and a hysteresis correction value
             servo_2_angle_pws = []
             differences = []
             for angle, pws in servo_2_angle_pws_bidi.items():
@@ -700,8 +704,8 @@ class Plotter:
 
         if self.virtual:
 
-            actual_pulse_width_1 = self.virtual_pw_1
-            actual_pulse_width_2 = self.virtual_pw_2
+            actual_pulse_width_1 = int(self.virtual_pw_1)
+            actual_pulse_width_2 = int(self.virtual_pw_2)
 
         else:
 
@@ -724,6 +728,86 @@ class Plotter:
 
     # ----------------- manual driving methods -----------------
 
+    def capture_pws(self):
+        print("""
+Drive each servo over a wide range of movement (do not exceed a pulse-width
+range ~600 to ~2400). To capture the pulse-width value for a particular angle,
+press "c", then enter the angle. For each angle, do this in both directions,
+clockwise and anti-clockwise. Press "0" to exit.
+        """)
+
+        pw_1, pw_2 = self.get_pulse_widths()
+        self.set_pulse_widths(pw_1, pw_2)
+
+        last_action = values = None
+        pws1_dict = {}
+        pws2_dict = {}
+
+        print("0 to exit, c to capture a value, v to show captured values")
+        print("Shoulder a: -10  A: -1   s: +10  S: +1")
+        print("Elbow    k: -10  K: -1   l: +10  L: +1")
+
+        controls = {
+            "a": [-10, 0, "acw"],
+            "A": [-1, 0, "acw"],
+            "s": [+10, 0, "cw"],
+            "S": [+1, 0, "cw"],
+            "k": [0, -10, "acw"],
+            "K": [0, -1, "acw"],
+            "l": [0, +10, "cw"],
+            "L": [0, +1, "cw"],
+        }
+
+        while True:
+            # move the arms if commanded
+            key = readchar.readchar()
+            values = controls.get(key)
+
+            if values:
+
+                if values[0] or values[1]:
+                    previous_pw_1, previous_pw_2 = pw_1, pw_2
+                    pw_1 += values[0]
+                    pw_2 += values[1]
+
+                    print(pw_1, pw_2)
+
+                    self.set_pulse_widths(pw_1, pw_2)
+
+                    last_action = values
+
+
+            elif key == "0":
+                # exit and print results
+                print("servo_1_angle_pws_bidi =")
+                pprint.pp(pws1_dict, sort_dicts=True, indent=4)
+                print("servo_2_angle_pws_bidi =")
+                pprint.pp(pws1_dict, sort_dicts=True, indent=4)
+                return
+
+            elif key == "v":
+                print("servo_1_angle_pws_bidi =")
+                pprint.pp(pws1_dict, sort_dicts=True, indent=4)
+                print("servo_2_angle_pws_bidi =")
+                pprint.pp(pws1_dict, sort_dicts=True, indent=4)
+
+            elif key == "c":
+                # capture a value
+                if not last_action:
+                    print("Drive the servos to a new position first")
+
+                # add the values - if any - to the dictionaries
+                elif last_action[0]:
+                    angle = int(input("Enter the angle of the inner arm: "))
+                    pws1_dict.setdefault(angle, {})[last_action[2]] = pw_1
+
+                    print(pws1_dict)
+
+                elif last_action[1]:
+                    angle = int(input("Enter the angle of the outer arm: "))
+                    pws2_dict.setdefault(angle, {})[last_action[2]] = pw_2
+
+
     def drive(self):
         """Control the pulse-widths using the keyboard."""
 
@@ -731,31 +815,36 @@ class Plotter:
 
         self.set_pulse_widths(pw_1, pw_2)
 
+        print("0 to exit")
+        print("Shoulder a: -10  A: -1   s: +10  S: +1")
+        print("Elbow    k: -10  K: -1   l: +10  L: +1")
+
+        controls = {
+            "a": [-10, 0],
+            "A": [-1, 0],
+            "s": [+10, 0],
+            "S": [+1, 0],
+            "k": [0, -10],
+            "K": [0, -1],
+            "l": [0, +10],
+            "L": [0, +1],
+        }
+
         while True:
             key = readchar.readchar()
 
             if key == "0":
                 return
-            elif key == "a":
-                pw_1 = pw_1 - 10
-            elif key == "s":
-                pw_1 = pw_1 + 10
-            elif key == "A":
-                pw_1 = pw_1 - 2
-            elif key == "S":
-                pw_1 = pw_1 + 2
-            elif key == "k":
-                pw_2 = pw_2 - 10
-            elif key == "l":
-                pw_2 = pw_2 + 10
-            elif key == "K":
-                pw_2 = pw_2 - 2
-            elif key == "L":
-                pw_2 = pw_2 + 2
 
-            print(pw_1, pw_2)
+            values = controls.get(key)
 
-            self.set_pulse_widths(pw_1, pw_2)
+            if values:
+                pw_1 += values[0]
+                pw_2 += values[1]
+
+                print(pw_1, pw_2)
+
+                self.set_pulse_widths(pw_1, pw_2)
 
     def drive_xy(self):
         """Control the x/y position using the keyboard."""
