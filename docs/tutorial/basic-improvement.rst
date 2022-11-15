@@ -39,7 +39,7 @@ angle.
 
 This behaviour is called :ref:`hysteresis <about-hysteresis>`, and we can attempt to counteract it. We'll do this by
 accounting for it, and commanding the motors to *overshoot* their targets by an equivalent distance. Add hysteresis
-correction to the BrachioGraph definition:
+correction to the BrachioGraph definition in ``custom.py``:
 
 ..  code-block::
     :emphasize-lines: 6-7
@@ -80,7 +80,7 @@ Is the inner arm now exactly at 0˚? If not, try different values for ``angle_1`
 Find out the actual pulse-width value, and subtract it from the -90˚ pulse-width value. That's the difference required
 to move 90º. If you divide it by 90, you'll get a value corresponding to 1 degree of movement.
 
-Do a similar check with the outer arm. Add the values you discovered to the definition, for example:
+Do a similar check with the outer arm. Add the values you discovered to the definition in ``custom.py``, for example:
 
 ..  code-block::
     :emphasize-lines: 8-9

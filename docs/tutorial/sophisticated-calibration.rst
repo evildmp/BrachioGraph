@@ -18,7 +18,7 @@ Remove the inner arm, and initialise a default BrachioGraph instance::
     from brachiograph import BrachioGraph
     bg = BrachioGraph()
 
-Now reattach the inner arm, but instead of placing it at -90˚ as before, place it at -60˚ degrees - see
+Now reattach the inner arm, but instead of placing it at -90˚ as before, place it at about -60˚ degrees - see
 :ref:`rotating-drawing-area` for a fuller explanation why, but in short, it puts the arm in a position where it can
 operate closer to the centre of the motor's movement, where it's more accurate and consistent.
 
@@ -135,7 +135,8 @@ Check for any missing values (use ``v``), and when done, ``0``. The output might
      150: {'cw': 1968, 'acw': 1968}}
 
 
-Now, you can copy and paste (you'll need to do a little reformatting) the two dictionaries to the BrachioGraph definition:
+Now, you can copy and paste (you'll need to do a little reformatting) the two dictionaries to the BrachioGraph definition
+that you have been working with in ``custom.py``:
 
 ..  code-block::
     :emphasize-lines: 10-15
