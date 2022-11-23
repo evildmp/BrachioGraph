@@ -54,21 +54,14 @@ def makesvg(lines):
     print("Generating svg file...")
     width = math.ceil(max([max([p[0] * 0.5 for p in l]) for l in lines]))
     height = math.ceil(max([max([p[1] * 0.5 for p in l]) for l in lines]))
-    out = (
-        '<svg xmlns="http://www.w3.org/2000/svg" height="%spx" width="%spx" version="1.1">'
-        % (
-            height,
-            width,
-        )
+    out = '<svg xmlns="http://www.w3.org/2000/svg" height="%spx" width="%spx" version="1.1">' % (
+        height,
+        width,
     )
 
     for l in lines:
         l = ",".join([str(p[0] * 0.5) + "," + str(p[1] * 0.5) for p in l])
-        out += (
-            '<polyline points="'
-            + l
-            + '" stroke="black" stroke-width="1" fill="none" />\n'
-        )
+        out += '<polyline points="' + l + '" stroke="black" stroke-width="1" fill="none" />\n'
     out += "</svg>"
     return out
 
@@ -133,38 +126,21 @@ def vectorise(
     image = image.convert("L")
 
     # maximise contrast
-    image = ImageOps.autocontrast(image, 10)
+    image = ImageOps.autocontrast(image, 5, preserve_tone=True)
 
     lines = []
 
     if draw_contours and repeat_contours:
-        contours = sortlines(
-            getcontours(
-                image.resize(
-                    (
-                        int(resolution / draw_contours),
-                        int(resolution / draw_contours * h / w),
-                    )
-                ),
-                draw_contours,
-            )
-        )
+        contours = getcontours(resize_image(image, resolution, draw_contours), draw_contours)
+        contours = sortlines(contours)
         contours = join_lines(contours)
         for r in range(repeat_contours):
             lines += contours
 
     if draw_hatch and repeat_hatch:
-        hatches = sortlines(
-            hatch(
-                # image,
-                image.resize(
-                    (int(resolution / draw_hatch), int(resolution / draw_hatch * h / w))
-                ),
-                draw_hatch,
-            )
-        )
+        hatches = hatch(resize_image(image, resolution), line_spacing=draw_hatch)
+        hatches = sortlines(hatches)
         hatches = join_lines(hatches)
-
         for r in range(repeat_hatch):
             lines += hatches
 
@@ -178,6 +154,15 @@ def vectorise(
     f.close()
 
     return lines
+
+
+def resize_image(image, resolution, divider=1):
+    return image.resize(
+        (
+            int(resolution / divider),
+            int(resolution / divider * image.size[1] / image.size[0]),
+        )
+    )
 
 
 # -------------- vectorisation options --------------
@@ -210,68 +195,81 @@ def getcontours(image, draw_contours=2):
     contours = [c for c in contours if len(c) > 1]
 
     for i in range(0, len(contours)):
-        contours[i] = [
-            (v[0] * draw_contours, v[1] * draw_contours) for v in contours[i]
-        ]
+        contours[i] = [(v[0] * draw_contours, v[1] * draw_contours) for v in contours[i]]
 
     return contours
 
 
-# improved, faster and easier to understand hatching
-def hatch(image, draw_hatch=16):
+E = (1, 0)
+S = (0, 1)
+SE = (1, 1)
+NE = (1, -1)
 
-    t0 = time.time()
 
-    print("Hatching...")
+def hatch(image, line_spacing=16):
+    lines = []
+
+    lines.extend(get_lines(image, "y", E, line_spacing, 160))
+    lines.extend(get_lines(image, "x", S, line_spacing, 80))
+    lines.extend(get_lines(image, "y", SE, line_spacing, 40))
+    lines.extend(get_lines(image, "x", SE, line_spacing, 40))
+    lines.extend(get_lines(image, "y", NE, line_spacing, 20))
+    lines.extend(get_lines(image, "x", NE, line_spacing, 20))
+
+    return lines
+
+
+def get_lines(image, scan, direction, line_spacing, level):
     pixels = image.load()
-    w, h = image.size
-    lg1 = []
-    lg2 = []
-    for x0 in range(w):
-        # print("reading x", x0)
-        for y0 in range(h):
-            # print("    reading y", x0)
-            x = x0 * draw_hatch
-            y = y0 * draw_hatch
+    width, height = image.size[0], image.size[1]
+    i_start = j_start = 0
+    lines = []
 
-            # don't hatch above a certain level of brightness
-            if pixels[x0, y0] > 144:
-                pass
+    if scan == "y":
+        i_range = height
+    elif scan == "x":
+        i_range = width
+        # we already have an SE line starting at (0, 0) in the y scan, so skip to the next
+        if direction == SE:
+            i_start = line_spacing
+        elif direction == NE:
+            # shift these NE lines down to maintain consistent spacing with the ones in the y scan
+            i_start = line_spacing - (height - 1 % line_spacing)
+            # these lines start from the bottom of the image
+            j_start = height - 1
 
-            # above 64, draw horizontal lines
-            elif pixels[x0, y0] > 64:
-                lg1.append(
-                    [(x, y + draw_hatch / 4), (x + draw_hatch, y + draw_hatch / 4)]
-                )
+    for i in range(i_start, i_range, line_spacing):
+        start_point = None
 
-            # above 16, draw diagonal lines also
-            elif pixels[x0, y0] > 16:
-                lg1.append(
-                    [(x, y + draw_hatch / 4), (x + draw_hatch, y + draw_hatch / 4)]
-                )
-                lg2.append([(x + draw_hatch, y), (x, y + draw_hatch)])
+        if scan == "y":
+            x, y = j_start, i
+        elif scan == "x":
+            x, y = i, j_start
 
-            # below 16, draw diagonal lines and a second horizontal line
+        while (0 <= x < width) and (0 <= y < height):
+            if not start_point:
+                if pixels[x, y] < level:
+                    start_point = (x, y)
             else:
-                lg1.append(
-                    [(x, y + draw_hatch / 4), (x + draw_hatch, y + draw_hatch / 4)]
-                )  # horizontal lines
-                lg1.append(
-                    [
-                        (x, y + draw_hatch / 2 + draw_hatch / 4),
-                        (x + draw_hatch, y + draw_hatch / 2 + draw_hatch / 4),
-                    ]
-                )  # horizontal lines with additional offset
-                lg2.append(
-                    [(x + draw_hatch, y), (x, y + draw_hatch)]
-                )  # diagonal lines, left
+                if pixels[x, y] >= level:
+                    end_point = (x, y)
+                    lines.append([start_point, end_point])
+                    start_point = None
 
-    t1 = time.time()
+            end_point = (x, y)
+            x += direction[0]
+            y += direction[1]
+
+        # if a line has been started, we need to end it now we're at the edge
+        if start_point:
+            lines.append([start_point, end_point])
+
+    return lines
+
+
+def join_segments(line_groups):
 
     print("Making segments into lines...")
-
-    # Make segments into lines
-    line_groups = [lg1, lg2]
 
     for line_group in line_groups:
         for lines in line_group:
@@ -292,12 +290,6 @@ def hatch(image, draw_hatch=16):
         line_group.extend(saved_lines)
 
     lines = [item for group in line_groups for item in group]
-
-    t2 = time.time()
-
-    print(f"{'Hatching:':>15}", f"{t1 - t0:>3.1}s")
-    print(f"{'Making lines:':>15}", f"{t2 - t1:>3.1}s")
-    print(f"{'Total:':>15}", f"{t2 - t0:>3.1}s")
 
     return lines
 
@@ -449,8 +441,7 @@ def midpt(*args):
 def distsum(*args):
     return sum(
         [
-            ((args[i][0] - args[i - 1][0]) ** 2 + (args[i][1] - args[i - 1][1]) ** 2)
-            ** 0.5
+            ((args[i][0] - args[i - 1][0]) ** 2 + (args[i][1] - args[i - 1][1]) ** 2) ** 0.5
             for i in range(1, len(args))
         ]
     )
