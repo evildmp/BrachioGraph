@@ -680,13 +680,13 @@ class Plotter:
 
             if pw_1:
                 if 500 < pw_1 < 2500:
-                    self.virtual_pw_1 = pw_1
+                    self.virtual_pw_1 = int(pw_1)
                 else:
                     raise ValueError
 
             if pw_2:
                 if 500 < pw_2 < 2500:
-                    self.virtual_pw_2 = pw_2
+                    self.virtual_pw_2 = int(pw_2)
                 else:
                     raise ValueError
 
@@ -704,8 +704,8 @@ class Plotter:
 
         if self.virtual:
 
-            actual_pulse_width_1 = int(self.virtual_pw_1)
-            actual_pulse_width_2 = int(self.virtual_pw_2)
+            actual_pulse_width_1 = self.virtual_pw_1
+            actual_pulse_width_2 = self.virtual_pw_2
 
         else:
 
