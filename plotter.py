@@ -185,9 +185,7 @@ class Plotter:
         with open(filename, "r") as line_file:
             lines = json.load(line_file)
 
-        self.plot_lines(
-            lines=lines, wait=wait, resolution=resolution, bounds=bounds, flip=True
-        )
+        self.plot_lines(lines=lines, wait=wait, resolution=resolution, bounds=bounds, flip=True)
 
     def plot_lines(
         self,
@@ -304,9 +302,7 @@ class Plotter:
             step = (self.right - self.left) / lines
             x = self.left
             while x <= self.right:
-                self.draw_line(
-                    (x, top_y), (x, bottom_y), resolution=resolution, both=both
-                )
+                self.draw_line((x, top_y), (x, bottom_y), resolution=resolution, both=both)
                 x = x + step
 
         self.park()
@@ -343,9 +339,7 @@ class Plotter:
 
         self.park()
 
-    def draw_line(
-        self, start=(0, 0), end=(0, 0), wait=None, resolution=None, both=False
-    ):
+    def draw_line(self, start=(0, 0), end=(0, 0), wait=None, resolution=None, both=False):
         """Draws a line between two points"""
 
         start_x, start_y = start
@@ -409,9 +403,7 @@ class Plotter:
 
     #  ----------------- servo angle drawing methods -----------------
 
-    def move_angles(
-        self, angle_1=None, angle_2=None, wait=None, resolution=None, draw=False
-    ):
+    def move_angles(self, angle_1=None, angle_2=None, wait=None, resolution=None, draw=False):
         """Moves the servo motors to the specified angles step-by-step, calling ``set_angles()`` for
         each step. ``resolution`` refers to *degrees* of movement. ``None`` for one of the angles
         means that that servo will not move.
@@ -523,15 +515,11 @@ class Plotter:
 
     def naive_angles_to_pulse_widths_1(self, angle):
         """A rule-of-thumb calculation of pulse-width for the desired servo angle"""
-        return (
-            angle - self.servo_1_parked_angle
-        ) * self.servo_1_degree_ms + self.servo_1_parked_pw
+        return (angle - self.servo_1_parked_angle) * self.servo_1_degree_ms + self.servo_1_parked_pw
 
     def naive_angles_to_pulse_widths_2(self, angle):
         """A rule-of-thumb calculation of pulse-width for the desired servo angle"""
-        return (
-            angle - self.servo_2_parked_angle
-        ) * self.servo_2_degree_ms + self.servo_2_parked_pw
+        return (angle - self.servo_2_parked_angle) * self.servo_2_degree_ms + self.servo_2_parked_pw
 
     # ----------------- line-processing methods -----------------
 
@@ -553,9 +541,7 @@ class Plotter:
                     point[0], point[1] = point[1], point[0]
 
                 x = point[0]
-                x = (
-                    x - x_mid_point
-                )  # shift x values so that they have zero as their mid-point
+                x = x - x_mid_point  # shift x values so that they have zero as their mid-point
                 x = x / divider  # scale x values to fit in our box width
 
                 if flip ^ rotate:  # flip before moving back into drawing pane
@@ -637,9 +623,7 @@ class Plotter:
         # And their mid-points.
 
         x_mid_point, y_mid_point = (max_x + min_x) / 2, (max_y + min_y) / 2
-        box_x_mid_point, box_y_mid_point = (bounds[0] + bounds[2]) / 2, (
-            bounds[1] + bounds[3]
-        ) / 2
+        box_x_mid_point, box_y_mid_point = (bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2
 
         # Get a 'divider' value for each range - the value by which we must divide all x and y so
         # that they will fit safely inside the bounds.
@@ -729,12 +713,14 @@ class Plotter:
     # ----------------- manual driving methods -----------------
 
     def capture_pws(self):
-        print("""
+        print(
+            """
 Drive each servo over a wide range of movement (do not exceed a pulse-width
 range ~600 to ~2400). To capture the pulse-width value for a particular angle,
 press "c", then enter the angle. For each angle, do this in both directions,
 clockwise and anti-clockwise. Press "0" to exit.
-        """)
+        """
+        )
 
         pw_1, pw_2 = self.get_pulse_widths()
         self.set_pulse_widths(pw_1, pw_2)
@@ -776,7 +762,6 @@ clockwise and anti-clockwise. Press "0" to exit.
 
                     last_action = values
 
-
             elif key == "0":
                 # exit and print results
                 print("servo_1_angle_pws_bidi =")
@@ -806,7 +791,6 @@ clockwise and anti-clockwise. Press "0" to exit.
                 elif last_action[1]:
                     angle = int(input("Enter the angle of the outer arm: "))
                     pws2_dict.setdefault(angle, {})[last_action[2]] = pw_2
-
 
     def drive(self):
         """Control the pulse-widths using the keyboard."""
@@ -900,9 +884,7 @@ clockwise and anti-clockwise. Press "0" to exit.
         print("pen:", self.pen.position)
 
         print("------------------------------------------")
-        print(
-            f"left: {self.left}, right: {self.right}, top: {self.top}, bottom: {self.bottom}"
-        )
+        print(f"left: {self.left}, right: {self.right}, top: {self.top}, bottom: {self.bottom}")
         print("------------------------------------------")
         print(f"resolution: {self.resolution} cm")
         print("------------------------------------------")
@@ -947,9 +929,7 @@ clockwise and anti-clockwise. Press "0" to exit.
 
 
 class Pen:
-    def __init__(
-        self, bg, pw_up=1700, pw_down=1300, pin=18, transition_time=0.25, virtual=False
-    ):
+    def __init__(self, bg, pw_up=1700, pw_down=1300, pin=18, transition_time=0.25, virtual=False):
 
         self.bg = bg
         self.pin = pin
