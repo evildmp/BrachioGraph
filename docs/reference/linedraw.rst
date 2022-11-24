@@ -14,7 +14,7 @@
         draw_contours=False,  # suggested value: 2
         repeat_contours=1,    # increase to draw the contours multiple times
         draw_hatch=False,     # suggested value: 16
-        repeat_contours=1,    # increase to draw the hatching multiple times
+        repeat_hatch=1,    # increase to draw the hatching multiple times
         ):
 
 * ``image_filename``:  all images are expected to be found in the ``images`` directory
