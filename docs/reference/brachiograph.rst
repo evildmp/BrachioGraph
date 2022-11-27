@@ -6,18 +6,64 @@ Plotter modules
 
 ..  class:: Plotter
 
+
 ``Plotter``
 ===================
 
-A base class for the BrachioGraph and PantoGraph subclasses.
+A base class for the :class:`~brachiograph.BrachioGraph` and ``PantoGraph`` subclasses.
 
-This class provides all the interfaces you'll need to use with the plotter in normal use, with the
-exception of ``__init__()``.
+This class provides all the interfaces you'll need for the plotter in normal use.
 
-All the classes, including this base class, can be instantiated *without any arguments* and will
-work for testing.
+All the classes (``Plotter``,  ``BrachioGraph`` and ``PantoGraph``) can be
+instantiated *without any arguments* and will work for testing.
 
 For testing with turtle graphics, you will need to use one of the subclasses.
+
+
+Methods in general
+------------------
+
+Hierarchy
+~~~~~~~~~
+
+This table shows how the methods in the class :class:`Plotter <plotter>` depend on each other.
+Each named method calls the method in the cell below it.
+
++-----------------------------+-------------------------------+-----------------------------------------------------------------------------------+
+| :meth:`~Plotter.plot_file`  | :meth:`~Plotter.test_pattern` |                                                                                   |
++----------------+--------------------------------------------+-----------------------------------------------------------------------------------+
+| :meth:`~Plotter.plot_lines` | :meth:`~Plotter.vertical_lines`, :meth:`~Plotter.horizontal_lines` |                                              |
++-----------------------------+--------------------------------------------------------------------+----------------------+-----------------------+
+| :meth:`~Plotter.draw_line`                                                                       | :meth:`~Plotter.box` |                       |
++--------------------------------------------------------------------------------------------------+----------------------+-----------------------+
+| :meth:`~Plotter.xy`                                                                                                     | :meth:`~Plotter.park` |
++-------------------------------------------------------------------------------------------------------------------------+-----------------------+
+| :meth:`~Plotter.move_angles`                                                                                                                    |
++-------------------------------------------------------------------------------------------------------------------------------------------------+
+| :meth:`~Plotter.set_angles`                                                                                                                     |
++-------------------------------------------------------------------------------------------------------------------------------------------------+
+| :meth:`~Plotter.set_pulse_widths`                                                                                                               |
++-------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
+Order of arguments
+~~~~~~~~~~~~~~~~~~
+
+Many of these methods accept a similar set of arguments. For consistency, they always appear in the
+same order. Note that not all are available to all methods. They are:
+
+* *what to draw*: ``filename`` or ``lines``
+* *where to draw*:``bounds``
+* *precision and speed*: ``angular_step``, ``wait``, ``resolution``
+* *whether to draw*: ``draw``
+* *direction and repetition*: ``repeat``, ``reverse``, ``both``
+* *image transformations*: ``flip``, ``rotate``
+
+
+
+
+Initialisation
+--------------
 
 ..  automethod:: Plotter.__init__
 
@@ -55,7 +101,9 @@ For testing with turtle graphics, you will need to use one of the subclasses.
     :param int pw_up: The pulse-width for the pen's up position.
     :param int pw_down: The pulse-width for the pen's down position.
     :param float wait: A time in seconds that the plotter will rest after making a
-        movement. If not specified, will be initialised as 0.1, or 0 for a virtual-only plotter.
+        movement. If not specified, will be initialised as 0.01, or 0 for a virtual-only plotter.
+    :param float angular_step: An angle in degrees that determines how big each discrete step in
+        a series of movements of the arm servos will be. If not specified, will be initialised as 0.1.
     :param float resolution:
         A distance in centimetres. When drawing between two points, any line longer than
         ``resolution`` will be broken down into a series of points no more than ``resolution`` cm
@@ -67,15 +115,17 @@ In all the methods below, arguments that are also attributes of the plotter clas
 to override those values (which is generally not required).
 
 
-Plotting methods
+Image-plotting methods
 -------------------------------
+
+These methods draw an image (as a series of lines, encoded in JSON).
 
 ..  automethod:: Plotter.plot_file
 
 ..  automethod:: Plotter.plot_lines
 
 
-Drawing methods using x/y values
+Pattern-drawing methods
 --------------------------------
 
 ..  automethod:: Plotter.box
@@ -87,6 +137,12 @@ Drawing methods using x/y values
 ..  automethod:: Plotter.horizontal_lines
 
 ..  automethod:: Plotter.draw_line
+
+
+Drawing methods using x/y co-ordinates
+----------------------------------------
+
+All of the methods above call ``xy``:
 
 ..  automethod:: Plotter.xy
 
@@ -159,10 +215,12 @@ Physical control
 ..  automethod:: Plotter.quiet
 
 
-Manual driving
----------------
+.. _calibration-control-methods:
 
-..  automethod:: Plotter.drive
+Calibration and manual driving
+-------------------------------
+
+..  automethod:: Plotter.capture_pws
 
     The controls are:
 
@@ -171,17 +229,23 @@ Manual driving
 
         * -
           - Exit
+          - Capture a pulse-width value
+          - Show captured values
           - -10 µs
           - -1 µs
           - \+ 10 µs
           - \+ 1 µs
         * -
           - ``0``
+          - ``c``
+          - ``v``
           -
           -
           -
           -
         * - Servo 1
+          -
+          -
           -
           - ``a``
           - ``A``
@@ -189,37 +253,7 @@ Manual driving
           - ``S``
         * - Servo 2
           -
-          - ``k``
-          - ``K``
-          - ``l``
-          - ``L``
-
-..  automethod:: Plotter.drive_xy
-
-    The controls are:
-
-    ..  list-table::
-        :stub-columns: 1
-
-        * -
-          - Exit
-          - -1 cm
-          - -1 mm
-          - \+ 1 cm
-          - \+ 1 mm
-        * -
-          - ``0``
           -
-          -
-          -
-          -
-        * - Servo 1
-          -
-          - ``a``
-          - ``A``
-          - ``s``
-          - ``S``
-        * - Servo 2
           -
           - ``k``
           - ``K``
@@ -247,9 +281,11 @@ Trigonometric methods
 
 ..  module:: brachiograph
 
-..  automethod:: BrachioGraph.__init__
+..  class:: BrachioGraph
 
-    Parameters are as for the ``Plotter`` parent class, except for:
+    ..  automethod:: __init__
 
-    :param float inner_arm: The length of the inner arm, in cm.
-    :param float outer_arm: The length of the outer arm, in cm.
+        Parameters are as for the ``Plotter`` parent class, except for:
+
+        :param float inner_arm: The length of the inner arm, in cm.
+        :param float outer_arm: The length of the outer arm, in cm.

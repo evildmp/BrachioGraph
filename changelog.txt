@@ -1,6 +1,33 @@
 Changelog
 =========
 
+2022 11 27
+----------
+
+* Vastly improved timing and resolution control
+* Improved consistency of ordering of arguments
+* Removed Plotter.drive_xy() method
+
+2022 11 24
+----------
+
+* Added a new hatching regime
+
+2022 11 15
+----------
+
+* Added a capture_pws method to make calibration easier
+
+2022 11 03
+----------
+
+* Added Ubuntu installation instructions
+
+2022 03 06
+----------
+
+* Added turtle graphics drawing
+
 2019 12 19
 ----------
 
