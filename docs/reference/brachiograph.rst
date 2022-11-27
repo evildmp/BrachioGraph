@@ -228,37 +228,40 @@ Calibration and manual driving
         :stub-columns: 1
 
         * -
-          - Exit
-          - Capture a pulse-width value
-          - Show captured values
           - -10 µs
           - -1 µs
           - \+ 10 µs
           - \+ 1 µs
         * -
-          - ``0``
-          - ``c``
-          - ``v``
           -
           -
           -
           -
-        * - Servo 1
-          -
-          -
-          -
+        * - Shoulder
           - ``a``
           - ``A``
           - ``s``
           - ``S``
-        * - Servo 2
-          -
-          -
-          -
+        * - Elbow
           - ``k``
           - ``K``
           - ``l``
           - ``L``
+        * - Pen
+          - ``z``
+          -
+          - ``x``
+          -
+
+    ..  list-table::
+        :stub-columns: 1
+
+        * - Capture pulse-width value
+          - ``c``
+        * - Show captured values
+          - ``v``
+        * - Exit
+          - ``0``
 
 
 Reporting methods

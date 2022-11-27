@@ -75,6 +75,11 @@ Use the controls indicated to move the arms:
       - ``K``
       - ``l``
       - ``L``
+    * - Pen
+      - ``z``
+      -
+      - ``x``
+      -
 
 ..  list-table::
     :stub-columns: 1

@@ -152,8 +152,6 @@ class Plotter:
         self.angular_step = angular_step or 0.1
         self.resolution = resolution or 0.1
 
-        print("setting")
-
         self.set_angles(self.servo_1_parked_angle, self.servo_2_parked_angle)
         sleep(1)
 
@@ -726,25 +724,29 @@ clockwise and anti-clockwise. Press "0" to exit.
         )
 
         pw_1, pw_2 = self.get_pulse_widths()
-        self.set_pulse_widths(pw_1, pw_2)
+        pen_pw = self.pen.get_pw()
 
         last_action = values = None
         pws1_dict = {}
         pws2_dict = {}
+        pen_pw_dict = {}
 
         print("0 to exit, c to capture a value, v to show captured values")
         print("Shoulder a: -10  A: -1   s: +10  S: +1")
         print("Elbow    k: -10  K: -1   l: +10  L: +1")
+        print("Pen      z: -10          x: +10")
 
         controls = {
-            "a": [-10, 0, "acw"],
-            "A": [-1, 0, "acw"],
-            "s": [+10, 0, "cw"],
-            "S": [+1, 0, "cw"],
-            "k": [0, -10, "acw"],
-            "K": [0, -1, "acw"],
-            "l": [0, +10, "cw"],
-            "L": [0, +1, "cw"],
+            "a": [-10, 0, 0, "acw"],
+            "A": [-1, 0, 0, "acw"],
+            "s": [+10, 0, 0, "cw"],
+            "S": [+1, 0, 0, "cw"],
+            "k": [0, -10, 0, "acw"],
+            "K": [0, -1, 0, "acw"],
+            "l": [0, +10, 0, "cw"],
+            "L": [0, +1, 0, "cw"],
+            "z": [0, 0, -10],
+            "x": [0, 0, +10],
         }
 
         while True:
@@ -754,30 +756,30 @@ clockwise and anti-clockwise. Press "0" to exit.
 
             if values:
 
-                if values[0] or values[1]:
-                    previous_pw_1, previous_pw_2 = pw_1, pw_2
+                if values[0] or values[1] or values[2]:
+                    previous_pw_1, previous_pw_2, previous_pen_pw = pw_1, pw_2, pen_pw
                     pw_1 += values[0]
                     pw_2 += values[1]
+                    pen_pw += values[2]
 
-                    print(pw_1, pw_2)
+                    print(pw_1, pw_2, pen_pw)
 
                     self.set_pulse_widths(pw_1, pw_2)
+                    self.pen.pw(pen_pw)
 
                     last_action = values
 
-            elif key == "0":
+            elif key == "0" or key == "v":
                 # exit and print results
                 print("servo_1_angle_pws_bidi =")
                 pprint.pp(pws1_dict, sort_dicts=True, indent=4)
                 print("servo_2_angle_pws_bidi =")
                 pprint.pp(pws2_dict, sort_dicts=True, indent=4)
-                return
+                print("Pen pulse-widths =")
+                pprint.pp(pen_pw_dict)
 
-            elif key == "v":
-                print("servo_1_angle_pws_bidi =")
-                pprint.pp(pws1_dict, sort_dicts=True, indent=4)
-                print("servo_2_angle_pws_bidi =")
-                pprint.pp(pws2_dict, sort_dicts=True, indent=4)
+                if key == "0":
+                    return
 
             elif key == "c":
                 # capture a value
@@ -796,6 +798,12 @@ clockwise and anti-clockwise. Press "0" to exit.
                     pws2_dict.setdefault(angle, {})[last_action[2]] = pw_2
 
                     print(pws2_dict)
+
+                elif last_action[2]:
+                    state = input("Enter the state of the pen ([u]p, [d]own):")
+                    pen_pw_dict[state] = pen_pw
+
+                    print(pen_pw)
 
 
     def drive_xy(self):
@@ -976,3 +984,12 @@ class Pen:
 
         else:
             self.rpi.set_servo_pulsewidth(self.pin, pulse_width)
+
+    # for convenience, a quick way to get pen motor pulse-widths
+    def get_pw(self):
+
+        if self.virtual:
+            return self.virtual_pw
+
+        else:
+            return self.rpi.get_servo_pulsewidth(self.pin)
