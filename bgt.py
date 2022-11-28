@@ -1,4 +1,4 @@
-from turtle_draw import BrachioGraphTurtle
+from turtle_plotter import BrachioGraphTurtle
 
 # This is an example BrachioGraphTurtle definition.
 
@@ -6,7 +6,7 @@ bgt = BrachioGraphTurtle(
     inner_arm=8,          # the length of the inner arm (blue)
     outer_arm=8,          # the length of the outer arm (red)
 
-    shoulder_centre_angle=-60,  # the starting angle of the inner arm, relative to straight ahead
+    shoulder_centre_angle=-90,  # the starting angle of the inner arm, relative to straight ahead
     shoulder_sweep=180,     # the arc covered by the shoulder motor
 
     elbow_centre_angle=90,  # the centre of the outer arm relative to the inner arm

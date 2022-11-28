@@ -1,125 +1,115 @@
 .. _optimise-geometry:
 
-How to optimise your plotter's geometry and drawing area
+Visualise your plotter's geometry and drawing area
 ========================================================
 
-The geometry of the plotter - the length of its arms, the arcs they can sweep through, the relation of those arcs to
-other aspects of the machine - and its drawing area are closely related. The former determines the latter.
-
-:ref:`understand_plotter_geometry` will help make clearer the relationship between the two by visualising them.
-
-Optimising the plotter's geometry means designing it so that:
-
-* the length of the arms is suited to the power of the motors and the system's mechanical limitations
-* you obtain a drawing area that is useful in both *size* and *shape*
-* the movement of the motors to cover that shape is around their *centre positions* (and not at the extremes of their
-  sweep), and uses *not too much or too little of their sweep*.
-
-The ``turtle_plotter.py`` module will help you do this.
-
-
-Decide on the length of the arms
---------------------------------
-
-As the arms are made longer, the more power is required to drive them, and the more mechanical limitations of the
-system will affect the results (i.e. the more the arms will droop and twist). You will always have to trade off
-accuracy and size.
-
-Experience shows that arms of about 8cm work well even with the cheapest of servos, and produce drawings of an adequate
-size - 14 x 9cm - which works well on sheets of A5 paper.
-
-The arms don't need to be exactly the same length. See :ref:`understand_plotter_geometry` for examples of how this
-makes a difference to the plotter.
-
-
-Measure the actual arms
------------------------
-
-Unless you're a very accurate worker, the actual length of each arm is likely to be a little off. Measure these
-values (in cm) - we will use them in the next step.
-
-
-Model your BrachioGraph using ``turtle_plotter.py``
-----------------------------------------------------
-
-The ``turtle_plotter.py`` contains a ``BrachioGraphTurtle`` class. The file ``bgt.py`` contains a module with an example
-instance of a ``BrachioGraphTurtle``, that you can use in different ways (you may prefer to copy this file and leave
-the original untouched).
-
-You can use the class and the example instance:
-
-* as a script, by running ``python bgt.py``, which will execute all the commands in the file
-* interactively in a Python shell, executing commands one by one, e.g.::
-
-      >>> from turtle_plotter import BrachioGraphTurtle
-      >>> bgt = BrachioGraphTurtle(inner_arm=9, shoulder_centre_angle=-45, shoulder_sweep=120, outer_arm=7.5,  elbow_centre_angle=95, elbow_sweep=120)
-      >>> bgt.draw_grid()
-
-The examples below will use the script, but you can equally well use the shell to do the same
-things.
-
-
-Draw the model
-~~~~~~~~~~~~~~~~~~~~~~~
-
-An example definition is provided in ``bgt.py``. Edit its ``inner_arm`` and ``outer_arm`` values, then run ``python
-bgt.py``.
-
-
-You can choose what to draw by editing the commands in the script:
-
-* a *grid*
-* *arcs* representing sweeps of the outer arm for positions within the sweep of the inner arm
-* the inner and outer *arms* at various positions within the sweep of the inner arm
-* an *outline* of the plotting area
-
-The ``bgt.py`` module draws all of these by default:
+The drawing area of the potter is determined by its geometry (the length of
+its arms, the arcs they can sweep through, the relation of those arcs to
+other aspects of the machine), but the relationship can be hard to
+understand. Being able to visualise it helps immensely:
 
 .. image:: /images/plotter-geometry/understanding-the-plot.png
    :alt: 'Plotting area'
    :class: 'main-visual'
 
+Visualisation is provided by ``turtle_plotter.py``, using Python's turtle
+graphics. Visualisation in turn makes it possible to discover the optimal
+plotter geometry. Good plotter geometry means that:
 
-The grid
-^^^^^^^^
+* the length of the arms is suited to the power of the motors and the system's
+  mechanical limitations
+* you obtain a drawing area that is useful in both *size* and *shape*
+* the movement of the motors to cover that shape is around their *centre
+  positions* (and not at the extremes of their sweep), and uses *not too much
+  or too little of their sweep*.
 
-Draw a grid with the ``draw_grid()`` method. The grid is based on the dimensions of the plotter at the moment it was
-initialised; *although you can can change its arm lengths afterwards, the grid will not reflect this*.
-
-
-The arcs
-^^^^^^^^
-
-Use ``draw_arcs()`` to fill in the drawing area with a series of arcs.
-
-
-The arms
-^^^^^^^^
-
-Use ``draw_arms()`` to show the positions of the arms at various intervals.
+:ref:`understand_plotter_geometry` explores some of the relationships between
+geometry and plotting area in more detail.
 
 
-The outline
-^^^^^^^^^^^^^^^^
+Model a BrachioGraph using ``turtle_plotter.py``
+----------------------------------------------------
 
-``draw_outline()`` will trace an outline of the drawing area.
+In a Python shell, import the ``BrachioGraphTurtle`` class and instantiate it::
+
+    >>> from turtle_plotter import BrachioGraphTurtle
+    >>> bgt = BrachioGraphTurtle()
+
+``BrachioGraphTurtle`` includes four methods to produce visualisations:
+
+* ``draw_grid()`` to draw a grid based on the dimensions of the plotter at the
+  moment it was initialised
+* ``draw_arcs()`` to fill in the drawing area with a series of arcs. These
+  represent sweeps of the outer arm for positions within the sweep of the
+  inner arm
+* ``draw_arms()`` to show the positions of the arms at various intervals, to
+  help visualise what the plotter is doing
+* ``draw_outline()`` to trace an outline of the drawing area
+
+Run them to show this plotter's drawing area::
+
+    >>> bgt.draw_grid()
+    >>> bgt.draw_arcs()
+    >>> bgt.draw_arms()
+    >>> bgt.draw_outline()
+
+
+Customise the model
+-------------------
+
+As usual in BrachioGraph, nearly all classes can be instantiated without
+parameters, and working defaults will be applied. These are::
+
+    inner_arm: 8
+    outer_arm: 8
+    shoulder_centre_angle: 0
+    shoulder_sweep: 180
+    elbow_centre_angle: 90
+    elbow_sweep: 180
+
+Whether you want to model an actual BrachioGraph, or explore a possible one,
+you'll need to supply some custom values.
+
+Experience shows that arms of about 8cm work well even with the cheapest of
+servos, and produce drawings of an adequate size - 14 x 9cm - which works
+well on sheets of A5 paper.
+
+If you're modelling an actual plotter, use the actual length of the arms as
+arguments (note - the length is the distance between its points of rotation).
+
+Real-world servos don't have sweep angles of 180˚; 120˚ is more
+realistic (in practice, you may find that your servos have a usable 150˚
+sweep).
+
+An example might be::
+
+    bgt = BrachioGraphTurtle(inner_arm=8.2, shoulder_centre_angle=-60, shoulder_sweep=120, outer_arm=7.9,  elbow_centre_angle=95, elbow_sweep=120)
+
+Close the turtle graphics display before creating a new instance, in order to redraw the grid correctly.
 
 
 Discover the optimum configuration for your BrachioGraph
 -----------------------------------------------------------
 
-Start by defining your ``BrachioGraphTurtle`` instance with the exact arm lengths you have built, or the ones you
-propose to build.
+Starting from this point, you can experiment with different values to see how
+the plotting areas is affected. Typically, given arm lengths and sweep
+values, you will want to find the centre angles that give the best results
+(*best* usually means an outline accomodating the largest useful rectangles
+for drawing).
 
-120˚ sweep values for the inner and outer arms are a safe starting-point, along with values of -60˚ and 90˚ for
-the inner and outer centre positions respectively (if the arms are of equal length)::
+As ever, the *actual* best values will depend on your actual BrachioGraph.
+Particularly at the extreme servo angles, or when the outer arm is nearly
+inline with the inner arm, you'll experience poorer control of the pen. The
+``bounds`` you provide an actual BrachioGraph need to be based on actual
+results as well as theoretical drawing areas.
 
-    >>> from turtle_plotter import BrachioGraphTurtle
-    >>> bgt = BrachioGraphTurtle(inner_arm=8, shoulder_centre_angle=-60, shoulder_sweep=120, outer_arm=8,  elbow_centre_angle=90, elbow_sweep=120)
 
-Draw the grid and an outline::
+Use the provided ``bgt.py`` module
+----------------------------------
 
-    >>> bgt.draw_grid()
-    >>> bgt.draw_outline()
+As a convenience, the ``bgt.py`` module contains a defined
+``BrachioGraphTurtle`` instance (this can be more efficient than retyping
+values into the shell).
 
-See :ref:`understand_plotter_geometry` for how to interpret the output.
+Adjust its parameters appropriately and run ``python
+bgt.py``.
