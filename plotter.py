@@ -747,7 +747,7 @@ clockwise and anti-clockwise. Press "0" to exit.
                     pw_2 += values[1]
                     pen_pw += values[2]
 
-                    print(pw_1, pw_2, pen_pw)
+                    print(f"shoulder: {pw_1}, elbow: {pw_2}, pen: {pen_pw}")
 
                     self.set_pulse_widths(pw_1, pw_2)
                     self.pen.pw(pen_pw)
@@ -774,13 +774,13 @@ clockwise and anti-clockwise. Press "0" to exit.
                 # add the values - if any - to the dictionaries
                 elif last_action[0]:
                     angle = int(input("Enter the angle of the inner arm: "))
-                    pws1_dict.setdefault(angle, {})[last_action[2]] = pw_1
+                    pws1_dict.setdefault(angle, {})[last_action[3]] = pw_1
 
                     print(pws1_dict)
 
                 elif last_action[1]:
                     angle = int(input("Enter the angle of the outer arm: "))
-                    pws2_dict.setdefault(angle, {})[last_action[2]] = pw_2
+                    pws2_dict.setdefault(angle, {})[last_action[3]] = pw_2
 
                     print(pws2_dict)
 
