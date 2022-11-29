@@ -353,7 +353,6 @@ class Plotter:
         if both:
             self.xy(start_x, start_y, angular_step, wait, resolution, draw=True)
 
-
     def xy(self, x=None, y=None, angular_step=None, wait=None, resolution=None, draw=False):
         """Moves the pen to the xy position; optionally draws while doing it. ``None`` for x or y
         means that the pen will not be moved in that dimension.
@@ -380,10 +379,7 @@ class Plotter:
             else:
                 disable_tqdm = False
 
-            (length_of_step_x, length_of_step_y) = (
-                x_length / no_of_steps,
-                y_length / no_of_steps,
-            )
+            (length_of_step_x, length_of_step_y) = (x_length / no_of_steps, y_length / no_of_steps)
 
             for step in range(no_of_steps):
 
@@ -425,10 +421,7 @@ class Plotter:
         else:
             disable_tqdm = False
 
-        (length_of_step_1, length_of_step_2) = (
-            diff_1 / no_of_steps,
-            diff_2 / no_of_steps,
-        )
+        (length_of_step_1, length_of_step_2) = (diff_1 / no_of_steps, diff_2 / no_of_steps)
 
         for step in tqdm.tqdm(
             range(no_of_steps), desc="Progress", leave=False, disable=disable_tqdm
@@ -528,7 +521,7 @@ class Plotter:
             box_x_mid_point,
             box_y_mid_point,
             divider,
-        ) = self.analyse_lines(lines=lines, rotate=rotate, bounds=bounds)
+        ) = self.analyse_lines(lines, rotate, bounds)
 
         for line in lines:
 
@@ -543,9 +536,8 @@ class Plotter:
                 if flip ^ rotate:  # flip before moving back into drawing pane
                     x = -x
 
-                x = (
-                    x + box_x_mid_point
-                )  # shift x values so that they have the box x midpoint as their endpoint
+                # shift x values so that they have the box x midpoint as their endpoint
+                x = x + box_x_mid_point
 
                 y = point[1]
                 y = y - y_mid_point
@@ -640,14 +632,7 @@ class Plotter:
             rotate = True
             x_mid_point, y_mid_point = y_mid_point, x_mid_point
 
-        return (
-            rotate,
-            x_mid_point,
-            y_mid_point,
-            box_x_mid_point,
-            box_y_mid_point,
-            divider,
-        )
+        return (rotate, x_mid_point, y_mid_point, box_x_mid_point, box_y_mid_point, divider)
 
     # ----------------- physical control methods -----------------
 
@@ -804,7 +789,6 @@ clockwise and anti-clockwise. Press "0" to exit.
                     pen_pw_dict[state] = pen_pw
 
                     print(pen_pw)
-
 
     def drive_xy(self):
         """Control the x/y position using the keyboard."""
