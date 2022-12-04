@@ -115,29 +115,29 @@ angles accurately with the outer arm, because you can see where the pen actually
 Check for any missing values (use ``v``), and when done, ``0``. The output might be something like::
 
     servo_1_angle_pws_bidi =
-    {30: {'cw': 769, 'acw': 759},
-     15: {'cw': 919, 'acw': 919},
-     0: {'cw': 1059, 'acw': 1069},
-     -15: {'cw': 1209, 'acw': 1219},
-     -30: {'cw': 1349, 'acw': 1339},
-     -45: {'cw': 1459, 'acw': 1459},
-     -60: {'cw': 1579, 'acw': 1589},
-     -75: {'cw': 1719, 'acw': 1709},
-     -105: {'cw': 1999, 'acw': 1979},
-     -120: {'cw': 2119, 'acw': 2129},
-     -135: {'cw': 2289, 'acw': 2289},
-     -90: {'acw': 1859, 'cw': 1859}}
+    {30: {'asc': 769, 'des': 759},
+     15: {'asc': 919, 'des': 919},
+     0: {'asc': 1059, 'des': 1069},
+     -15: {'asc': 1209, 'des': 1219},
+     -30: {'asc': 1349, 'des': 1339},
+     -45: {'asc': 1459, 'des': 1459},
+     -60: {'asc': 1579, 'des': 1589},
+     -75: {'asc': 1719, 'des': 1709},
+     -105: {'asc': 1999, 'des': 1979},
+     -120: {'asc': 2119, 'des': 2129},
+     -135: {'asc': 2289, 'des': 2289},
+     -90: {'des': 1859, 'asc': 1859}}
     servo_2_angle_pws_bidi =
-    {15: {'cw': 656, 'acw': 639},
-     30: {'cw': 788, 'acw': 778},
-     45: {'cw': 928, 'acw': 908},
-     60: {'cw': 1058, 'acw': 1048},
-     75: {'cw': 1218, 'acw': 1208},
-     90: {'cw': 1368, 'acw': 1358},
-     105: {'cw': 1518, 'acw': 1508},
-     120: {'cw': 1668, 'acw': 1668},
-     135: {'cw': 1818, 'acw': 1818},
-     150: {'cw': 1968, 'acw': 1968}}
+    {15: {'asc': 656, 'des': 639},
+     30: {'asc': 788, 'des': 778},
+     45: {'asc': 928, 'des': 908},
+     60: {'asc': 1058, 'des': 1048},
+     75: {'asc': 1218, 'des': 1208},
+     90: {'asc': 1368, 'des': 1358},
+     105: {'asc': 1518, 'des': 1508},
+     120: {'asc': 1668, 'des': 1668},
+     135: {'asc': 1818, 'des': 1818},
+     150: {'asc': 1968, 'des': 1968}}
 
 
 Now, you can copy and paste (you'll need to do a little reformatting) the two dictionaries to the BrachioGraph definition

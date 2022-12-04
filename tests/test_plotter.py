@@ -32,48 +32,45 @@ class TestBiDiPlotter:
         virtual=True,
         wait=0,
         servo_1_angle_pws_bidi={
-            -135: {"cw": 2374, "acw": 2386},
-            -120: {"cw": 2204, "acw": 2214},
-            -105: {"cw": 2042, "acw": 2054},
-            -90: {"cw": 1898, "acw": 1900},
-            -75: {"cw": 1730, "acw": 1750},
-            -60: {"cw": 1604, "acw": 1612},
-            -45: {"cw": 1466, "acw": 1476},
-            -30: {"cw": 1330, "acw": 1340},
-            -15: {"cw": 1188, "acw": 1200},
-            0: {"cw": 1048, "acw": 1060},
-            15: {"cw": 904, "acw": 910},
-            30: {"cw": 750, "acw": 766},
+            -135: {"asc": 2374, "des": 2386},
+            -120: {"asc": 2204, "des": 2214},
+            -105: {"asc": 2042, "des": 2054},
+            -90: {"asc": 1898, "des": 1900},
+            -75: {"asc": 1730, "des": 1750},
+            -60: {"asc": 1604, "des": 1612},
+            -45: {"asc": 1466, "des": 1476},
+            -30: {"asc": 1330, "des": 1340},
+            -15: {"asc": 1188, "des": 1200},
+            0: {"asc": 1048, "des": 1060},
+            15: {"asc": 904, "des": 910},
+            30: {"asc": 750, "des": 766},
         },
         servo_2_angle_pws_bidi={
-            15: {"cw": 783, "acw": 761},
-            30: {"cw": 917, "acw": 901},
-            45: {"cw": 1053, "acw": 1035},
-            60: {"cw": 1183, "acw": 1167},
-            75: {"cw": 1303, "acw": 1287},
-            90: {"cw": 1427, "acw": 1417},
-            105: {"cw": 1557, "acw": 1537},
-            120: {"cw": 1697, "acw": 1681},
-            135: {"cw": 1843, "acw": 1827},
-            150: {"cw": 2003, "acw": 1987},
+            15: {"asc": 783, "des": 761},
+            30: {"asc": 917, "des": 901},
+            45: {"asc": 1053, "des": 1035},
+            60: {"asc": 1183, "des": 1167},
+            75: {"asc": 1303, "des": 1287},
+            90: {"asc": 1427, "des": 1417},
+            105: {"asc": 1557, "des": 1537},
+            120: {"asc": 1697, "des": 1681},
+            135: {"asc": 1843, "des": 1827},
+            150: {"asc": 2003, "des": 1987},
         },
         pw_up=1400,  # pulse-widths for pen up/down
         pw_down=1650,
     )
 
     def test_defaults_of_bg_with_bidi_pws(self):
-        assert (
-            self.plotter.angles_to_pw_1 != self.plotter.naive_angles_to_pulse_widths_1
-        )
+        assert (self.plotter.angles_to_pw_1 == self.plotter.sophisticated_angles_to_pulse_widths_1)
+        assert (self.plotter.angles_to_pw_2 == self.plotter.sophisticated_angles_to_pulse_widths_2)
 
         assert self.plotter.angles_to_pw_1(-90) == approx(1894, abs=1e-0)
+        assert self.plotter.angles_to_pw_1(-90, direction="asc") == approx(1900, abs=1e-0)
+        assert self.plotter.angles_to_pw_1(-90, direction="des") == approx(1889, abs=1e-0)
         assert self.plotter.angles_to_pw_2(90) == approx(1422, abs=1e-0)
+        assert self.plotter.angles_to_pw_2(90, direction="asc") == approx(1428, abs=1e-0)
+        assert self.plotter.angles_to_pw_2(90, direction="des") == approx(1414, abs=1e-0)
 
-        assert self.plotter.hysteresis_correction_1 == approx(5.416666)
-        assert self.plotter.hysteresis_correction_2 == approx(-8.3)
-
-        assert self.plotter.get_pulse_widths() == (
-            approx(1054 + self.plotter.hysteresis_correction_1, abs=1e-0),
-            approx(617 + self.plotter.hysteresis_correction_2, abs=1e-0),
-        )
+        assert self.plotter.get_pulse_widths() == (approx(1054, abs=1e-0), approx(617, abs=1e-0))
         assert (self.plotter.angle_1, self.plotter.angle_2) == (0, 0)

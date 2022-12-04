@@ -98,7 +98,7 @@ This will install:
 * PIGPIO's Python library
 * `Pillow <http://pillow.readthedocs.io>`_, the most widely-used Python imaging library.
 * ``tqdm``, for the progress indicator while drawing
-* ``readchar``, to allow the ``BrachioGraph.drive()`` methods to accept user input
+* ``readchar``, to allow the :ref:`calibration methods <calibration-control-methods>` to accept user input
 * ``pytest``, to run the test suite
 
 You only need to install them once in your virtual environment. Next time you activate the virtual environment, you'll

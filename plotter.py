@@ -73,16 +73,26 @@ class Plotter:
         self.hysteresis_correction_1 = hysteresis_correction_1
 
         if servo_1_angle_pws_bidi:
-            # use the bi-directional values to obtain mean values, and a hysteresis correction value
-            servo_1_angle_pws = []
-            differences = []
-            for angle, pws in servo_1_angle_pws_bidi.items():
-                pw = (pws["acw"] + pws["cw"]) / 2
-                servo_1_angle_pws.append([angle, pw])
-                differences.append((pws["acw"] - pws["cw"]) / 2)
-            self.hysteresis_correction_1 = numpy.mean(differences)
 
-        if servo_1_angle_pws:
+            servo_1_array_asc = numpy.array([(angle, pw["asc"]) for angle, pw in servo_1_angle_pws_bidi.items()])
+            servo_1_array_des = numpy.array([(angle, pw["des"]) for angle, pw in servo_1_angle_pws_bidi.items()])
+
+            ascending_pulse_widths_function = numpy.poly1d(
+                numpy.polyfit(servo_1_array_asc[:, 0], servo_1_array_asc[:, 1], 3)
+            )
+            descending_pulse_widths_function = numpy.poly1d(
+                numpy.polyfit(servo_1_array_des[:, 0], servo_1_array_des[:, 1], 3)
+            )
+            if ascending_pulse_widths_function(-30) < ascending_pulse_widths_function(30):
+                self.angles_to_pw_1_asc = ascending_pulse_widths_function
+                self.angles_to_pw_1_des = descending_pulse_widths_function
+            else:
+                self.angles_to_pw_1_asc = descending_pulse_widths_function
+                self.angles_to_pw_1_des = ascending_pulse_widths_function
+
+            self.angles_to_pw_1 = self.sophisticated_angles_to_pulse_widths_1
+
+        elif servo_1_angle_pws:
             servo_1_array = numpy.array(servo_1_angle_pws)
             self.angles_to_pw_1 = numpy.poly1d(
                 numpy.polyfit(servo_1_array[:, 0], servo_1_array[:, 1], 3)
@@ -97,16 +107,26 @@ class Plotter:
         self.hysteresis_correction_2 = hysteresis_correction_2
 
         if servo_2_angle_pws_bidi:
-            # use the bi-directional values to obtain mean values, and a hysteresis correction value
-            servo_2_angle_pws = []
-            differences = []
-            for angle, pws in servo_2_angle_pws_bidi.items():
-                pw = (pws["acw"] + pws["cw"]) / 2
-                servo_2_angle_pws.append([angle, pw])
-                differences.append((pws["acw"] - pws["cw"]) / 2)
-            self.hysteresis_correction_2 = numpy.mean(differences)
 
-        if servo_2_angle_pws:
+            servo_2_array_asc = numpy.array([(angle, pw["asc"]) for angle, pw in servo_2_angle_pws_bidi.items()])
+            servo_2_array_des = numpy.array([(angle, pw["des"]) for angle, pw in servo_2_angle_pws_bidi.items()])
+
+            ascending_pulse_widths_function = numpy.poly1d(
+                numpy.polyfit(servo_2_array_asc[:, 0], servo_2_array_asc[:, 1], 3)
+            )
+            descending_pulse_widths_function = numpy.poly1d(
+                numpy.polyfit(servo_2_array_des[:, 0], servo_2_array_des[:, 1], 3)
+            )
+            if ascending_pulse_widths_function(-30) < ascending_pulse_widths_function(30):
+                self.angles_to_pw_2_asc = ascending_pulse_widths_function
+                self.angles_to_pw_2_des = descending_pulse_widths_function
+            else:
+                self.angles_to_pw_2_asc = descending_pulse_widths_function
+                self.angles_to_pw_2_des = ascending_pulse_widths_function
+
+            self.angles_to_pw_2 = self.sophisticated_angles_to_pulse_widths_2
+
+        elif servo_2_angle_pws:
             servo_2_array = numpy.array(servo_2_angle_pws)
             self.angles_to_pw_2 = numpy.poly1d(
                 numpy.polyfit(servo_2_array[:, 0], servo_2_array[:, 1], 3)
@@ -116,7 +136,6 @@ class Plotter:
             self.angles_to_pw_2 = self.naive_angles_to_pulse_widths_2
 
         # set some initial values required for moving methods
-        self.previous_pw_1 = self.previous_pw_2 = 0
         self.active_hysteresis_correction_1 = self.active_hysteresis_correction_2 = 0
         self.reset_report()
 
@@ -422,19 +441,18 @@ class Plotter:
             disable_tqdm = False
 
         (length_of_step_1, length_of_step_2) = (diff_1 / no_of_steps, diff_2 / no_of_steps)
+        intermediate_angle_1, intermediate_angle_2 = self.angle_1, self.angle_2
 
-        for step in tqdm.tqdm(
-            range(no_of_steps), desc="Progress", leave=False, disable=disable_tqdm
-        ):
+        for step in tqdm.tqdm(range(no_of_steps), desc="Progress", leave=False, disable=disable_tqdm):
 
-            self.angle_1 = self.angle_1 + length_of_step_1
-            self.angle_2 = self.angle_2 + length_of_step_2
+            intermediate_angle_1 += length_of_step_1
+            intermediate_angle_2 += length_of_step_2
 
             time_since_last_moved = monotonic() - self.last_moved
             if time_since_last_moved < wait:
                 sleep(wait - time_since_last_moved)
 
-            self.set_angles(self.angle_1, self.angle_2)
+            self.set_angles(intermediate_angle_1, intermediate_angle_2)
 
             self.last_moved = monotonic()
 
@@ -446,38 +464,30 @@ class Plotter:
 
         Calls ``set_pulse_widths()``.
 
-        Sets ``current_x``, ``current_y``.
+        Sets ``x``, ``y``, ``angle_1``, ``angle_2``.
         """
 
         pw_1 = pw_2 = None
 
         if angle_1 is not None:
-            pw_1 = self.angles_to_pw_1(angle_1)
-
-            if pw_1 > self.previous_pw_1:
-                self.active_hysteresis_correction_1 = self.hysteresis_correction_1
-            elif pw_1 < self.previous_pw_1:
-                self.active_hysteresis_correction_1 = -self.hysteresis_correction_1
-
-            self.previous_pw_1 = pw_1
-
-            pw_1 = pw_1 + self.active_hysteresis_correction_1
+            if self.angle_1 is None or angle_1 == self.angle_1:
+                pw_1 = numpy.mean([self.angles_to_pw_1(angle_1, direction="asc"), self.angles_to_pw_1(angle_1, direction="des")])
+            elif angle_1 > self.angle_1:
+                pw_1 = self.angles_to_pw_1(angle_1, direction="asc")
+            elif angle_1 < self.angle_1:
+                pw_1 = self.angles_to_pw_1(angle_1, direction="des")
 
             self.angle_1 = angle_1
             self.angles_used_1.add(int(angle_1))
             self.pulse_widths_used_1.add(int(pw_1))
 
         if angle_2 is not None:
-            pw_2 = self.angles_to_pw_2(angle_2)
-
-            if pw_2 > self.previous_pw_2:
-                self.active_hysteresis_correction_2 = self.hysteresis_correction_2
-            elif pw_2 < self.previous_pw_2:
-                self.active_hysteresis_correction_2 = -self.hysteresis_correction_2
-
-            self.previous_pw_2 = pw_2
-
-            pw_2 = pw_2 + self.active_hysteresis_correction_2
+            if self.angle_2 is None or angle_2 == self.angle_2:
+                pw_2 = numpy.mean([self.angles_to_pw_2(angle_2, direction="asc"), self.angles_to_pw_2(angle_2, direction="des")])
+            elif angle_2 > self.angle_2:
+                pw_2 = self.angles_to_pw_2(angle_2, direction="asc")
+            elif angle_2 < self.angle_2:
+                pw_2 = self.angles_to_pw_2(angle_2, direction="des")
 
             self.angle_2 = angle_2
             self.angles_used_2.add(int(angle_2))
@@ -502,13 +512,29 @@ class Plotter:
 
     #  ----------------- angles-to-pulse-widths methods -----------------
 
-    def naive_angles_to_pulse_widths_1(self, angle):
+    def naive_angles_to_pulse_widths_1(self, angle, direction=None):
         """A rule-of-thumb calculation of pulse-width for the desired servo angle"""
         return (angle - self.servo_1_parked_angle) * self.servo_1_degree_ms + self.servo_1_parked_pw
 
-    def naive_angles_to_pulse_widths_2(self, angle):
+    def naive_angles_to_pulse_widths_2(self, angle, direction=None):
         """A rule-of-thumb calculation of pulse-width for the desired servo angle"""
         return (angle - self.servo_2_parked_angle) * self.servo_2_degree_ms + self.servo_2_parked_pw
+
+    def sophisticated_angles_to_pulse_widths_1(self, angle, direction=None):
+        if direction == "asc":
+            return self.angles_to_pw_1_asc(angle)
+        elif direction == "des":
+            return self.angles_to_pw_1_des(angle)
+        else:
+            return numpy.mean([self.angles_to_pw_1_asc(angle), self.angles_to_pw_1_des(angle)])
+
+    def sophisticated_angles_to_pulse_widths_2(self, angle, direction=None):
+        if direction == "asc":
+            return self.angles_to_pw_2_asc(angle)
+        elif direction == "des":
+            return self.angles_to_pw_2_des(angle)
+        else:
+            return numpy.mean([self.angles_to_pw_2_asc(angle), self.angles_to_pw_2_des(angle)])
 
     # ----------------- line-processing methods -----------------
 
@@ -656,7 +682,6 @@ class Plotter:
                     raise ValueError
 
         else:
-
             if pw_1:
                 self.rpi.set_servo_pulsewidth(14, pw_1)
             if pw_2:
@@ -693,7 +718,7 @@ class Plotter:
 
     # ----------------- manual driving methods -----------------
 
-    def capture_pws(self):
+    def capture_pws(self, pws1_dict={}, pws2_dict={}):
         """
         Helps capture angle/pulse-width data for the servos, as a dictionary to be used
         in a Plotter definition.
@@ -712,8 +737,6 @@ clockwise and anti-clockwise. Press "0" to exit.
         pen_pw = self.pen.get_pw()
 
         last_action = values = None
-        pws1_dict = {}
-        pws2_dict = {}
         pen_pw_dict = {}
 
         print("0 to exit, c to capture a value, v to show captured values")
@@ -722,14 +745,14 @@ clockwise and anti-clockwise. Press "0" to exit.
         print("Pen      z: -10          x: +10")
 
         controls = {
-            "a": [-10, 0, 0, "acw"],
-            "A": [-1, 0, 0, "acw"],
-            "s": [+10, 0, 0, "cw"],
-            "S": [+1, 0, 0, "cw"],
-            "k": [0, -10, 0, "acw"],
-            "K": [0, -1, 0, "acw"],
-            "l": [0, +10, 0, "cw"],
-            "L": [0, +1, 0, "cw"],
+            "a": [-10, 0, 0, "des"],
+            "A": [-1, 0, 0, "des"],
+            "s": [+10, 0, 0, "asc"],
+            "S": [+1, 0, 0, "asc"],
+            "k": [0, -10, 0, "des"],
+            "K": [0, -1, 0, "des"],
+            "l": [0, +10, 0, "asc"],
+            "L": [0, +1, 0, "asc"],
             "z": [0, 0, -10],
             "x": [0, 0, +10],
         }
