@@ -86,6 +86,7 @@ This documentation uses the `Diátaxis documentation structure <https://diataxis
     :maxdepth: 1
     :hidden:
 
+    self
     Tutorial <tutorial/index>
     How-to guides <how-to/index>
     Reference <reference/index>
