@@ -7,10 +7,6 @@ BrachioGraph
 
 ..  raw:: html
 
-    <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Share on Twitter</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-    <a href="https://twitter.com/BrachioGraph?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @BrachioGraph</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
     <iframe src="https://player.vimeo.com/video/372867891" width="696" height="392" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
 
 
