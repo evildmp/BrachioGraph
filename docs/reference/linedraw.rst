@@ -14,7 +14,7 @@
         draw_contours=False,  # suggested value: 2
         repeat_contours=1,    # increase to draw the contours multiple times
         draw_hatch=False,     # suggested value: 16
-        repeat_contours=1,    # increase to draw the hatching multiple times
+        repeat_hatch=1,       # increase to draw the hatching multiple times
         ):
 
 * ``image_filename``:  all images are expected to be found in the ``images`` directory
@@ -24,7 +24,7 @@
 * ``draw_contours``: find and draw outlines, using the value provided (smaller is more detailed, and slower)
 * ``repeat_contours``: how many times should the contours be drawn?
 * ``draw_hatch``: hatch (shade) the processed image, using the value provided (smaller is more detailed, and slower).
-* ``repeat_contours``: how many times should the hatching be drawn?
+* ``repeat_hatch``: how many times should the hatching be drawn?
 
 At least one of ``draw_hatch`` and ``draw_contours`` must be given otherwise nothing will be drawn.
 
