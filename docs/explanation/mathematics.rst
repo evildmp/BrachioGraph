@@ -1,35 +1,23 @@
+.. _mathematics:
+
 The mathematics
 ---------------
 
-The BrachioGraph object contains two trigonometric methods, to translate x/y co-ordinates of the pen into angles of the
-motors and vice-versa. Using the example illustrated below, the arms are both 9cm long and the pen is at ``x=4, y=10``.
+A physical plotter instance is modelled with a ``BrachioGraph`` instance. Given x/y co-ordinates, a plotter 
+must be able to derive the appropriate motor angles. 
+
 
 Translating co-ordinates to angles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
-
-    hypotenuse = math.sqrt(x**2+y**2)
-    if hypotenuse > self.inner_arm + self.outer_arm:
-        raise Exception(f"Cannot reach {hypotenuse}; total arm length is {self.inner_arm + self.outer_arm}")
-    hypotenuse_angle = math.asin(x/hypotenuse)
-    inner_angle = math.acos(
-        (hypotenuse**2+self.inner_arm**2-self.outer_arm**2)/(2*hypotenuse*self.inner_arm)
-    )
-    outer_angle = math.acos(
-        (self.inner_arm**2+self.outer_arm**2-hypotenuse**2)/(2*self.inner_arm*self.outer_arm)
-    )
-    shoulder_motor_angle = hypotenuse_angle - inner_angle
-    elbow_motor_angle = math.pi - outer_angle
-    return (math.degrees(shoulder_motor_angle), math.degrees(elbow_motor_angle))
-
+In this example, the arms are both 9cm long and the pen is at ``x=4, y=10``. 
 
 .. image:: /images/geometry.png
    :alt: 'BrachioGraph geometry'
    :class: 'main-visual'
 
-The ``xy_to_angles()`` method receives x and y co-ordinates as arguments. First we find a line from the origin (the
-shoulder motor) to the pen, and its angle from the y-axis::
+The ``xy_to_angles()`` method receives x and y co-ordinates as arguments. The first thing it does is find a line 
+from the origin (the shoulder motor) to the pen, and its angle from the y-axis::
 
     hypotenuse = math.sqrt(x ** 2 + y ** 2)
     hypotenuse_angle = math.asin(x/hypotenuse)

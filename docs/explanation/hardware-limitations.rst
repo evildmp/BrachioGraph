@@ -1,3 +1,5 @@
+.. _hardware-limitations:
+
 Compensating for hardware limitations
 ======================================
 
