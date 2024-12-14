@@ -35,7 +35,7 @@ USB, on the same port (the Pi's USB port).
 
 Edit ``config.txt``, adding::
 
-   dtoverlay=dwc2
+    dtoverlay=dwc2
 
 to a new line at the end.
 
@@ -44,6 +44,60 @@ Edit ``cmdline.txt``, adding::
     modules-load=dwc2,g_ether
 
 just after ``rootwait``.
+
+..  admonition:: Raspian Bookworm
+
+    Raspbian Bookworm (Debian 12) Network-Manager configuration ignores RNDIS devices by default, so you will need to add this snippet to ``firstrun.txt``, immediately before the line ``rm -f /boot/firstrun.sh``::
+
+        # Remove the rule setting gadget devices to be unmanagend
+        cp /usr/lib/udev/rules.d/85-nm-unmanaged.rules /etc/udev/rules.d/85-nm-unmanaged.rules
+        sed 's/^[^#]*gadget/#\ &/' -i /etc/udev/rules.d/85-nm-unmanaged.rules
+
+        # Create a NetworkManager connection file that tries DHCP first
+        CONNFILE1=/etc/NetworkManager/system-connections/usb0-dhcp.nmconnection
+        UUID1=$(uuid -v4)
+        cat <<- EOF >${CONNFILE1}
+            [connection]
+            id=usb0-dhcp
+            uuid=${UUID1}
+            type=ethernet
+            interface-name=usb0
+            autoconnect-priority=100
+            autoconnect-retries=2
+            [ethernet]
+            [ipv4]
+            dhcp-timeout=3
+            method=auto
+            [ipv6]
+            addr-gen-mode=default
+            method=auto
+            [proxy]
+            EOF
+
+        # Create a NetworkManager connection file that assigns a Link-Local address if DHCP fails
+        CONNFILE2=/etc/NetworkManager/system-connections/usb0-ll.nmconnection
+        UUID2=$(uuid -v4)
+        cat <<- EOF >${CONNFILE2}
+            [connection]
+            id=usb0-ll
+            uuid=${UUID2}
+            type=ethernet
+            interface-name=usb0
+            autoconnect-priority=50
+            [ethernet]
+            [ipv4]
+            method=link-local
+            [ipv6]
+            addr-gen-mode=default
+            method=auto
+            [proxy]
+            EOF
+
+        # NetworkManager will ignore nmconnection files with incorrect permissions so change them here
+        chmod 600 ${CONNFILE1}
+        chmod 600 ${CONNFILE2}
+
+
 
 Eject the card and put it into the Pi.
 
