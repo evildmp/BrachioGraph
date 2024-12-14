@@ -47,7 +47,7 @@ Contents
 
    .. grid-item:: :doc:`Explanation <explanation/index>`
 
-      Understanding the mathematics, choosing hardware
+      Understanding :ref:`the mathematics <mathematics>`, :ref:`choosing hardware <hardware>`, :ref:`compensating for hardware limitations <hardware-limitations>` and other topics
 
 
 From bitmap to plot via vectorisation
@@ -86,6 +86,7 @@ This documentation uses the `Diátaxis documentation structure <https://diataxis
     :maxdepth: 1
     :hidden:
 
+    self
     Tutorial <tutorial/index>
     How-to guides <how-to/index>
     Reference <reference/index>
