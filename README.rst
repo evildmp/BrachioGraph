@@ -13,8 +13,6 @@ Almost everything required can be found in a desk or kitchen drawer. The entire 
 .. image:: docs/images/readme_combined_image.png
     :width: 100%
 
-`BrachioGraph can be found on Twitter <https://twitter.com/BrachioGraph>`_.
-
 
 Documentation
 -------------
