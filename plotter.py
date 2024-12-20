@@ -658,9 +658,9 @@ class Plotter:
         else:
 
             if pw_1:
-                self.rpi.set_servo_pulsewidth(14, pw_1)
+                self.rpi.hardware_PWM(18, 50, 50 * pw_1)
             if pw_2:
-                self.rpi.set_servo_pulsewidth(15, pw_2)
+                self.rpi.hardware_PWM(13, 50, 50 * pw_2)
 
     def get_pulse_widths(self):
         """Returns the actual pulse-widths values; if in virtual mode, returns the nominal values -
@@ -679,7 +679,7 @@ class Plotter:
 
         return (actual_pulse_width_1, actual_pulse_width_2)
 
-    def quiet(self, servos=[14, 15, 18]):
+    def quiet(self, servos=[18, 13, 12]):
         """Stop sending pulses to the servos, so that they are no longer energised (and so that they
         stop buzzing).
         """
@@ -893,7 +893,7 @@ clockwise and anti-clockwise. Press "0" to exit.
 
 
 class Pen:
-    def __init__(self, bg, pw_up=1700, pw_down=1300, pin=18, transition_time=0.25, virtual=False):
+    def __init__(self, bg, pw_up=1700, pw_down=1300, pin=12, transition_time=0.25, virtual=False):
 
         self.bg = bg
         self.pin = pin
