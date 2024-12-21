@@ -829,8 +829,8 @@ clockwise and anti-clockwise. Press "0" to exit.
         print("                      | Servo 1 | Servo 2 ")
         print("----------------------|---------|---------")
 
-        pw_1, pw_2 = self.get_pulse_widths()
-        print(f"{'pulse-width |':>23}", f"{pw_1:>7.0f}", "|", f"{pw_2:>7.0f}")
+        # pw_1, pw_2 = self.get_pulse_widths()
+        # print(f"{'pulse-width |':>23}", f"{pw_1:>7.0f}", "|", f"{pw_2:>7.0f}")
 
         angle_1, angle_2 = self.angle_1, self.angle_2
         print(f"{'angle |':>23}", f"{angle_1:>7.0f}", "|", f"{angle_2:>7.0f}")
