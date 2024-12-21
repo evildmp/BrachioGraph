@@ -67,7 +67,7 @@ class Plotter:
         # numpy.polyfit(), to produce a function for each one. Otherwise, we will use a simple
         # approximation based on a centre of travel of 1500µS and 10µS per degree
 
-        self.servo_1_parked_pw = servo_1_parked_pw
+        self.servo_1_pw = self.servo_1_parked_pw = servo_1_parked_pw
         self.servo_1_degree_ms = servo_1_degree_ms
         self.servo_1_parked_angle = servo_1_parked_angle
         self.hysteresis_correction_1 = hysteresis_correction_1
@@ -91,7 +91,7 @@ class Plotter:
         else:
             self.angles_to_pw_1 = self.naive_angles_to_pulse_widths_1
 
-        self.servo_2_parked_pw = servo_2_parked_pw
+        self.servo_2_pw = self.servo_2_parked_pw = servo_2_parked_pw
         self.servo_2_degree_ms = servo_2_degree_ms
         self.servo_2_parked_angle = servo_2_parked_angle
         self.hysteresis_correction_2 = hysteresis_correction_2
@@ -116,6 +116,7 @@ class Plotter:
             self.angles_to_pw_2 = self.naive_angles_to_pulse_widths_2
 
         # set some initial values required for moving methods
+        self.dir_1 = self.dir_2 = self.previous_dir_1 = self.previous_dir_2 = 0
         self.previous_pw_1 = self.previous_pw_2 = 0
         self.active_hysteresis_correction_1 = self.active_hysteresis_correction_2 = 0
         self.reset_report()
@@ -131,8 +132,8 @@ class Plotter:
                 self.rpi = pigpio.pi()
                 # the pulse frequency should be no higher than 100Hz - higher values could
                 # (supposedly) # damage the servos
-                self.rpi.set_PWM_frequency(14, 50)
-                self.rpi.set_PWM_frequency(15, 50)
+                # self.rpi.set_PWM_frequency(14, 50)
+                # self.rpi.set_PWM_frequency(15, 50)
                 pigpio.exceptions = True
                 self.virtual = False
                 # by default we use a wait factor of 0.01 seconds for better control
@@ -155,6 +156,7 @@ class Plotter:
         self.set_angles(self.servo_1_parked_angle, self.servo_2_parked_angle)
         sleep(1)
 
+        print("status time")
         self.status()
 
     def virtualise(self):
@@ -456,10 +458,16 @@ class Plotter:
 
             if pw_1 > self.previous_pw_1:
                 self.active_hysteresis_correction_1 = self.hysteresis_correction_1
+                self.dir_1 = 1
             elif pw_1 < self.previous_pw_1:
                 self.active_hysteresis_correction_1 = -self.hysteresis_correction_1
+                self.dir_1 = -1
+            
+            if self.dir_1 == -self.previous_dir_1:
+                print("Reversing motor 1")
 
             self.previous_pw_1 = pw_1
+            self.previous_dir_1 = self.dir_1
 
             pw_1 = pw_1 + self.active_hysteresis_correction_1
 
@@ -472,10 +480,16 @@ class Plotter:
 
             if pw_2 > self.previous_pw_2:
                 self.active_hysteresis_correction_2 = self.hysteresis_correction_2
+                self.dir_2 = 1
             elif pw_2 < self.previous_pw_2:
                 self.active_hysteresis_correction_2 = -self.hysteresis_correction_2
+                self.dir_2 = -1
+
+            if self.dir_2 == -self.previous_dir_2:
+                print("Reversing motor 2")
 
             self.previous_pw_2 = pw_2
+            self.previous_dir_2 = self.dir_2
 
             pw_2 = pw_2 + self.active_hysteresis_correction_2
 
@@ -658,9 +672,11 @@ class Plotter:
         else:
 
             if pw_1:
-                self.rpi.hardware_PWM(18, 50, 50 * pw_1)
+                self.rpi.hardware_PWM(18, 50, int(50 * pw_1))
+                self.servo_1_pw = pw_1
             if pw_2:
-                self.rpi.hardware_PWM(13, 50, 50 * pw_2)
+                self.rpi.hardware_PWM(13, 50, int(50 * pw_2))
+                self.servo_2_pw = pw_2
 
     def get_pulse_widths(self):
         """Returns the actual pulse-widths values; if in virtual mode, returns the nominal values -
@@ -674,8 +690,8 @@ class Plotter:
 
         else:
 
-            actual_pulse_width_1 = self.rpi.get_servo_pulsewidth(14)
-            actual_pulse_width_2 = self.rpi.get_servo_pulsewidth(15)
+            actual_pulse_width_1 = self.servo_1_pw
+            actual_pulse_width_2 = self.servo_2_pw
 
         return (actual_pulse_width_1, actual_pulse_width_2)
 
