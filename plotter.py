@@ -162,7 +162,7 @@ class Plotter:
 
     def virtualise(self):
 
-        print("Initialising virtual BrachioGraph")
+        print("Initialising virtual Plotter")
 
         self.virtual_pw_1 = self.angles_to_pw_1(-90)
         self.virtual_pw_2 = self.angles_to_pw_2(90)
@@ -441,6 +441,7 @@ class Plotter:
 
             self.last_moved = monotonic()
 
+
     # ----------------- pen-moving methods -----------------
 
     def set_angles(self, angle_1=None, angle_2=None):
@@ -464,9 +465,6 @@ class Plotter:
                 self.active_hysteresis_correction_1 = -self.hysteresis_correction_1
                 self.dir_1 = -1
             
-            if self.dir_1 == -self.previous_dir_1:
-                print("Reversing motor 1")
-
             self.previous_pw_1 = pw_1
             self.previous_dir_1 = self.dir_1
 
@@ -485,9 +483,6 @@ class Plotter:
             elif pw_2 < self.previous_pw_2:
                 self.active_hysteresis_correction_2 = -self.hysteresis_correction_2
                 self.dir_2 = -1
-
-            if self.dir_2 == -self.previous_dir_2:
-                print("Reversing motor 2")
 
             self.previous_pw_2 = pw_2
             self.previous_dir_2 = self.dir_2
@@ -846,8 +841,8 @@ clockwise and anti-clockwise. Press "0" to exit.
         print("                      | Servo 1 | Servo 2 ")
         print("----------------------|---------|---------")
 
-        # pw_1, pw_2 = self.get_pulse_widths()
-        # print(f"{'pulse-width |':>23}", f"{pw_1:>7.0f}", "|", f"{pw_2:>7.0f}")
+        pw_1, pw_2 = self.get_pulse_widths()
+        print(f"{'pulse-width |':>23}", f"{pw_1:>7.0f}", "|", f"{pw_2:>7.0f}")
 
         angle_1, angle_2 = self.angle_1, self.angle_2
         print(f"{'angle |':>23}", f"{angle_1:>7.0f}", "|", f"{angle_2:>7.0f}")
