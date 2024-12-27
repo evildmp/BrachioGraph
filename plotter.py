@@ -759,11 +759,13 @@ clockwise and anti-clockwise. Press "0" to exit.
                     pw_2 += values[1]
                     pen_pw += values[2]
 
-                    print(f"shoulder: {pw_1}, elbow: {pw_2}, pen: {pen_pw}")
+                    # print(f"shoulder: {pw_1}, elbow: {pw_2}, pen: {pen_pw}")
 
                     self.set_pulse_widths(pw_1, pw_2)
                     self.pen.pw(pen_pw)
 
+                    self.previous_pw_1 = pw_1
+                    self.previous_pw_2 = pw_2
                     last_action = values
 
             elif key == "0" or key == "v":
