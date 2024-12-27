@@ -1,6 +1,4 @@
 # coding=utf-8
-
-from time import sleep
 import readchar
 import math
 import numpy
@@ -177,8 +175,8 @@ class BrachioGraph(Plotter):
         h1, h2 = self.hysteresis_correction_1, self.hysteresis_correction_2
         print(f"hysteresis                 {h1:>2.1f}  |              {h2:>2.1f}")
 
-        # pw_1, pw_2 = self.get_pulse_widths()
-        # print(f"pulse-width               {pw_1:<4.0f}  |             {pw_2:<4.0f}")
+        pw_1, pw_2 = self.get_pulse_widths()
+        print(f"pulse-width               {pw_1:<4.0f}  |             {pw_2:<4.0f}")
 
         angle_1, angle_2 = self.angle_1, self.angle_2
 
