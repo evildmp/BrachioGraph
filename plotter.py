@@ -673,10 +673,10 @@ class Plotter:
 
             if pw_1:
                 self.rpi.hardware_PWM(18, 50, int(50 * pw_1))
-                self.servo_1_pw = pw_1
+                self.servo_1_pw = int(pw_1)
             if pw_2:
                 self.rpi.hardware_PWM(13, 50, int(50 * pw_2))
-                self.servo_2_pw = pw_2
+                self.servo_2_pw = int(pw_2)
 
     def get_pulse_widths(self):
         """Returns the actual pulse-widths values; if in virtual mode, returns the nominal values -
