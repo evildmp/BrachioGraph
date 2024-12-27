@@ -70,10 +70,7 @@ class TestBiDiPlotter:
         assert self.plotter.angles_to_pw_2(90) == approx(1422, abs=1e-0)
 
         assert self.plotter.hysteresis_correction_1 == approx(5.416666)
-        assert self.plotter.hysteresis_correction_2 == approx(-8.3)
+        assert self.plotter.hysteresis_correction_2 == approx(8.3)
 
-        assert self.plotter.get_pulse_widths() == (
-            approx(1054 + self.plotter.hysteresis_correction_1, abs=1e-0),
-            approx(617 + self.plotter.hysteresis_correction_2, abs=1e-0),
-        )
+        assert self.plotter.get_pulse_widths() == (1054, 617)
         assert (self.plotter.angle_1, self.plotter.angle_2) == (0, 0)

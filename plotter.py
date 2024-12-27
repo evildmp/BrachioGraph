@@ -80,7 +80,7 @@ class Plotter:
                 pw = (pws["acw"] + pws["cw"]) / 2
                 servo_1_angle_pws.append([angle, pw])
                 differences.append((pws["acw"] - pws["cw"]) / 2)
-            self.hysteresis_correction_1 = numpy.mean(differences)
+            self.hysteresis_correction_1 = abs(numpy.mean(differences))
 
         if servo_1_angle_pws:
             servo_1_array = numpy.array(servo_1_angle_pws)
@@ -104,7 +104,7 @@ class Plotter:
                 pw = (pws["acw"] + pws["cw"]) / 2
                 servo_2_angle_pws.append([angle, pw])
                 differences.append((pws["acw"] - pws["cw"]) / 2)
-            self.hysteresis_correction_2 = numpy.mean(differences)
+            self.hysteresis_correction_2 = abs(numpy.mean(differences))
 
         if servo_2_angle_pws:
             servo_2_array = numpy.array(servo_2_angle_pws)
@@ -153,11 +153,12 @@ class Plotter:
         self.angular_step = angular_step or 0.1
         self.resolution = resolution or 0.1
 
+        # prime with "previous" pulse-widths to avoid hysteresis correction
+        self.previous_pw_1 = self.angles_to_pw_1(self.servo_1_parked_angle)
+        self.previous_pw_2 = self.angles_to_pw_2(self.servo_2_parked_angle)
+
         self.set_angles(self.servo_1_parked_angle, self.servo_2_parked_angle)
         sleep(1)
-
-        print("status time")
-        self.status()
 
     def virtualise(self):
 

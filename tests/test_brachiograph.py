@@ -53,7 +53,7 @@ class TestBiDiBrachioGraph:
     )
 
     def test_defaults_of_bg_with_bidi_pws(self):
-        assert self.bg.get_pulse_widths() == (1899, 1412)
+        assert self.bg.get_pulse_widths() == (1894, 1421)
         assert (self.bg.angle_1, self.bg.angle_2) == (-90, 90)
 
     # ----------------- drawing methods -----------------
