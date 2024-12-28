@@ -100,8 +100,7 @@ Initialisation
         both clockwise and anti-clockwise directions.
     :param int pw_up: The pulse-width for the pen's up position.
     :param int pw_down: The pulse-width for the pen's down position.
-    :param float wait: A time in seconds that the plotter will rest after making a
-        movement. If not specified, will be initialised as 0.01, or 0 for a virtual-only plotter.
+    :param float wait: A time in seconds that the plotter will reserve to travel 1 degree. If not specified, will be initialised as 0.1, or 0 for a virtual-only plotter.
     :param float angular_step: An angle in degrees that determines how big each discrete step in
         a series of movements of the arm servos will be. If not specified, will be initialised as 0.1.
     :param float resolution:

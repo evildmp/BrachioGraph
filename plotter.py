@@ -38,9 +38,9 @@ class Plotter(PatternsMixin, LinesMixin):
         pw_up: int = None,  # pulse-widths for pen up/down
         pw_down: int = None,
         #  ----------------- physical control -----------------
-        angular_step: float = None,  # default step of the servos in degrees
-        wait: float = None,  # default wait time between operations
-        resolution: float = None,  # default resolution of the plotter in cm
+        wait: float = None,  # default time to allow the plotter to move 1 degree, in seconds
+        angular_step: float = 0.1,  # default step of the servos in degrees
+        resolution: float = 0.1,  # default resolution of the plotter in cm
     ):
 
         self.last_moved = monotonic()
@@ -136,8 +136,8 @@ class Plotter(PatternsMixin, LinesMixin):
                 # self.rpi.set_PWM_frequency(15, 50)
                 pigpio.exceptions = True
                 self.virtual = False
-                # by default we use a wait factor of 0.01 seconds for better control
-                self.wait = wait if wait is not None else 0.01
+                # by default we use a wait factor of 0.1 seconds for better control
+                self.wait = wait if wait is not None else 0.1
 
             except AttributeError:
                 print("pigpio daemon is not available; running in virtual mode")
@@ -150,8 +150,8 @@ class Plotter(PatternsMixin, LinesMixin):
 
         self.pen = Pen(bg=self, pw_up=pw_up, pw_down=pw_down, virtual=self.virtual)
 
-        self.angular_step = angular_step or 0.1
-        self.resolution = resolution or 0.1
+        self.angular_step = angular_step
+        self.resolution = resolution
 
         # prime with "previous" pulse-widths to avoid hysteresis correction
         self.previous_pw_1 = self.angles_to_pw_1(self.servo_1_parked_angle)
@@ -215,24 +215,17 @@ class Plotter(PatternsMixin, LinesMixin):
             diff_2 = angle_2 - self.angle_2
 
         no_of_steps = int(max(map(abs, (diff_1 / angular_step, diff_2 / angular_step)))) or 1
+        (degrees_per_step_1, degrees_per_step_2) = (diff_1 / no_of_steps, diff_2 / no_of_steps)
+        max_degrees_per_step = max(map(abs, (degrees_per_step_1, degrees_per_step_2)))
+        wait_per_step = wait * max_degrees_per_step
 
-        if no_of_steps < 100:
-            disable_tqdm = True
-        else:
-            disable_tqdm = False
+        for step in range(no_of_steps):
 
-        (length_of_step_1, length_of_step_2) = (diff_1 / no_of_steps, diff_2 / no_of_steps)
-
-        for step in tqdm.tqdm(
-            range(no_of_steps), desc="Progress", leave=False, disable=disable_tqdm
-        ):
-
-            self.angle_1 = self.angle_1 + length_of_step_1
-            self.angle_2 = self.angle_2 + length_of_step_2
-
+            self.angle_1 = self.angle_1 + degrees_per_step_1
+            self.angle_2 = self.angle_2 + degrees_per_step_2
             time_since_last_moved = monotonic() - self.last_moved
-            if time_since_last_moved < wait:
-                sleep(wait - time_since_last_moved)
+            if time_since_last_moved < wait_per_step:
+                sleep(wait_per_step - time_since_last_moved)
 
             self.set_angles(self.angle_1, self.angle_2)
 
@@ -367,6 +360,45 @@ class Plotter(PatternsMixin, LinesMixin):
                 self.rpi.set_servo_pulsewidth(servo, 0)
 
     # ----------------- manual driving methods -----------------
+
+    def calibrate(self, target=None, correction=20):
+
+        print("0 to exit, c to capture a value, v to show captured values")
+        print("Shoulder a: -10  A: -1   s: +10  S: +1")
+        print("Elbow    k: -10  K: -1   l: +10  L: +1")
+        print("Pen      z: -10          x: +10")
+
+        target = target or self.servo_1_parked_pw
+
+        print(target)
+        self.park()
+        
+        while True:
+
+            match readchar.readchar():
+                case "a":
+                    target = target -10
+                case "A":
+                    target = target -1
+                case "s":
+                    target = target +10
+                case "S":
+                    target = target +1
+                case "q":
+                    correction = correction - 1
+                case "w":
+                    correction = correction + 1
+
+            print("target:", target, "correction:", correction)
+            self.set_pulse_widths(pw_1=target-30)
+            sleep(.2)
+            self.set_pulse_widths(pw_1=target+correction)
+            sleep(1)
+            self.set_pulse_widths(pw_1=target+30)
+            sleep(.2)
+            self.set_pulse_widths(pw_1=target-correction)
+            sleep(1)
+       
 
     def capture_pws(self):
         """
