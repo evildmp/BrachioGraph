@@ -27,8 +27,50 @@ except:
 
 # -------------- output functions --------------
 
-
 def image_to_json(
+    image_filename,
+    resolution=1024,
+    draw_contours=False, repeat_contours=1,
+    draw_hatch=False, repeat_hatch=1,
+):
+
+    lines = vectorise( image_filename, resolution, draw_contours, repeat_contours, draw_hatch, repeat_hatch)
+
+    filename = json_folder + image_filename + ".json"
+    lines_to_file(lines, filename)
+    print("Saving", filename)
+
+
+def image_to_raster(image_filename, resolution=1024):
+
+    image = prepare_image(image_filename)
+    image = resize_image(image, resolution)
+    lines = []
+
+    for y in range(0, image.height, 10):
+        drawing = False
+        line = None
+        for x in range(0, image.width, 1):
+            draw = image.getpixel((x, y)) < 127
+            if draw and not drawing:
+                # not already drawing so must be the start of a new segment
+                line = [[x, y]]
+                drawing = True
+            elif not draw and drawing:
+                # must be the end of a segment
+                line.append([x, y])
+                lines.append(line)
+                drawing = False
+        if line and len(line) == 1:
+            # we reached the end of the line while drawing so we must close the segment
+            line.append([x, y])
+            lines.append(line)
+            drawing = False
+
+    return lines
+
+
+def vectorise(
     image_filename,
     resolution=1024,
     draw_contours=False,
@@ -36,19 +78,43 @@ def image_to_json(
     draw_hatch=False,
     repeat_hatch=1,
 ):
+    """Takes an image file, and turns into vectors. Saves the result as an SVG file, and returns a list of lines."""
+    
+    image = prepare_image(image_filename)
+    image = resize_image(image, resolution)
 
-    lines = vectorise(
-        image_filename,
-        resolution,
-        draw_contours,
-        repeat_contours,
-        draw_hatch,
-        repeat_hatch,
-    )
+    lines = []
 
-    filename = json_folder + image_filename + ".json"
-    lines_to_file(lines, filename)
+    if draw_contours and repeat_contours:
+        contours = getcontours(image, draw_contours=draw_contours)
+        contours = sortlines(contours)
+        contours = join_lines(contours)
+        for r in range(repeat_contours):
+            lines += contours
 
+    if draw_hatch and repeat_hatch:
+        hatches = hatch(image, line_spacing=draw_hatch)
+        hatches = sortlines(hatches)
+        hatches = join_lines(hatches)
+        for r in range(repeat_hatch):
+            lines += hatches
+
+    segments = 0
+    for line in lines:
+        segments = segments + len(line) - 1
+    print(len(lines), "lines,", segments, "segments.")
+
+    svg_filename = svg_folder + image_filename + ".svg"
+    f = open(svg_filename, "w")
+    f.write(makesvg(lines))
+    print("Saving", svg_filename)
+    f.close()
+
+    return lines
+
+def lines_to_file(lines, filename):
+    with open(filename, "w") as file_to_save:
+        json.dump(lines, file_to_save, indent=4)
 
 def makesvg(lines):
     print("Generating svg file...")
@@ -95,15 +161,7 @@ def draw(lines):
 
 # -------------- conversion control --------------
 
-
-def vectorise(
-    image_filename,
-    resolution=1024,
-    draw_contours=False,
-    repeat_contours=1,
-    draw_hatch=False,
-    repeat_hatch=1,
-):
+def prepare_image(image_filename):
 
     image = None
     possible = [
@@ -120,7 +178,6 @@ def vectorise(
             break
         except:
             pass
-    w, h = image.size
 
     # convert the image to greyscale
     image = image.convert("L")
@@ -128,45 +185,18 @@ def vectorise(
     # maximise contrast
     image = ImageOps.autocontrast(image, 5, preserve_tone=True)
 
-    lines = []
-
-    if draw_contours and repeat_contours:
-        contours = getcontours(resize_image(image, resolution, draw_contours), draw_contours)
-        contours = sortlines(contours)
-        contours = join_lines(contours)
-        for r in range(repeat_contours):
-            lines += contours
-
-    if draw_hatch and repeat_hatch:
-        hatches = hatch(resize_image(image, resolution), line_spacing=draw_hatch)
-        hatches = sortlines(hatches)
-        hatches = join_lines(hatches)
-        for r in range(repeat_hatch):
-            lines += hatches
-
-    segments = 0
-    for line in lines:
-        segments = segments + len(line) - 1
-    print(len(lines), "lines,", segments, "segments.")
-
-    f = open(svg_folder + image_filename + ".svg", "w")
-    f.write(makesvg(lines))
-    f.close()
-
-    return lines
-
+    return image
 
 def resize_image(image, resolution, divider=1):
-    return image.resize(
-        (
-            int(resolution / divider),
-            int(resolution / divider * image.size[1] / image.size[0]),
-        )
-    )
+    aspect_ratio = image.size[0] / image.size[1]
+
+    if aspect_ratio > 1:
+        return image.resize((int(resolution/divider), int(aspect_ratio*resolution/divider))) 
+    else:
+        return image.resize((int(aspect_ratio*resolution/divider), int(resolution/divider))) 
 
 
 # -------------- vectorisation options --------------
-
 
 def getcontours(image, draw_contours=2):
     print("Generating contours...")
@@ -296,7 +326,6 @@ def join_segments(line_groups):
 
 # -------------- supporting functions for drawing contours --------------
 
-
 def find_edges(image):
     print("Finding edges...")
     if no_cv:
@@ -420,11 +449,6 @@ def join_lines(lines, closeness=128):
     lines = new_lines
 
     return lines
-
-
-def lines_to_file(lines, filename):
-    with open(filename, "w") as file_to_save:
-        json.dump(lines, file_to_save, indent=4)
 
 
 # -------------- helper functions --------------
