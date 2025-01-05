@@ -39,6 +39,7 @@ class Plotter(PatternsMixin, LinesMixin):
         pw_down: int = None,
         #  ----------------- physical control -----------------
         wait: float = None,  # default time to allow the plotter to move 1 degree, in seconds
+        wait_reducer: float = 3.0,  # a factor to divide wait time by when moving with pen up
         angular_step: float = 0.1,  # default step of the servos in degrees
         resolution: float = 0.1,  # default resolution of the plotter in cm
     ):
@@ -144,6 +145,8 @@ class Plotter(PatternsMixin, LinesMixin):
                 self.virtualise()
                 self.wait = wait if wait is not None else 0
 
+        self.wait_reducer = wait_reducer
+
         # create the pen object
         pw_up = pw_up or 1400
         pw_down = pw_down or 1600
@@ -206,6 +209,7 @@ class Plotter(PatternsMixin, LinesMixin):
             self.pen.down()
         else:
             self.pen.up()
+            wait = wait / self.wait_reducer
 
         diff_1 = diff_2 = 0
 

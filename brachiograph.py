@@ -38,6 +38,7 @@ class BrachioGraph(Plotter):
         pw_down: int = 1100,
         #  ----------------- physical control -----------------
         wait: float = None,  # default wait time between operations
+        wait_reducer: float = 3.0,  # a factor to divide wait time by when moving with pen up
         angular_step: float = 0.1,  # default step of the servos in degrees
         resolution: float = 0.1,  # default resolution of the plotter in cm
     ):
@@ -67,6 +68,7 @@ class BrachioGraph(Plotter):
             pw_up=pw_up,
             pw_down=pw_down,
             wait=wait,
+            wait_reducer=wait_reducer,
             angular_step=angular_step,
             resolution=resolution,
             virtual=virtual,
