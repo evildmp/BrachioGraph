@@ -119,7 +119,9 @@ class LinesMixin:
         target_bounds = bounds or self.bounds 
 
         rotate, x_mid, y_mid, box_x_mid, box_y_mid, divider = self.map_source_to_target(
-            source_bounds, target_bounds, rotate
+            source_bounds=(min(x_values), min(y_values), max(x_values), max(y_values)), 
+            target_bounds=bounds or self.bounds,
+            rotate=rotate
             )
 
         for line in lines:
@@ -140,10 +142,10 @@ class LinesMixin:
         Analyses the co-ordinates in ``lines``, and returns:
 
         * ``rotate``: ``True`` if the image needs to be rotated by 90˚ in order to fit better
-        * ``x_mid_point``, ``y_mid_point``: mid-points of the image
-        * ``box_x_mid_point``, ``box_y_mid_point``: mid-points of the ``bounds``
-        * ``divider``: the value by which we must divide all x and y so that they will fit safely
-          inside the bounds.
+        * ``source_x_mid``, ``source_y_mid``: mid-points of the source
+        * ``target_x_mid``, ``target_y_mid``: mid-points of the target
+        * ``divider``: the value by which we must divide all source x and y so that they will fit safely
+          inside the target bounds.
 
         ``lines`` is a tuple itself containing a number of tuples, each of which contains a number
         of 2-tuples::
@@ -185,23 +187,21 @@ class LinesMixin:
         # If both image and box are in portrait orientation, or both in landscape, we don't need to
         # rotate the plot.
 
-        if (source_x_range / source_y_range - 1) * (target_x_range / target_y_range - 1) >= 0:
+        rotate = (source_x_range / source_y_range - 1) * (target_x_range / target_y_range - 1) < 0 or False
 
-            divider = 10 ** max(
-                abs(math.log10(source_x_range / target_x_range)), 
-                abs(math.log10(source_y_range / target_y_range))
-            )
-            rotate = False
-            divider = 1 / divider
+        if not rotate:
 
+            if abs(math.log10(source_x_range / target_x_range)) > abs(math.log10(source_y_range / target_y_range)):                                                                            
+                divider = 10 ** math.log10(source_x_range / target_x_range)
+            else: 
+                divider = 10 ** math.log10(source_y_range / target_y_range)
+                
         else:
+            if abs(math.log10(source_x_range / target_y_range)) > abs(math.log10(source_y_range / target_x_range)):
+                divider = 10 ** math.log10(source_x_range / target_y_range)
+            else:
+                divider = 10 ** math.log10(source_y_range / target_x_range)
 
-            divider = 10 ** max(
-                abs(math.log10(source_x_range / target_y_range)), 
-                abs(math.log10(source_y_range / target_x_range))
-            )
-            divider = 1 / divider
-            rotate = True
             source_x_mid, source_y_mid = source_y_mid, source_x_mid
 
         return (rotate, source_x_mid, source_y_mid, target_x_mid, target_y_mid, divider)
