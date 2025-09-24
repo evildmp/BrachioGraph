@@ -9,10 +9,10 @@ Usage
 
     Prepare a Raspberry Pi Zero for plotting (quick guide) <prepare-pi>
     Vectorise images with the linedraw library <use-linedraw>
-    Run a virtual plotter in software <virtual-mode>
+    Run a virtual plotter <virtual-mode>
     Visualise the behaviour of servos <visualise-servo-behaviour>
-    Optimise plotter geometry and drawing area <use-turtle-draw>
-    Build a PantoGraph, an alternative plotter design <pantograph>
+    use-turtle-draw
+    Build a PantoGraph <pantograph>
 
 
 Development

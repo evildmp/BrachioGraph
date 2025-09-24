@@ -1,6 +1,6 @@
-.. _understand_plotter_geometry:
+.. _geometric-visualisation:
 
-Understanding the plotter's geometry
+Geometric visualisation
 ========================================
 
 .. _understand-plotter-geometry:

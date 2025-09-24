@@ -1,5 +1,5 @@
 ==========================
-Turtle plotter
+Turtle plotter reference
 ==========================
 
 ..  module:: turtle_plotter

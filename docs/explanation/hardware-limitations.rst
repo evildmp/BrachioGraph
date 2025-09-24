@@ -1,6 +1,6 @@
 .. _hardware-limitations:
 
-Compensating for hardware limitations
+Working with hardware limitations
 ======================================
 
 Make no mistake: any engineer can tell you that the BrachioGraph is no way to build a plotter. Hobby servo motors are

@@ -1,14 +1,14 @@
 ==========================
-Plotter modules
+Plotter module reference
 ==========================
+
+The ``Plotter`` module
+=======================
 
 ..  module:: plotter
 
 ..  class:: Plotter
 
-
-``Plotter``
-===================
 
 A base class for the :class:`~brachiograph.BrachioGraph` and ``PantoGraph`` subclasses.
 
@@ -108,7 +108,7 @@ Initialisation
         A distance in centimetres. When drawing between two points, any line longer than
         ``resolution`` will be broken down into a series of points no more than ``resolution`` cm
         apart. This allows the plotter to approximate straight lines by drawing a series of shorter
-        curved lines (all the lines the plotter naturally draws are curved). If not specified, will 
+        curved lines (all the lines the plotter naturally draws are curved). If not specified, will
         be initialised as 0.1.
 
 In all the methods below, arguments that are also attributes of the plotter class need only be used
@@ -279,8 +279,8 @@ Trigonometric methods
 
 
 
-``BrachioGraph``
-================
+The ``BrachioGraph`` module
+===========================
 
 ..  module:: brachiograph
 

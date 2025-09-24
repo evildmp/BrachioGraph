@@ -1,22 +1,40 @@
+Geometric calculation
+=====================
+
+BrachioGraph is an *arm-writer* - it moves the pen by adjusting the angles of its arms. All its
+movements are rotational - it can only move in curves. This has some consequences that make it
+challenging to draw with.
+
+Whether it needs to move one arm or both to move the pen from one point to another,
+what it draws will not be a straight line. The shortest distance between two points might be
+a straight line, but the simplest movement between them is certainly not. Simply moving the
+motors to the correct position for the end-point will draw a curved line rather than a straight
+one.
+
+Instead, it's necessary to break down any straight line into a series of much shorter lines along
+its length - enough to make the line as straight as possible. The movement of servo motors is
+rather coarse, which is why all the lines a BrachioGraph produces are wiggly.
+
+
 .. _mathematics:
 
 The mathematics
 ---------------
 
-A physical plotter instance is modelled with a ``BrachioGraph`` instance. Given x/y co-ordinates, a plotter 
-must be able to derive the appropriate motor angles. 
+A physical plotter instance is modelled with a ``BrachioGraph`` instance. Given x/y co-ordinates, a plotter
+must be able to derive the appropriate motor angles.
 
 
 Translating co-ordinates to angles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this example, the arms are both 9cm long and the pen is at ``x=4, y=10``. 
+In this example, the arms are both 9cm long and the pen is at ``x=4, y=10``.
 
 .. image:: /images/geometry.png
    :alt: 'BrachioGraph geometry'
    :class: 'main-visual'
 
-The ``xy_to_angles()`` method receives x and y co-ordinates as arguments. The first thing it does is find a line 
+The ``xy_to_angles()`` method receives x and y co-ordinates as arguments. The first thing it does is find a line
 from the origin (the shoulder motor) to the pen, and its angle from the y-axis::
 
     hypotenuse = math.sqrt(x ** 2 + y ** 2)

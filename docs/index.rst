@@ -20,34 +20,62 @@ A BrachioGraph can be built for about €15 in an hour or so, using a Raspberry 
 household items. The `BrachioGraph library <https://github.com/evildmp/brachiograph>`_ is published on GitHub and
 includes simple Python code to drive the plotter and vectorise bit-map images.
 
+In this documentation
+=====================
 
-Contents
-------------
+* **Tutorial**:
+  :doc:`tutorial/wiring` • 
+  :doc:`tutorial/power` • 
+  :doc:`tutorial/start-plotting` • 
+  :doc:`tutorial/basic-improvement` • 
+  :doc:`tutorial/sophisticated-calibration`
 
-..  grid:: 1 1 2 2
+* **Hardware and design**:
+  :doc:`Overview <explanation/hardware>` •
+  :doc:`Working with limitations <explanation/hardware-limitations>` •
+  :doc:`Visualise servo behaviour <how-to/visualise-servo-behaviour>` •
+  :doc:`Alternative building techniques <explanation/alternatives>` •
+  :doc:`Build a Pantograph <how-to/pantograph>`
 
-   ..  grid-item:: :doc:`Tutorial <tutorial/index>`
+* **Mathematics**:
+  :doc:`explanation/geometry` •
+  :doc:`explanation/geometric-visualisation`
 
-       **Start here**: build the machine, install the software, make your first drawings
+* **Working with the plotter**:
+  :doc:`Raspberry Pi Zero quick-start guide <how-to/prepare-pi>` •
+  :doc:`reference/brachiograph` •
+  :doc:`Run a virtual plotter <how-to/virtual-mode>`
 
-   ..  grid-item:: :doc:`How-to guides <how-to/index>`
+* **Python turtle plotting**:
+  :doc:`how-to/use-turtle-draw` •
+  :doc:`reference/turtle-plotter`
 
-      Improve the calibration, process images, visualise plotter behaviour, build alternative designs
+* **Image processing**:
+  :doc:`Vectorise images <how-to/use-linedraw>` •
+  :doc:`linedraw.py reference <reference/linedraw>`
 
-.. grid:: 1 1 2 2
-   :reverse:
+* **Development**:
+  :doc:`Build the documentation <how-to/development-documentation>` •
+  :doc:`Run automated tests <how-to/development-tests>`
 
-   .. grid-item:: :doc:`Reference <reference/index>`
 
-      Guide to key classes and functions
 
-   .. grid-item:: :doc:`Explanation <explanation/index>`
+How this documentation is organised
+===================================
 
-      Understanding :ref:`the mathematics <mathematics>`, :ref:`choosing hardware <hardware>`, :ref:`compensating for hardware limitations <hardware-limitations>` and other topics
+This documentation uses the `Diátaxis documentation structure <https://diataxis.fr/>`_.
+
+* The :doc:`Tutorial <tutorial/index>` takes you step-by-step through the process of building the machine, installing the software and making your first drawings.
+
+* :doc:`How-to guides <how-to/index>` assume you have basic familiarity with the BrachioGraph. They go deeper into problems and explore things you can do with the system.
+
+* :doc:`Reference <reference/index>` provides a guide to APIs, key classes and functions.
+
+* :doc:`Explanation <explanation/index>` includes topic overviews, background and context and detailed discussion.
 
 
 From bitmap to plot via vectorisation
--------------------------------------
+=====================================
 
 .. rst-class:: clearfix row
 
@@ -58,28 +86,22 @@ From bitmap to plot via vectorisation
    :alt: 'Prague'
 
 
-
-
 .. rst-class:: clearfix row
 
 
-The BrachioGraph community
---------------------------
+Community contributions
+==========================
 
-BrachioGraph benefits from contributions from the open-source community, and independently-created :ref:`community
-resources <community-resources>`. These include videos, `brachio.me <https://brachio.me>`_, a web version of the
-linedraw software used to vectorise images and `3D printed plotter components
-<https://www.thingiverse.com/thing:4295302>`_.
+BrachioGraph is a hobby project, and I have very limited time to work on it. It means that I don't have the capacity to answer the many questions I get, or even to give due consideration the numerous offers of improvement.
 
+Other people in the open-source community have created their own resources for working with BrachioGraph.
 
-About the documentation
------------------------
-
-This documentation uses the `Diátaxis documentation structure <https://diataxis.fr/>`_
+* `brachio.me <https://brachio.me>`_: vectorise images with a web version of ``linedraw``
+* `3D printed plotter components <https://www.thingiverse.com/thing:4295302>`_, including arms and stand-offs
+* **Video**: `Building a BrachioGraph <https://youtu.be/7hI-9dHqTeg>`_
 
 
-.. toctree::
-    :maxdepth: 1
+..  toctree::
     :hidden:
 
     self

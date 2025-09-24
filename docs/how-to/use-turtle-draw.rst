@@ -1,6 +1,6 @@
 .. _optimise-geometry:
 
-Visualise your plotter's geometry and drawing area
+Visualise a plotter using Turtle graphics
 ========================================================
 
 The drawing area of the potter is determined by its geometry (the length of
@@ -23,7 +23,7 @@ plotter geometry. Good plotter geometry means that:
   positions* (and not at the extremes of their sweep), and uses *not too much
   or too little of their sweep*.
 
-:ref:`understand_plotter_geometry` explores some of the relationships between
+:ref:`geometric-visualisation` explores some of the relationships between
 geometry and plotting area in more detail.
 
 
