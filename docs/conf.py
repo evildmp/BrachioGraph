@@ -35,6 +35,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx_design",
+    "sphinx_structured_toc",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

@@ -8,3 +8,11 @@ h4 {font-size: 120%; text-transform: none;}
 body {font-family: 'Source Sans Pro', sans;}
 
 label.tab-label {font-weight: bolder}
+
+a:visited, a:visited:hover {color: var(--color-link)}
+
+.domain-list > ul > li > ul > li {
+    border-left-color: gray;
+    padding-left: 0.4em;
+    margin-left: 0.4em;
+}

@@ -23,40 +23,49 @@ includes simple Python code to drive the plotter and vectorise bit-map images.
 In this documentation
 =====================
 
-* **Tutorial**:
-  :doc:`tutorial/wiring` • 
-  :doc:`tutorial/power` • 
-  :doc:`tutorial/start-plotting` • 
-  :doc:`tutorial/basic-improvement` • 
-  :doc:`tutorial/sophisticated-calibration`
+..  domain::
 
-* **Hardware and design**:
-  :doc:`Overview <explanation/hardware>` •
-  :doc:`Working with limitations <explanation/hardware-limitations>` •
-  :doc:`Visualise servo behaviour <how-to/visualise-servo-behaviour>` •
-  :doc:`Alternative building techniques <explanation/alternatives>` •
-  :doc:`Build a Pantograph <how-to/pantograph>`
+    ..  slice:: Tutorial
 
-* **Mathematics**:
-  :doc:`explanation/geometry` •
-  :doc:`explanation/geometric-visualisation`
+        :doc:`tutorial/wiring`
+        :doc:`tutorial/power`
+        :doc:`tutorial/start-plotting`
+        :doc:`tutorial/basic-improvement`
+        :doc:`tutorial/sophisticated-calibration`
 
-* **Working with the plotter**:
-  :doc:`Raspberry Pi Zero quick-start guide <how-to/prepare-pi>` •
-  :doc:`reference/brachiograph` •
-  :doc:`Run a virtual plotter <how-to/virtual-mode>`
+    ..  slice:: Hardware and design
 
-* **Python turtle plotting**:
-  :doc:`how-to/use-turtle-draw` •
-  :doc:`reference/turtle-plotter`
+        :doc:`Overview <explanation/hardware>`
+        :doc:`Working with limitations <explanation/hardware-limitations>`
+        :doc:`Visualise servo behaviour <how-to/visualise-servo-behaviour>`
+        :doc:`Alternative building techniques <explanation/alternatives>`
+        :doc:`Build a Pantograph <how-to/pantograph>`
 
-* **Image processing**:
-  :doc:`Vectorise images <how-to/use-linedraw>` •
-  :doc:`linedraw.py reference <reference/linedraw>`
+    ..  slice:: Mathematics
 
-* **Development**:
-  :doc:`Build the documentation <how-to/development-documentation>` •
-  :doc:`Run automated tests <how-to/development-tests>`
+        :doc:`explanation/geometry`
+        :doc:`explanation/geometric-visualisation`
+
+    ..  slice:: Working with the plotter
+
+        :doc:`Raspberry Pi Zero quick-start guide <how-to/prepare-pi>`
+        :doc:`reference/brachiograph`
+        :doc:`Run a virtual plotter <how-to/virtual-mode>`
+
+    ..  slice:: Python turtle plotting
+
+        :doc:`how-to/use-turtle-draw`
+        :doc:`reference/turtle-plotter`
+
+    ..  slice:: Image processing
+
+        :doc:`Vectorise images <how-to/use-linedraw>`
+        :doc:`linedraw.py reference <reference/linedraw>`
+
+    ..  slice:: Development
+
+        :doc:`Build the documentation <how-to/development-documentation>`
+        :doc:`Run automated tests <how-to/development-tests>`
 
 
 
